@@ -1,0 +1,3 @@
+packages: tree-sitter-simple tree-sitter-*
+
+test-show-details: direct
