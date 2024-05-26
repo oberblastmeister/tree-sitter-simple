@@ -11,5 +11,5 @@ main :: IO ()
 main = do
   [file] <- getArgs
   !tree <- parse tree_sitter_haskell <$> T.IO.Utf8.readFile file
-  -- pPrintOpt NoCheckColorTty (defaultOutputOptionsDarkBg {outputOptionsIndentAmount = 1}) tree
+  pPrintOpt NoCheckColorTty (defaultOutputOptionsDarkBg {outputOptionsIndentAmount = 1}) tree
   pure ()
