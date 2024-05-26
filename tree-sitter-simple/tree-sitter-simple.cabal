@@ -53,12 +53,13 @@ library
   hs-source-dirs:      src
   build-depends:
     , base                  >= 4.14.3.0 && < 5
+    , text >= 2.0 && < 2.2
     , bytestring            >= 0.10.8.2 && < 0.13
     , containers           ^>= 0.6.0.1
     , directory            ^>= 1.3
     , filepath             ^>= 1.4.1
-    , split                ^>= 0.2.3
-    , template-haskell      >= 2.12 && < 3
+    -- , split                ^>= 0.2.3
+    -- , template-haskell      >= 2.12 && < 3
     , unordered-containers ^>= 0.2.9
   exposed-modules:     TreeSitter.Raw.Parser
                      , TreeSitter.Raw.Language
@@ -67,6 +68,7 @@ library
                      , TreeSitter.Raw.Tree
                      , TreeSitter.Raw
                      , TreeSitter.Api
+                     , TreeSitter.Query
   include-dirs:        vendor/tree-sitter/lib/include
                      , vendor/tree-sitter/lib/src
   install-includes:    tree_sitter/api.h

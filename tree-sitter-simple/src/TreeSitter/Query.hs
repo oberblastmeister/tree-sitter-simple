@@ -1,0 +1,1 @@
+module TreeSitter.Query where

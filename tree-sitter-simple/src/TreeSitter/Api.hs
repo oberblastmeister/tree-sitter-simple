@@ -1,4 +1,5 @@
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE RecordWildCards #-}
@@ -8,9 +9,19 @@
 module TreeSitter.Api
   ( parse,
     Node (..),
+    defaultNode,
+    Point (..),
+    Range (..),
+    Symbol (..),
+    SymbolType (..),
   )
 where
 
+import Control.Monad ((<$!>))
+import Data.ByteString qualified as B
+import Data.Text (Text)
+import Data.Text qualified as T
+import Data.Text.Encoding qualified as T.Encoding
 import Data.Tree (Tree)
 import Data.Tree qualified as Tree
 import Foreign
@@ -37,7 +48,7 @@ data SymbolType = Regular | Anonymous | Auxiliary
 
 data Symbol = Symbol
   { symbolType :: !SymbolType,
-    symbolName :: !String,
+    symbolName :: !Text,
     symbolId :: !Int
   }
   deriving (Show, Eq, Ord)
@@ -48,15 +59,15 @@ convertPoint Raw.TSPoint {pointRow, pointColumn} = Point {row = fromIntegral poi
 convertSymbol :: Ptr Raw.Language -> Raw.TSSymbol -> IO Symbol
 convertSymbol language sym = do
   cname <- Raw.ts_language_symbol_name language sym
-  name <- peekCString cname
+  name <- cStringToText cname
   ty <- toEnum <$> Raw.ts_language_symbol_type language sym
   pure $ Symbol ty name (fromIntegral @Raw.TSSymbol @Int sym)
 
 data Node = Node
-  { nodeType :: String,
+  { nodeType :: !Text,
     nodeSymbol :: Symbol,
     nodeRange :: Range,
-    nodeFieldName :: Maybe String,
+    nodeFieldName :: !(Maybe Text),
     nodeIsNamed :: !Bool,
     nodeIsExtra :: !Bool
   }
@@ -65,8 +76,8 @@ data Node = Node
 defaultNode :: Node
 defaultNode =
   Node
-    { nodeType = "",
-      nodeSymbol = Symbol {symbolType = Regular, symbolName = "", symbolId = 0},
+    { nodeType = T.pack "",
+      nodeSymbol = Symbol {symbolType = Regular, symbolName = T.pack "", symbolId = 0},
       nodeRange = Range {startByte = 0, startPoint = Point {row = 0, col = 0}, endByte = 0, endPoint = Point {row = 0, col = 0}},
       nodeFieldName = Nothing,
       nodeIsNamed = False,
@@ -76,12 +87,15 @@ defaultNode =
 convertCBool :: CBool -> Bool
 convertCBool (CBool b) = b /= 0
 
+cStringToText :: CString -> IO Text
+cStringToText cstr = T.Encoding.decodeUtf8Lenient <$!> B.packCString cstr
+
 convertNode :: Ptr Raw.Language -> Raw.Node -> IO Node
 convertNode language node@Raw.Node {nodeType, nodeSymbol, nodeEndPoint, nodeEndByte, nodeFieldName, nodeIsNamed, nodeIsExtra} = do
-  nodeType <- peekCString nodeType
+  nodeType <- cStringToText nodeType
   nodeSymbol <- convertSymbol language nodeSymbol
   -- be careful, the fieldname might be null
-  nodeFieldName <- if nodeFieldName == nullPtr then pure Nothing else Just <$> peekCString nodeFieldName
+  nodeFieldName <- if nodeFieldName == nullPtr then pure Nothing else Just <$> cStringToText nodeFieldName
   nodeStartPoint <- pure $ convertPoint $ Raw.nodeStartPoint node
   nodeStartByte <- pure $ fromIntegral @_ @Int $ Raw.nodeStartByte node
   nodeEndPoint <- pure $ convertPoint nodeEndPoint
@@ -97,13 +111,14 @@ convertNode language node@Raw.Node {nodeType, nodeSymbol, nodeEndPoint, nodeEndB
         nodeIsExtra = convertCBool nodeIsExtra
       }
 
-parse :: Ptr Raw.Language -> String -> Tree Node
-parse language source = unsafePerformIO $ do
-  parser <- Raw.ts_parser_new
-  _ <- Raw.ts_parser_set_language parser language
-  (str, len) <- newCStringLen source
-  tree <- Raw.ts_parser_parse_string parser nullPtr str len
-  convertTree language tree
+parse :: Ptr Raw.Language -> Text -> Tree Node
+parse language source = unsafePerformIO $ parseIO language source
+
+parseIO :: Ptr Raw.Language -> Text -> IO (Tree Node)
+parseIO language source = do
+  Raw.withParser language \parser -> do
+    let !bs = T.Encoding.encodeUtf8 source
+    Raw.withParseTree parser bs $ convertTree language
 
 convertTree :: Ptr Raw.Language -> Ptr Raw.Tree -> IO (Tree Node)
 convertTree language tree = do
