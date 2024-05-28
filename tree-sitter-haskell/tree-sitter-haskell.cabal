@@ -61,8 +61,12 @@ library
   other-modules:       Paths_tree_sitter_haskell
   build-depends:       base >= 4.12 && < 5
                      , tree-sitter-simple
-  Include-dirs:        vendor/tree-sitter-haskell/src
+  include-dirs:        vendor/tree-sitter-haskell/src
+  -- Might want to change this to normal includes?
+  -- install-includes is intended for headers that will be exposed to other libraries 
   install-includes:    tree_sitter/parser.h
+                     , tree_sitter/alloc.h
+                     , tree_sitter/array.h
   c-sources:           vendor/tree-sitter-haskell/src/parser.c
                      , vendor/tree-sitter-haskell/src/scanner.c
 
