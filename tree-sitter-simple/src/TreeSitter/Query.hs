@@ -6,11 +6,11 @@
 module TreeSitter.Query where
 
 import Control.Applicative (Alternative (..), liftA2)
-import Control.Monad (MonadPlus (..))
+import Control.Monad (MonadPlus (..), guard)
 import Data.Text (Text)
 import Data.Tree (Tree)
 import qualified Data.Tree as Tree
-import TreeSitter.Api (Node (..))
+import TreeSitter.Api (Node (..), Symbol (..))
 
 newtype NodeQuery a = NodeQuery {runNodeQuery :: Tree Node -> Maybe a}
 
@@ -76,7 +76,7 @@ instance Monad ChildQuery where
 instance Alternative ChildQuery where
   empty = ChildQuery \_ -> Nothing
   ChildQuery f <|> ChildQuery g = ChildQuery \children -> f children <|> g children
-  
+
 instance MonadPlus ChildQuery where
   mzero = empty
   mplus = (<|>)
@@ -93,6 +93,12 @@ node f g = withNode f \x -> do y <- g; pure (x, y)
 
 node_ :: (Node -> Maybe a) -> ChildQuery b -> NodeQuery b
 node_ f g = fmap snd (node f g)
+
+nodeName :: Text -> ChildQuery b -> NodeQuery (Node, b)
+nodeName name = node (\node -> do guard (node.nodeSymbol.symbolName == name); pure node)
+
+nodeName_ :: Text -> ChildQuery b -> NodeQuery b
+nodeName_ name child = fmap snd (nodeName name child)
 
 query :: Tree Node -> NodeQuery a -> Maybe a
 query tree (NodeQuery f) = f tree

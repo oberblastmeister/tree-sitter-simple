@@ -147,7 +147,7 @@ getChildNodes node = do
 
   children <- mallocArray childCount
   Raw.ts_node_copy_child_nodes tsNode children
-
+  
   let go i
         | i < childCount = do
             child <- peekElemOff children i
