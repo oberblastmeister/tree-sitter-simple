@@ -67,6 +67,7 @@ library
   install-includes:    tree_sitter/parser.h
                      , tree_sitter/alloc.h
                      , tree_sitter/array.h
+                     , unicode.h
   c-sources:           vendor/tree-sitter-haskell/src/parser.c
                      , vendor/tree-sitter-haskell/src/scanner.c
 
