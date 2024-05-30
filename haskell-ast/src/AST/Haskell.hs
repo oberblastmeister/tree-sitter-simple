@@ -332,10 +332,10 @@ instance AST.Cast.Cast AbstractFamily where
     Prelude.pure AbstractFamily
 
 data Alternative = Alternative
-  { binds :: (Prelude.Maybe (AST.Node.Node (LocalBinds Sum.:+ Sum.Nil))),
-    match :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node (Match Sum.:+ Sum.Nil))),
+  { binds :: (Prelude.Maybe (AST.Node.Node LocalBinds)),
+    match :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node Match)),
     pattern' :: (Prelude.Maybe (AST.Node.Node (Pattern Sum.:+ Signature Sum.:+ Sum.Nil))),
-    patterns :: (Prelude.Maybe (AST.Node.Node (Patterns Sum.:+ Sum.Nil)))
+    patterns :: (Prelude.Maybe (AST.Node.Node Patterns))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -368,7 +368,7 @@ instance AST.Cast.Cast Alternative where
   cast = cast_Alternative
 
 data Alternatives = Alternatives
-  { alternative :: ([(AST.Node.Node (Alternative Sum.:+ Sum.Nil))])
+  { alternative :: ([(AST.Node.Node Alternative)])
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -388,8 +388,8 @@ instance AST.Cast.Cast Alternatives where
   cast = cast_Alternatives
 
 data Annotated = Annotated
-  { children :: (AST.Node.Node (TypeParam Sum.:+ Sum.Nil)),
-    kind :: (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil))
+  { children :: (AST.Node.Node TypeParam),
+    kind :: (AST.Node.Node QuantifiedType)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -476,8 +476,8 @@ instance AST.Cast.Cast ArithmeticSequence where
   cast = cast_ArithmeticSequence
 
 data As = As
-  { bind :: (AST.Node.Node (Variable Sum.:+ Sum.Nil)),
-    pattern' :: (AST.Node.Node (Pattern Sum.:+ Sum.Nil))
+  { bind :: (AST.Node.Node Variable),
+    pattern' :: (AST.Node.Node Pattern)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -502,7 +502,7 @@ instance AST.Cast.Cast As where
   cast = cast_As
 
 data AssociatedType = AssociatedType
-  { namespace :: (AST.Node.Node ((AST.Token.Token "type") Sum.:+ Sum.Nil)),
+  { namespace :: (AST.Node.Node (AST.Token.Token "type")),
     type' :: (AST.Node.Node (Name Sum.:+ Qualified Sum.:+ Sum.Nil))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -529,10 +529,10 @@ instance AST.Cast.Cast AssociatedType where
 
 data Bind = Bind
   { arrow :: (Prelude.Maybe (AST.Node.Node ((AST.Token.Token "<-") Sum.:+ (AST.Token.Token "←") Sum.:+ Sum.Nil))),
-    binds :: (Prelude.Maybe (AST.Node.Node (LocalBinds Sum.:+ Sum.Nil))),
+    binds :: (Prelude.Maybe (AST.Node.Node LocalBinds)),
     expression :: (Prelude.Maybe (AST.Node.Node (Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    implicit :: (Prelude.Maybe (AST.Node.Node (ImplicitVariable Sum.:+ Sum.Nil))),
-    match :: ([(AST.Node.Node (Match Sum.:+ Sum.Nil))]),
+    implicit :: (Prelude.Maybe (AST.Node.Node ImplicitVariable)),
+    match :: ([(AST.Node.Node Match)]),
     name :: (Prelude.Maybe (AST.Node.Node (PrefixId Sum.:+ Variable Sum.:+ Sum.Nil))),
     pattern' :: (Prelude.Maybe (AST.Node.Node (Pattern Sum.:+ Signature Sum.:+ Sum.Nil)))
   }
@@ -621,7 +621,7 @@ instance AST.Cast.Cast Boolean where
 
 data Case = Case
   { children :: (AST.Node.Node (Expression Sum.:+ Signature Sum.:+ Sum.Nil)),
-    alternatives :: (Prelude.Maybe (AST.Node.Node (Alternatives Sum.:+ Sum.Nil)))
+    alternatives :: (Prelude.Maybe (AST.Node.Node Alternatives))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -667,11 +667,11 @@ instance AST.Cast.Cast Children where
 
 data Class = Class
   { children :: (Prelude.Maybe (AST.Node.Node (Infix Sum.:+ Parens Sum.:+ Sum.Nil))),
-    context :: (Prelude.Maybe (AST.Node.Node (Context Sum.:+ Sum.Nil))),
-    declarations :: (Prelude.Maybe (AST.Node.Node (ClassDeclarations Sum.:+ Sum.Nil))),
-    fundeps :: (Prelude.Maybe (AST.Node.Node (Fundeps Sum.:+ Sum.Nil))),
+    context :: (Prelude.Maybe (AST.Node.Node Context)),
+    declarations :: (Prelude.Maybe (AST.Node.Node ClassDeclarations)),
+    fundeps :: (Prelude.Maybe (AST.Node.Node Fundeps)),
     name :: (Prelude.Maybe (AST.Node.Node (Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Unit Sum.:+ Sum.Nil))),
-    patterns :: (Prelude.Maybe (AST.Node.Node (TypeParams Sum.:+ Sum.Nil)))
+    patterns :: (Prelude.Maybe (AST.Node.Node TypeParams))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -712,7 +712,7 @@ instance AST.Cast.Cast Class where
   cast = cast_Class
 
 data ClassDeclarations = ClassDeclarations
-  { declaration :: ([(AST.Node.Node (ClassDecl Sum.:+ Sum.Nil))])
+  { declaration :: ([(AST.Node.Node ClassDecl)])
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -771,9 +771,9 @@ instance AST.Cast.Cast ConstructorOperator where
     Prelude.pure ConstructorOperator
 
 data ConstructorSynonym = ConstructorSynonym
-  { binds :: (Prelude.Maybe (AST.Node.Node (LocalBinds Sum.:+ Sum.Nil))),
-    implicit :: (Prelude.Maybe (AST.Node.Node (ImplicitVariable Sum.:+ Sum.Nil))),
-    match :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node (Match Sum.:+ Sum.Nil))),
+  { binds :: (Prelude.Maybe (AST.Node.Node LocalBinds)),
+    implicit :: (Prelude.Maybe (AST.Node.Node ImplicitVariable)),
+    match :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node Match)),
     name :: (Prelude.Maybe (AST.Node.Node (PrefixId Sum.:+ Variable Sum.:+ Sum.Nil))),
     pattern' :: (Prelude.Maybe (AST.Node.Node (Pattern Sum.:+ Signature Sum.:+ Sum.Nil)))
   }
@@ -812,7 +812,7 @@ instance AST.Cast.Cast ConstructorSynonym where
   cast = cast_ConstructorSynonym
 
 data ConstructorSynonyms = ConstructorSynonyms
-  { children :: ([(AST.Node.Node (ConstructorSynonym Sum.:+ Sum.Nil))])
+  { children :: ([(AST.Node.Node ConstructorSynonym)])
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -833,9 +833,9 @@ instance AST.Cast.Cast ConstructorSynonyms where
 
 data Context = Context
   { arrow :: (AST.Node.Node ((AST.Token.Token "=>") Sum.:+ (AST.Token.Token "⇒") Sum.:+ Sum.Nil)),
-    constraint :: (Prelude.Maybe (AST.Node.Node (Constraints Sum.:+ Sum.Nil))),
-    context :: (AST.Node.Node (Constraint Sum.:+ Sum.Nil)),
-    type' :: (Prelude.Maybe (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil)))
+    constraint :: (Prelude.Maybe (AST.Node.Node Constraints)),
+    context :: (AST.Node.Node Constraint),
+    type' :: (Prelude.Maybe (AST.Node.Node QuantifiedType))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -869,7 +869,7 @@ instance AST.Cast.Cast Context where
 
 data DataConstructor = DataConstructor
   { constructor :: (AST.Node.Node (Infix Sum.:+ Prefix Sum.:+ Record Sum.:+ Special Sum.:+ Sum.Nil)),
-    context :: (Prelude.Maybe (AST.Node.Node (Context Sum.:+ Sum.Nil))),
+    context :: (Prelude.Maybe (AST.Node.Node Context)),
     forall' :: (Prelude.Maybe (AST.Node.Node (Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil)))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -899,7 +899,7 @@ instance AST.Cast.Cast DataConstructor where
   cast = cast_DataConstructor
 
 data DataConstructors = DataConstructors
-  { constructor :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node (DataConstructor Sum.:+ Sum.Nil)))
+  { constructor :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node DataConstructor))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -921,9 +921,9 @@ instance AST.Cast.Cast DataConstructors where
 
 data DataFamily = DataFamily
   { children :: (Prelude.Maybe (AST.Node.Node (Infix Sum.:+ Parens Sum.:+ Sum.Nil))),
-    kind :: (Prelude.Maybe (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil))),
+    kind :: (Prelude.Maybe (AST.Node.Node QuantifiedType)),
     name :: (Prelude.Maybe (AST.Node.Node (Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Unit Sum.:+ Sum.Nil))),
-    patterns :: (Prelude.Maybe (AST.Node.Node (TypeParams Sum.:+ Sum.Nil)))
+    patterns :: (Prelude.Maybe (AST.Node.Node TypeParams))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -979,10 +979,10 @@ instance AST.Cast.Cast DataInstance where
 data DataType = DataType
   { children :: (Prelude.Maybe (AST.Node.Node (Infix Sum.:+ Parens Sum.:+ Sum.Nil))),
     constructors :: (Prelude.Maybe (AST.Node.Node (DataConstructors Sum.:+ GadtConstructors Sum.:+ Sum.Nil))),
-    context :: (Prelude.Maybe (AST.Node.Node (Context Sum.:+ Sum.Nil))),
-    deriving' :: ([(AST.Node.Node (Deriving Sum.:+ Sum.Nil))]),
+    context :: (Prelude.Maybe (AST.Node.Node Context)),
+    deriving' :: ([(AST.Node.Node Deriving)]),
     forall' :: (Prelude.Maybe (AST.Node.Node (Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil))),
-    kind :: (Prelude.Maybe (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil))),
+    kind :: (Prelude.Maybe (AST.Node.Node QuantifiedType)),
     name :: (Prelude.Maybe (AST.Node.Node (Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Qualified Sum.:+ Unit Sum.:+ Sum.Nil))),
     patterns :: (Prelude.Maybe (AST.Node.Node (TypeParams Sum.:+ TypePatterns Sum.:+ Sum.Nil)))
   }
@@ -1053,7 +1053,7 @@ instance AST.Cast.Cast Declarations where
   cast = cast_Declarations
 
 data DefaultSignature = DefaultSignature
-  { signature :: (AST.Node.Node (Signature Sum.:+ Sum.Nil))
+  { signature :: (AST.Node.Node Signature)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1094,9 +1094,9 @@ instance AST.Cast.Cast DefaultTypes where
   cast = cast_DefaultTypes
 
 data Deriving = Deriving
-  { classes :: (AST.Node.Node (Constraint Sum.:+ Sum.Nil)),
-    strategy :: (Prelude.Maybe (AST.Node.Node (DerivingStrategy Sum.:+ Sum.Nil))),
-    via :: (Prelude.Maybe (AST.Node.Node (Via Sum.:+ Sum.Nil)))
+  { classes :: (AST.Node.Node Constraint),
+    strategy :: (Prelude.Maybe (AST.Node.Node DerivingStrategy)),
+    via :: (Prelude.Maybe (AST.Node.Node Via))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1126,12 +1126,12 @@ instance AST.Cast.Cast Deriving where
 
 data DerivingInstance = DerivingInstance
   { children :: (Prelude.Maybe (AST.Node.Node (Infix Sum.:+ Parens Sum.:+ Sum.Nil))),
-    context :: (Prelude.Maybe (AST.Node.Node (Context Sum.:+ Sum.Nil))),
+    context :: (Prelude.Maybe (AST.Node.Node Context)),
     forall' :: (Prelude.Maybe (AST.Node.Node (Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil))),
     name :: (Prelude.Maybe (AST.Node.Node (Name Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Sum.Nil))),
-    patterns :: (Prelude.Maybe (AST.Node.Node (TypePatterns Sum.:+ Sum.Nil))),
-    strategy :: (Prelude.Maybe (AST.Node.Node (DerivingStrategy Sum.:+ Sum.Nil))),
-    via :: (Prelude.Maybe (AST.Node.Node (Via Sum.:+ Sum.Nil)))
+    patterns :: (Prelude.Maybe (AST.Node.Node TypePatterns)),
+    strategy :: (Prelude.Maybe (AST.Node.Node DerivingStrategy)),
+    via :: (Prelude.Maybe (AST.Node.Node Via))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1184,8 +1184,8 @@ instance AST.Cast.Cast DerivingStrategy where
     Prelude.pure DerivingStrategy
 
 data Do = Do
-  { children :: (Prelude.Maybe (AST.Node.Node (DoModule Sum.:+ Sum.Nil))),
-    statement :: ([(AST.Node.Node (Statement Sum.:+ Sum.Nil))])
+  { children :: (Prelude.Maybe (AST.Node.Node DoModule)),
+    statement :: ([(AST.Node.Node Statement)])
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1210,7 +1210,7 @@ instance AST.Cast.Cast Do where
 
 data DoModule = DoModule
   { id :: (AST.Node.Node ((AST.Token.Token "do") Sum.:+ (AST.Token.Token "mdo") Sum.:+ Sum.Nil)),
-    module' :: (AST.Node.Node (Module Sum.:+ Sum.Nil))
+    module' :: (AST.Node.Node Module)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1243,7 +1243,7 @@ instance AST.Cast.Cast EmptyList where
     Prelude.pure EmptyList
 
 data Entity = Entity
-  { children :: (AST.Node.Node (String Sum.:+ Sum.Nil))
+  { children :: (AST.Node.Node String)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1265,12 +1265,12 @@ instance AST.Cast.Cast Entity where
 
 data Equation = Equation
   { children :: ([(AST.Node.Node (Infix Sum.:+ Parens Sum.:+ QuantifiedType Sum.:+ Sum.Nil))]),
-    constructors :: (Prelude.Maybe (AST.Node.Node (ConstructorSynonyms Sum.:+ Sum.Nil))),
+    constructors :: (Prelude.Maybe (AST.Node.Node ConstructorSynonyms)),
     forall' :: (Prelude.Maybe (AST.Node.Node (Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil))),
     name :: (Prelude.Maybe (AST.Node.Node (Name Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Sum.Nil))),
     pattern' :: (Prelude.Maybe (AST.Node.Node (Pattern Sum.:+ Signature Sum.:+ Sum.Nil))),
-    patterns :: (Prelude.Maybe (AST.Node.Node (TypePatterns Sum.:+ Sum.Nil))),
-    synonym :: (Prelude.Maybe (AST.Node.Node (Pattern Sum.:+ Sum.Nil)))
+    patterns :: (Prelude.Maybe (AST.Node.Node TypePatterns)),
+    synonym :: (Prelude.Maybe (AST.Node.Node Pattern))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1314,7 +1314,7 @@ instance AST.Cast.Cast Equation where
   cast = cast_Equation
 
 data Equations = Equations
-  { equation :: ([(AST.Node.Node (Equation Sum.:+ Sum.Nil))])
+  { equation :: ([(AST.Node.Node Equation)])
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1355,7 +1355,7 @@ instance AST.Cast.Cast Exp where
   cast = cast_Exp
 
 data ExplicitType = ExplicitType
-  { type' :: (AST.Node.Node (Type Sum.:+ Sum.Nil))
+  { type' :: (AST.Node.Node Type)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1376,9 +1376,9 @@ instance AST.Cast.Cast ExplicitType where
   cast = cast_ExplicitType
 
 data Export = Export
-  { childrenSQuote :: (Prelude.Maybe (AST.Node.Node (Children Sum.:+ Sum.Nil))),
-    namespace :: (Prelude.Maybe (AST.Node.Node (Namespace Sum.:+ Sum.Nil))),
-    operator :: (Prelude.Maybe (AST.Node.Node (PrefixId Sum.:+ Sum.Nil))),
+  { childrenSQuote :: (Prelude.Maybe (AST.Node.Node Children)),
+    namespace :: (Prelude.Maybe (AST.Node.Node Namespace)),
+    operator :: (Prelude.Maybe (AST.Node.Node PrefixId)),
     type' :: (Prelude.Maybe (AST.Node.Node (Name Sum.:+ Qualified Sum.:+ Sum.Nil))),
     variable :: (Prelude.Maybe (AST.Node.Node (Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))
   }
@@ -1417,8 +1417,8 @@ instance AST.Cast.Cast Export where
   cast = cast_Export
 
 data Exports = Exports
-  { children :: ([(AST.Node.Node (ModuleExport Sum.:+ Sum.Nil))]),
-    export :: ([(AST.Node.Node (Export Sum.:+ Sum.Nil))])
+  { children :: ([(AST.Node.Node ModuleExport)]),
+    export :: ([(AST.Node.Node Export)])
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1441,8 +1441,8 @@ instance AST.Cast.Cast Exports where
   cast = cast_Exports
 
 data Field = Field
-  { children :: (Prelude.Maybe (AST.Node.Node (Type Sum.:+ Sum.Nil))),
-    name :: ([(AST.Node.Node (FieldName Sum.:+ Sum.Nil))]),
+  { children :: (Prelude.Maybe (AST.Node.Node Type)),
+    name :: ([(AST.Node.Node FieldName)]),
     parameter :: (Prelude.Maybe (AST.Node.Node (LazyField Sum.:+ QuantifiedType Sum.:+ StrictField Sum.:+ Sum.Nil))),
     type' :: (Prelude.Maybe (AST.Node.Node (LazyField Sum.:+ QuantifiedType Sum.:+ StrictField Sum.:+ Sum.Nil)))
   }
@@ -1476,7 +1476,7 @@ instance AST.Cast.Cast Field where
   cast = cast_Field
 
 data FieldName = FieldName
-  { children :: (AST.Node.Node (Variable Sum.:+ Sum.Nil))
+  { children :: (AST.Node.Node Variable)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1498,7 +1498,7 @@ instance AST.Cast.Cast FieldName where
 
 data FieldPath = FieldPath
   { field :: (AST.Node.Node (FieldName Sum.:+ Qualified Sum.:+ Sum.Nil)),
-    subfield :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node (FieldName Sum.:+ Sum.Nil)))
+    subfield :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node FieldName))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1523,7 +1523,7 @@ instance AST.Cast.Cast FieldPath where
   cast = cast_FieldPath
 
 data FieldPattern = FieldPattern
-  { children :: (Prelude.Maybe (AST.Node.Node (Wildcard Sum.:+ Sum.Nil))),
+  { children :: (Prelude.Maybe (AST.Node.Node Wildcard)),
     field :: (Prelude.Maybe (AST.Node.Node (FieldName Sum.:+ Qualified Sum.:+ Sum.Nil))),
     pattern' :: (Prelude.Maybe (AST.Node.Node (Pattern Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))
   }
@@ -1554,7 +1554,7 @@ instance AST.Cast.Cast FieldPattern where
   cast = cast_FieldPattern
 
 data FieldUpdate = FieldUpdate
-  { children :: (Prelude.Maybe (AST.Node.Node (Wildcard Sum.:+ Sum.Nil))),
+  { children :: (Prelude.Maybe (AST.Node.Node Wildcard)),
     expression :: (Prelude.Maybe (AST.Node.Node (Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
     field :: (Prelude.Maybe (AST.Node.Node (FieldName Sum.:+ FieldPath Sum.:+ Qualified Sum.:+ Sum.Nil)))
   }
@@ -1585,7 +1585,7 @@ instance AST.Cast.Cast FieldUpdate where
   cast = cast_FieldUpdate
 
 data Fields = Fields
-  { field :: ([(AST.Node.Node (Field Sum.:+ Sum.Nil))])
+  { field :: ([(AST.Node.Node Field)])
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1607,7 +1607,7 @@ instance AST.Cast.Cast Fields where
 data Fixity = Fixity
   { associativity :: (AST.Node.Node ((AST.Token.Token "infix") Sum.:+ (AST.Token.Token "infixl") Sum.:+ (AST.Token.Token "infixr") Sum.:+ Sum.Nil)),
     operator :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node ((AST.Token.Token ",") Sum.:+ ConstructorOperator Sum.:+ InfixId Sum.:+ Operator Sum.:+ Sum.Nil))),
-    precedence :: (Prelude.Maybe (AST.Node.Node (Integer Sum.:+ Sum.Nil)))
+    precedence :: (Prelude.Maybe (AST.Node.Node Integer))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1636,10 +1636,10 @@ instance AST.Cast.Cast Fixity where
   cast = cast_Fixity
 
 data Forall = Forall
-  { constraint :: (Prelude.Maybe (AST.Node.Node (Constraints Sum.:+ Sum.Nil))),
+  { constraint :: (Prelude.Maybe (AST.Node.Node Constraints)),
     quantifier :: (AST.Node.Node ((AST.Token.Token "forall") Sum.:+ (AST.Token.Token "∀") Sum.:+ Sum.Nil)),
-    type' :: (Prelude.Maybe (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil))),
-    variables :: (Prelude.Maybe (AST.Node.Node (QuantifiedVariables Sum.:+ Sum.Nil)))
+    type' :: (Prelude.Maybe (AST.Node.Node QuantifiedType)),
+    variables :: (Prelude.Maybe (AST.Node.Node QuantifiedVariables))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1673,8 +1673,8 @@ instance AST.Cast.Cast Forall where
 
 data ForallRequired = ForallRequired
   { quantifier :: (AST.Node.Node ((AST.Token.Token "forall") Sum.:+ (AST.Token.Token "∀") Sum.:+ Sum.Nil)),
-    type' :: (Prelude.Maybe (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil))),
-    variables :: (Prelude.Maybe (AST.Node.Node (QuantifiedVariables Sum.:+ Sum.Nil)))
+    type' :: (Prelude.Maybe (AST.Node.Node QuantifiedType)),
+    variables :: (Prelude.Maybe (AST.Node.Node QuantifiedVariables))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1703,9 +1703,9 @@ instance AST.Cast.Cast ForallRequired where
   cast = cast_ForallRequired
 
 data ForeignExport = ForeignExport
-  { callingConvention :: (AST.Node.Node (CallingConvention Sum.:+ Sum.Nil)),
-    entity :: (Prelude.Maybe (AST.Node.Node (Entity Sum.:+ Sum.Nil))),
-    signature :: (AST.Node.Node (Signature Sum.:+ Sum.Nil))
+  { callingConvention :: (AST.Node.Node CallingConvention),
+    entity :: (Prelude.Maybe (AST.Node.Node Entity)),
+    signature :: (AST.Node.Node Signature)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1734,10 +1734,10 @@ instance AST.Cast.Cast ForeignExport where
   cast = cast_ForeignExport
 
 data ForeignImport = ForeignImport
-  { callingConvention :: (AST.Node.Node (CallingConvention Sum.:+ Sum.Nil)),
-    entity :: (Prelude.Maybe (AST.Node.Node (Entity Sum.:+ Sum.Nil))),
-    safety :: (Prelude.Maybe (AST.Node.Node (Safety Sum.:+ Sum.Nil))),
-    signature :: (AST.Node.Node (Signature Sum.:+ Sum.Nil))
+  { callingConvention :: (AST.Node.Node CallingConvention),
+    entity :: (Prelude.Maybe (AST.Node.Node Entity)),
+    safety :: (Prelude.Maybe (AST.Node.Node Safety)),
+    signature :: (AST.Node.Node Signature)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1770,15 +1770,15 @@ instance AST.Cast.Cast ForeignImport where
   cast = cast_ForeignImport
 
 data Function = Function
-  { children :: (Prelude.Maybe (AST.Node.Node (Infix Sum.:+ Sum.Nil))),
+  { children :: (Prelude.Maybe (AST.Node.Node Infix)),
     arrow :: (Prelude.Maybe (AST.Node.Node ((AST.Token.Token "->") Sum.:+ (AST.Token.Token "→") Sum.:+ Sum.Nil))),
-    binds :: (Prelude.Maybe (AST.Node.Node (LocalBinds Sum.:+ Sum.Nil))),
-    match :: ([(AST.Node.Node (Match Sum.:+ Sum.Nil))]),
+    binds :: (Prelude.Maybe (AST.Node.Node LocalBinds)),
+    match :: ([(AST.Node.Node Match)]),
     name :: (Prelude.Maybe (AST.Node.Node (PrefixId Sum.:+ Variable Sum.:+ Sum.Nil))),
     parameter :: (Prelude.Maybe (AST.Node.Node (LazyField Sum.:+ QuantifiedType Sum.:+ StrictField Sum.:+ Sum.Nil))),
-    parens :: (Prelude.Maybe (AST.Node.Node (FunctionHeadParens Sum.:+ Sum.Nil))),
-    patterns :: (Prelude.Maybe (AST.Node.Node (Patterns Sum.:+ Sum.Nil))),
-    result :: (Prelude.Maybe (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil)))
+    parens :: (Prelude.Maybe (AST.Node.Node FunctionHeadParens)),
+    patterns :: (Prelude.Maybe (AST.Node.Node Patterns)),
+    result :: (Prelude.Maybe (AST.Node.Node QuantifiedType))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1830,10 +1830,10 @@ instance AST.Cast.Cast Function where
   cast = cast_Function
 
 data FunctionHeadParens = FunctionHeadParens
-  { children :: (Prelude.Maybe (AST.Node.Node (Infix Sum.:+ Sum.Nil))),
+  { children :: (Prelude.Maybe (AST.Node.Node Infix)),
     name :: (Prelude.Maybe (AST.Node.Node (PrefixId Sum.:+ Variable Sum.:+ Sum.Nil))),
-    parens :: (Prelude.Maybe (AST.Node.Node (FunctionHeadParens Sum.:+ Sum.Nil))),
-    patterns :: (Prelude.Maybe (AST.Node.Node (Patterns Sum.:+ Sum.Nil)))
+    parens :: (Prelude.Maybe (AST.Node.Node FunctionHeadParens)),
+    patterns :: (Prelude.Maybe (AST.Node.Node Patterns))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1866,8 +1866,8 @@ instance AST.Cast.Cast FunctionHeadParens where
   cast = cast_FunctionHeadParens
 
 data Fundep = Fundep
-  { determined :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node (Variable Sum.:+ Sum.Nil))),
-    matched :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node (Variable Sum.:+ Sum.Nil)))
+  { determined :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node Variable)),
+    matched :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node Variable))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1892,7 +1892,7 @@ instance AST.Cast.Cast Fundep where
   cast = cast_Fundep
 
 data Fundeps = Fundeps
-  { fundep :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node (Fundep Sum.:+ Sum.Nil)))
+  { fundep :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node Fundep))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -1913,10 +1913,10 @@ instance AST.Cast.Cast Fundeps where
   cast = cast_Fundeps
 
 data GadtConstructor = GadtConstructor
-  { context :: (Prelude.Maybe (AST.Node.Node (Context Sum.:+ Sum.Nil))),
+  { context :: (Prelude.Maybe (AST.Node.Node Context)),
     forall' :: (Prelude.Maybe (AST.Node.Node (Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil))),
     name :: (Prelude.Maybe (AST.Node.Node (Constructor Sum.:+ PrefixId Sum.:+ Sum.Nil))),
-    names :: (Prelude.Maybe (AST.Node.Node (BindingList Sum.:+ Sum.Nil))),
+    names :: (Prelude.Maybe (AST.Node.Node BindingList)),
     type' :: (AST.Node.Node (Prefix Sum.:+ Record Sum.:+ Sum.Nil))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1954,7 +1954,7 @@ instance AST.Cast.Cast GadtConstructor where
   cast = cast_GadtConstructor
 
 data GadtConstructors = GadtConstructors
-  { constructor :: ([(AST.Node.Node (GadtConstructor Sum.:+ Sum.Nil))])
+  { constructor :: ([(AST.Node.Node GadtConstructor)])
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2031,7 +2031,7 @@ instance AST.Cast.Cast Group where
   cast = cast_Group
 
 data Guards = Guards
-  { guard :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node (Guard Sum.:+ Sum.Nil)))
+  { guard :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node Guard))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2052,9 +2052,9 @@ instance AST.Cast.Cast Guards where
   cast = cast_Guards
 
 data Haskell = Haskell
-  { children :: (Prelude.Maybe (AST.Node.Node (Header Sum.:+ Sum.Nil))),
-    declarations :: (Prelude.Maybe (AST.Node.Node (Declarations Sum.:+ Sum.Nil))),
-    imports :: (Prelude.Maybe (AST.Node.Node (Imports Sum.:+ Sum.Nil)))
+  { children :: (Prelude.Maybe (AST.Node.Node Header)),
+    declarations :: (Prelude.Maybe (AST.Node.Node Declarations)),
+    imports :: (Prelude.Maybe (AST.Node.Node Imports))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2083,8 +2083,8 @@ instance AST.Cast.Cast Haskell where
   cast = cast_Haskell
 
 data Header = Header
-  { exports :: (Prelude.Maybe (AST.Node.Node (Exports Sum.:+ Sum.Nil))),
-    module' :: (AST.Node.Node (Module Sum.:+ Sum.Nil))
+  { exports :: (Prelude.Maybe (AST.Node.Node Exports)),
+    module' :: (AST.Node.Node Module)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2109,8 +2109,8 @@ instance AST.Cast.Cast Header where
   cast = cast_Header
 
 data ImplicitParameter = ImplicitParameter
-  { name :: (AST.Node.Node (ImplicitVariable Sum.:+ Sum.Nil)),
-    type' :: (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil))
+  { name :: (AST.Node.Node ImplicitVariable),
+    type' :: (AST.Node.Node QuantifiedType)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2135,10 +2135,10 @@ instance AST.Cast.Cast ImplicitParameter where
   cast = cast_ImplicitParameter
 
 data Import = Import
-  { alias :: (Prelude.Maybe (AST.Node.Node (Module Sum.:+ Sum.Nil))),
-    module' :: (AST.Node.Node (Module Sum.:+ Sum.Nil)),
-    names :: (Prelude.Maybe (AST.Node.Node (ImportList Sum.:+ Sum.Nil))),
-    package :: (Prelude.Maybe (AST.Node.Node (ImportPackage Sum.:+ Sum.Nil)))
+  { alias :: (Prelude.Maybe (AST.Node.Node Module)),
+    module' :: (AST.Node.Node Module),
+    names :: (Prelude.Maybe (AST.Node.Node ImportList)),
+    package :: (Prelude.Maybe (AST.Node.Node ImportPackage))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2171,7 +2171,7 @@ instance AST.Cast.Cast Import where
   cast = cast_Import
 
 data ImportList = ImportList
-  { name :: ([(AST.Node.Node (ImportName Sum.:+ Sum.Nil))])
+  { name :: ([(AST.Node.Node ImportName)])
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2191,9 +2191,9 @@ instance AST.Cast.Cast ImportList where
   cast = cast_ImportList
 
 data ImportName = ImportName
-  { childrenSQuote :: (Prelude.Maybe (AST.Node.Node (Children Sum.:+ Sum.Nil))),
-    namespace :: (Prelude.Maybe (AST.Node.Node (Namespace Sum.:+ Sum.Nil))),
-    operator :: (Prelude.Maybe (AST.Node.Node (PrefixId Sum.:+ Sum.Nil))),
+  { childrenSQuote :: (Prelude.Maybe (AST.Node.Node Children)),
+    namespace :: (Prelude.Maybe (AST.Node.Node Namespace)),
+    operator :: (Prelude.Maybe (AST.Node.Node PrefixId)),
     type' :: (Prelude.Maybe (AST.Node.Node (Name Sum.:+ Qualified Sum.:+ Sum.Nil))),
     variable :: (Prelude.Maybe (AST.Node.Node (Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))
   }
@@ -2232,7 +2232,7 @@ instance AST.Cast.Cast ImportName where
   cast = cast_ImportName
 
 data Imports = Imports
-  { import' :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node (Import Sum.:+ Sum.Nil)))
+  { import' :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node Import))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2327,11 +2327,11 @@ instance AST.Cast.Cast InfixId where
 
 data Instance = Instance
   { children :: (Prelude.Maybe (AST.Node.Node (Infix Sum.:+ Parens Sum.:+ Sum.Nil))),
-    context :: (Prelude.Maybe (AST.Node.Node (Context Sum.:+ Sum.Nil))),
-    declarations :: (Prelude.Maybe (AST.Node.Node (InstanceDeclarations Sum.:+ Sum.Nil))),
+    context :: (Prelude.Maybe (AST.Node.Node Context)),
+    declarations :: (Prelude.Maybe (AST.Node.Node InstanceDeclarations)),
     forall' :: (Prelude.Maybe (AST.Node.Node (Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil))),
     name :: (Prelude.Maybe (AST.Node.Node (Name Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Sum.Nil))),
-    patterns :: (Prelude.Maybe (AST.Node.Node (TypePatterns Sum.:+ Sum.Nil)))
+    patterns :: (Prelude.Maybe (AST.Node.Node TypePatterns))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2372,7 +2372,7 @@ instance AST.Cast.Cast Instance where
   cast = cast_Instance
 
 data InstanceDeclarations = InstanceDeclarations
-  { declaration :: ([(AST.Node.Node (InstanceDecl Sum.:+ Sum.Nil))])
+  { declaration :: ([(AST.Node.Node InstanceDecl)])
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2400,7 +2400,7 @@ instance AST.Cast.Cast Integer where
     Prelude.pure Integer
 
 data Invisible = Invisible
-  { bind :: (AST.Node.Node (TypeParam Sum.:+ Sum.Nil))
+  { bind :: (AST.Node.Node TypeParam)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2421,7 +2421,7 @@ instance AST.Cast.Cast Invisible where
   cast = cast_Invisible
 
 data Irrefutable = Irrefutable
-  { pattern' :: (AST.Node.Node (Pattern Sum.:+ Sum.Nil))
+  { pattern' :: (AST.Node.Node Pattern)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2442,7 +2442,7 @@ instance AST.Cast.Cast Irrefutable where
   cast = cast_Irrefutable
 
 data KindApplication = KindApplication
-  { type' :: (AST.Node.Node (Type Sum.:+ Sum.Nil))
+  { type' :: (AST.Node.Node Type)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2464,9 +2464,9 @@ instance AST.Cast.Cast KindApplication where
 
 data KindSignature = KindSignature
   { children :: (Prelude.Maybe (AST.Node.Node (Infix Sum.:+ Parens Sum.:+ Sum.Nil))),
-    kind :: (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil)),
+    kind :: (AST.Node.Node QuantifiedType),
     name :: (Prelude.Maybe (AST.Node.Node (Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Unit Sum.:+ Sum.Nil))),
-    patterns :: (Prelude.Maybe (AST.Node.Node (TypeParams Sum.:+ Sum.Nil)))
+    patterns :: (Prelude.Maybe (AST.Node.Node TypeParams))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2500,7 +2500,7 @@ instance AST.Cast.Cast KindSignature where
 
 data Lambda = Lambda
   { expression :: (AST.Node.Node (Expression Sum.:+ Signature Sum.:+ Sum.Nil)),
-    patterns :: (AST.Node.Node (Patterns Sum.:+ Sum.Nil))
+    patterns :: (AST.Node.Node Patterns)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2525,7 +2525,7 @@ instance AST.Cast.Cast Lambda where
   cast = cast_Lambda
 
 data LambdaCase = LambdaCase
-  { alternatives :: (Prelude.Maybe (AST.Node.Node (Alternatives Sum.:+ Sum.Nil)))
+  { alternatives :: (Prelude.Maybe (AST.Node.Node Alternatives))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2546,7 +2546,7 @@ instance AST.Cast.Cast LambdaCase where
   cast = cast_LambdaCase
 
 data LambdaCases = LambdaCases
-  { alternatives :: (Prelude.Maybe (AST.Node.Node (Alternatives Sum.:+ Sum.Nil)))
+  { alternatives :: (Prelude.Maybe (AST.Node.Node Alternatives))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2567,7 +2567,7 @@ instance AST.Cast.Cast LambdaCases where
   cast = cast_LambdaCases
 
 data LazyField = LazyField
-  { type' :: (AST.Node.Node (Type Sum.:+ Sum.Nil))
+  { type' :: (AST.Node.Node Type)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2588,7 +2588,7 @@ instance AST.Cast.Cast LazyField where
   cast = cast_LazyField
 
 data LeftSection = LeftSection
-  { leftOperand :: (AST.Node.Node (Expression Sum.:+ Sum.Nil)),
+  { leftOperand :: (AST.Node.Node Expression),
     operator :: (AST.Node.Node (ConstructorOperator Sum.:+ InfixId Sum.:+ Operator Sum.:+ Qualified Sum.:+ Sum.Nil))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2614,7 +2614,7 @@ instance AST.Cast.Cast LeftSection where
   cast = cast_LeftSection
 
 data Let = Let
-  { binds :: (Prelude.Maybe (AST.Node.Node (LocalBinds Sum.:+ Sum.Nil)))
+  { binds :: (Prelude.Maybe (AST.Node.Node LocalBinds))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2635,7 +2635,7 @@ instance AST.Cast.Cast Let where
   cast = cast_Let
 
 data LetIn = LetIn
-  { binds :: (Prelude.Maybe (AST.Node.Node (LocalBinds Sum.:+ Sum.Nil))),
+  { binds :: (Prelude.Maybe (AST.Node.Node LocalBinds)),
     expression :: (AST.Node.Node (Expression Sum.:+ Signature Sum.:+ Sum.Nil))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2662,9 +2662,9 @@ instance AST.Cast.Cast LetIn where
 
 data LinearFunction = LinearFunction
   { arrow :: (AST.Node.Node ((AST.Token.Token "->") Sum.:+ (AST.Token.Token "->.") Sum.:+ (AST.Token.Token "→") Sum.:+ (AST.Token.Token "⊸") Sum.:+ Sum.Nil)),
-    multiplicity :: (Prelude.Maybe (AST.Node.Node (Modifier Sum.:+ Sum.Nil))),
+    multiplicity :: (Prelude.Maybe (AST.Node.Node Modifier)),
     parameter :: (AST.Node.Node (LazyField Sum.:+ QuantifiedType Sum.:+ StrictField Sum.:+ Sum.Nil)),
-    result :: (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil))
+    result :: (AST.Node.Node QuantifiedType)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2718,7 +2718,7 @@ instance AST.Cast.Cast List where
 
 data ListComprehension = ListComprehension
   { expression :: (AST.Node.Node (Expression Sum.:+ Signature Sum.:+ Sum.Nil)),
-    qualifiers :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node (Qualifiers Sum.:+ Sum.Nil)))
+    qualifiers :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node Qualifiers))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2785,7 +2785,7 @@ instance AST.Cast.Cast LocalBinds where
 
 data Match = Match
   { expression :: (AST.Node.Node (Expression Sum.:+ Signature Sum.:+ Sum.Nil)),
-    guards :: (Prelude.Maybe (AST.Node.Node (Guards Sum.:+ Sum.Nil)))
+    guards :: (Prelude.Maybe (AST.Node.Node Guards))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2810,7 +2810,7 @@ instance AST.Cast.Cast Match where
   cast = cast_Match
 
 data Modifier = Modifier
-  { children :: (AST.Node.Node (Type Sum.:+ Sum.Nil))
+  { children :: (AST.Node.Node Type)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2831,7 +2831,7 @@ instance AST.Cast.Cast Modifier where
   cast = cast_Modifier
 
 data Module = Module
-  { children :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node (ModuleId Sum.:+ Sum.Nil)))
+  { children :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node ModuleId))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2852,7 +2852,7 @@ instance AST.Cast.Cast Module where
   cast = cast_Module
 
 data ModuleExport = ModuleExport
-  { module' :: (AST.Node.Node (Module Sum.:+ Sum.Nil))
+  { module' :: (AST.Node.Node Module)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2873,7 +2873,7 @@ instance AST.Cast.Cast ModuleExport where
   cast = cast_ModuleExport
 
 data MultiWayIf = MultiWayIf
-  { match :: ([(AST.Node.Node (Match Sum.:+ Sum.Nil))])
+  { match :: ([(AST.Node.Node Match)])
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -2901,8 +2901,8 @@ instance AST.Cast.Cast Namespace where
     Prelude.pure Namespace
 
 data Negation = Negation
-  { expression :: (Prelude.Maybe (AST.Node.Node (Expression Sum.:+ Sum.Nil))),
-    minus :: (Prelude.Maybe (AST.Node.Node ((AST.Token.Token "-") Sum.:+ Sum.Nil))),
+  { expression :: (Prelude.Maybe (AST.Node.Node Expression)),
+    minus :: (Prelude.Maybe (AST.Node.Node (AST.Token.Token "-"))),
     number :: (Prelude.Maybe (AST.Node.Node (Float Sum.:+ Integer Sum.:+ Sum.Nil)))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2933,12 +2933,12 @@ instance AST.Cast.Cast Negation where
 
 data Newtype = Newtype
   { children :: (Prelude.Maybe (AST.Node.Node (Infix Sum.:+ Parens Sum.:+ Sum.Nil))),
-    constructor :: (Prelude.Maybe (AST.Node.Node (NewtypeConstructor Sum.:+ Sum.Nil))),
-    constructors :: (Prelude.Maybe (AST.Node.Node (GadtConstructors Sum.:+ Sum.Nil))),
-    context :: (Prelude.Maybe (AST.Node.Node (Context Sum.:+ Sum.Nil))),
-    deriving' :: ([(AST.Node.Node (Deriving Sum.:+ Sum.Nil))]),
+    constructor :: (Prelude.Maybe (AST.Node.Node NewtypeConstructor)),
+    constructors :: (Prelude.Maybe (AST.Node.Node GadtConstructors)),
+    context :: (Prelude.Maybe (AST.Node.Node Context)),
+    deriving' :: ([(AST.Node.Node Deriving)]),
     forall' :: (Prelude.Maybe (AST.Node.Node (Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil))),
-    kind :: (Prelude.Maybe (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil))),
+    kind :: (Prelude.Maybe (AST.Node.Node QuantifiedType)),
     name :: (Prelude.Maybe (AST.Node.Node (Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Qualified Sum.:+ Unit Sum.:+ Sum.Nil))),
     patterns :: (Prelude.Maybe (AST.Node.Node (TypeParams Sum.:+ TypePatterns Sum.:+ Sum.Nil)))
   }
@@ -3028,7 +3028,7 @@ instance AST.Cast.Cast Operator where
 data Parens = Parens
   { children :: (Prelude.Maybe (AST.Node.Node (Annotated Sum.:+ Constraints Sum.:+ Infix Sum.:+ TypeParam Sum.:+ Sum.Nil))),
     expression :: (Prelude.Maybe (AST.Node.Node (Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    kind :: (Prelude.Maybe (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil))),
+    kind :: (Prelude.Maybe (AST.Node.Node QuantifiedType)),
     name :: (Prelude.Maybe (AST.Node.Node (Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Qualified Sum.:+ Unit Sum.:+ Sum.Nil))),
     pattern' :: (Prelude.Maybe (AST.Node.Node (Pattern Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil))),
     patterns :: (Prelude.Maybe (AST.Node.Node (TypeParams Sum.:+ TypePatterns Sum.:+ Sum.Nil))),
@@ -3152,7 +3152,7 @@ instance AST.Cast.Cast Patterns where
 data Prefix = Prefix
   { field :: ([(AST.Node.Node (LazyField Sum.:+ StrictField Sum.:+ Type Sum.:+ Sum.Nil))]),
     name :: (Prelude.Maybe (AST.Node.Node (Constructor Sum.:+ PrefixId Sum.:+ Sum.Nil))),
-    type' :: (Prelude.Maybe (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil)))
+    type' :: (Prelude.Maybe (AST.Node.Node QuantifiedType))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3233,8 +3233,8 @@ instance AST.Cast.Cast PrefixUnboxedTuple where
     Prelude.pure PrefixUnboxedTuple
 
 data Projection = Projection
-  { expression :: (AST.Node.Node (Expression Sum.:+ Sum.Nil)),
-    field :: (AST.Node.Node (FieldName Sum.:+ Sum.Nil))
+  { expression :: (AST.Node.Node Expression),
+    field :: (AST.Node.Node FieldName)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3259,7 +3259,7 @@ instance AST.Cast.Cast Projection where
   cast = cast_Projection
 
 data ProjectionSelector = ProjectionSelector
-  { field :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node (Variable Sum.:+ Sum.Nil)))
+  { field :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node Variable))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3302,7 +3302,7 @@ instance AST.Cast.Cast Promoted where
 
 data Qualified = Qualified
   { id :: (AST.Node.Node (Constructor Sum.:+ ConstructorOperator Sum.:+ FieldName Sum.:+ Name Sum.:+ Operator Sum.:+ Variable Sum.:+ Sum.Nil)),
-    module' :: (AST.Node.Node (Module Sum.:+ Sum.Nil))
+    module' :: (AST.Node.Node Module)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3327,7 +3327,7 @@ instance AST.Cast.Cast Qualified where
   cast = cast_Qualified
 
 data Qualifiers = Qualifiers
-  { qualifier :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node (Qualifier Sum.:+ Sum.Nil)))
+  { qualifier :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node Qualifier))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3369,8 +3369,8 @@ instance AST.Cast.Cast QuantifiedVariables where
   cast = cast_QuantifiedVariables
 
 data Quasiquote = Quasiquote
-  { body :: (Prelude.Maybe (AST.Node.Node (QuasiquoteBody Sum.:+ Sum.Nil))),
-    quoter :: (AST.Node.Node (Quoter Sum.:+ Sum.Nil))
+  { body :: (Prelude.Maybe (AST.Node.Node QuasiquoteBody)),
+    quoter :: (AST.Node.Node Quoter)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3421,7 +3421,7 @@ instance AST.Cast.Cast Quote where
   cast = cast_Quote
 
 data QuotedDecls = QuotedDecls
-  { declaration :: ([(AST.Node.Node (Declaration Sum.:+ Sum.Nil))])
+  { declaration :: ([(AST.Node.Node Declaration)])
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3525,7 +3525,7 @@ instance AST.Cast.Cast Quoter where
   cast = cast_Quoter
 
 data Rec = Rec
-  { statement :: ([(AST.Node.Node (Statement Sum.:+ Sum.Nil))])
+  { statement :: ([(AST.Node.Node Statement)])
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3546,12 +3546,12 @@ instance AST.Cast.Cast Rec where
 
 data Record = Record
   { arrow :: ([(AST.Node.Node ((AST.Token.Token "->") Sum.:+ (AST.Token.Token "→") Sum.:+ Sum.Nil))]),
-    constructor :: (Prelude.Maybe (AST.Node.Node (Pattern Sum.:+ Sum.Nil))),
-    expression :: (Prelude.Maybe (AST.Node.Node (Expression Sum.:+ Sum.Nil))),
+    constructor :: (Prelude.Maybe (AST.Node.Node Pattern)),
+    expression :: (Prelude.Maybe (AST.Node.Node Expression)),
     field :: ([(AST.Node.Node (Field Sum.:+ FieldPattern Sum.:+ FieldUpdate Sum.:+ Sum.Nil))]),
-    fields :: (Prelude.Maybe (AST.Node.Node (Fields Sum.:+ Sum.Nil))),
-    name :: (Prelude.Maybe (AST.Node.Node (Constructor Sum.:+ Sum.Nil))),
-    type' :: (Prelude.Maybe (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil)))
+    fields :: (Prelude.Maybe (AST.Node.Node Fields)),
+    name :: (Prelude.Maybe (AST.Node.Node Constructor)),
+    type' :: (Prelude.Maybe (AST.Node.Node QuantifiedType))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3595,7 +3595,7 @@ instance AST.Cast.Cast Record where
 
 data RightSection = RightSection
   { children :: (AST.Node.Node (ConstructorOperator Sum.:+ InfixId Sum.:+ Operator Sum.:+ Qualified Sum.:+ Sum.Nil)),
-    rightOperand :: (AST.Node.Node (Expression Sum.:+ Sum.Nil))
+    rightOperand :: (AST.Node.Node Expression)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3620,7 +3620,7 @@ instance AST.Cast.Cast RightSection where
   cast = cast_RightSection
 
 data RoleAnnotation = RoleAnnotation
-  { role :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node (TypeRole Sum.:+ Sum.Nil))),
+  { role :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node TypeRole)),
     type' :: (AST.Node.Node (Name Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Sum.Nil))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3646,14 +3646,14 @@ instance AST.Cast.Cast RoleAnnotation where
   cast = cast_RoleAnnotation
 
 data Signature = Signature
-  { constraint :: (Prelude.Maybe (AST.Node.Node (Constraints Sum.:+ Sum.Nil))),
-    expression :: (Prelude.Maybe (AST.Node.Node (Expression Sum.:+ Sum.Nil))),
-    kind :: (Prelude.Maybe (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil))),
+  { constraint :: (Prelude.Maybe (AST.Node.Node Constraints)),
+    expression :: (Prelude.Maybe (AST.Node.Node Expression)),
+    kind :: (Prelude.Maybe (AST.Node.Node QuantifiedType)),
     name :: (Prelude.Maybe (AST.Node.Node (PrefixId Sum.:+ Variable Sum.:+ Sum.Nil))),
-    names :: (Prelude.Maybe (AST.Node.Node (BindingList Sum.:+ Sum.Nil))),
-    pattern' :: (Prelude.Maybe (AST.Node.Node (Pattern Sum.:+ Sum.Nil))),
+    names :: (Prelude.Maybe (AST.Node.Node BindingList)),
+    pattern' :: (Prelude.Maybe (AST.Node.Node Pattern)),
     synonym :: (Prelude.Maybe (AST.Node.Node (BindingList Sum.:+ Constructor Sum.:+ PrefixId Sum.:+ Sum.Nil))),
-    type' :: (Prelude.Maybe (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil)))
+    type' :: (Prelude.Maybe (AST.Node.Node QuantifiedType))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3752,7 +3752,7 @@ instance AST.Cast.Cast Star where
     Prelude.pure Star
 
 data Strict = Strict
-  { pattern' :: (AST.Node.Node (Pattern Sum.:+ Sum.Nil))
+  { pattern' :: (AST.Node.Node Pattern)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3773,7 +3773,7 @@ instance AST.Cast.Cast Strict where
   cast = cast_Strict
 
 data StrictField = StrictField
-  { type' :: (AST.Node.Node (Type Sum.:+ Sum.Nil))
+  { type' :: (AST.Node.Node Type)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3795,7 +3795,7 @@ instance AST.Cast.Cast StrictField where
 
 data ThQuotedName = ThQuotedName
   { name :: (Prelude.Maybe (AST.Node.Node (Constructor Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Variable Sum.:+ Sum.Nil))),
-    type' :: (Prelude.Maybe (AST.Node.Node (Type Sum.:+ Sum.Nil)))
+    type' :: (Prelude.Maybe (AST.Node.Node Type))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3820,7 +3820,7 @@ instance AST.Cast.Cast ThQuotedName where
   cast = cast_ThQuotedName
 
 data TopSplice = TopSplice
-  { children :: (AST.Node.Node (Expression Sum.:+ Sum.Nil))
+  { children :: (AST.Node.Node Expression)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3867,7 +3867,7 @@ instance AST.Cast.Cast Transform where
   cast = cast_Transform
 
 data Tuple = Tuple
-  { children :: ([(AST.Node.Node (Constraints Sum.:+ Sum.Nil))]),
+  { children :: ([(AST.Node.Node Constraints)]),
     element :: ([(AST.Node.Node (Expression Sum.:+ Pattern Sum.:+ QuantifiedType Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil))])
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3891,7 +3891,7 @@ instance AST.Cast.Cast Tuple where
   cast = cast_Tuple
 
 data TypeApplication = TypeApplication
-  { type' :: (AST.Node.Node (Type Sum.:+ Sum.Nil))
+  { type' :: (AST.Node.Node Type)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3912,7 +3912,7 @@ instance AST.Cast.Cast TypeApplication where
   cast = cast_TypeApplication
 
 data TypeBinder = TypeBinder
-  { type' :: (AST.Node.Node (Type Sum.:+ Sum.Nil))
+  { type' :: (AST.Node.Node Type)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3935,9 +3935,9 @@ instance AST.Cast.Cast TypeBinder where
 data TypeFamily = TypeFamily
   { children :: ([(AST.Node.Node (Infix Sum.:+ Parens Sum.:+ TypeFamilyInjectivity Sum.:+ TypeFamilyResult Sum.:+ Sum.Nil))]),
     closedFamily :: (Prelude.Maybe (AST.Node.Node (AbstractFamily Sum.:+ Equations Sum.:+ Sum.Nil))),
-    kind :: (Prelude.Maybe (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil))),
+    kind :: (Prelude.Maybe (AST.Node.Node QuantifiedType)),
     name :: (Prelude.Maybe (AST.Node.Node (Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Unit Sum.:+ Sum.Nil))),
-    patterns :: (Prelude.Maybe (AST.Node.Node (TypeParams Sum.:+ Sum.Nil)))
+    patterns :: (Prelude.Maybe (AST.Node.Node TypeParams))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3973,8 +3973,8 @@ instance AST.Cast.Cast TypeFamily where
   cast = cast_TypeFamily
 
 data TypeFamilyInjectivity = TypeFamilyInjectivity
-  { determined :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node (Variable Sum.:+ Sum.Nil))),
-    result :: (AST.Node.Node (Variable Sum.:+ Sum.Nil))
+  { determined :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node Variable)),
+    result :: (AST.Node.Node Variable)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -3999,7 +3999,7 @@ instance AST.Cast.Cast TypeFamilyInjectivity where
   cast = cast_TypeFamilyInjectivity
 
 data TypeFamilyResult = TypeFamilyResult
-  { result :: (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil))
+  { result :: (AST.Node.Node QuantifiedType)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -4023,7 +4023,7 @@ data TypeInstance = TypeInstance
   { children :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node (Infix Sum.:+ Parens Sum.:+ QuantifiedType Sum.:+ Sum.Nil))),
     forall' :: (Prelude.Maybe (AST.Node.Node (Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil))),
     name :: (Prelude.Maybe (AST.Node.Node (Name Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Sum.Nil))),
-    patterns :: (Prelude.Maybe (AST.Node.Node (TypePatterns Sum.:+ Sum.Nil)))
+    patterns :: (Prelude.Maybe (AST.Node.Node TypePatterns))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -4056,7 +4056,7 @@ instance AST.Cast.Cast TypeInstance where
   cast = cast_TypeInstance
 
 data TypeParams = TypeParams
-  { children :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node (TypeParam Sum.:+ Sum.Nil)))
+  { children :: (Data.List.NonEmpty.NonEmpty (AST.Node.Node TypeParam))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -4108,7 +4108,7 @@ instance AST.Cast.Cast TypeRole where
 data TypeSynomym = TypeSynomym
   { children :: (Prelude.Maybe (AST.Node.Node (Infix Sum.:+ Parens Sum.:+ Sum.Nil))),
     name :: (Prelude.Maybe (AST.Node.Node (Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Unit Sum.:+ Sum.Nil))),
-    patterns :: (Prelude.Maybe (AST.Node.Node (TypeParams Sum.:+ Sum.Nil))),
+    patterns :: (Prelude.Maybe (AST.Node.Node TypeParams)),
     type' :: (AST.Node.Node (QuantifiedType Sum.:+ Signature Sum.:+ Sum.Nil))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4142,7 +4142,7 @@ instance AST.Cast.Cast TypeSynomym where
   cast = cast_TypeSynomym
 
 data TypedQuote = TypedQuote
-  { children :: (Prelude.Maybe (AST.Node.Node (QuotedExpression Sum.:+ Sum.Nil)))
+  { children :: (Prelude.Maybe (AST.Node.Node QuotedExpression))
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 
@@ -4221,7 +4221,7 @@ instance AST.Cast.Cast Unit where
     Prelude.pure Unit
 
 data Via = Via
-  { type' :: (AST.Node.Node (QuantifiedType Sum.:+ Sum.Nil))
+  { type' :: (AST.Node.Node QuantifiedType)
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
 

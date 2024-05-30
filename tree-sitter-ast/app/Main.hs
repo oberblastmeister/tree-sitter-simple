@@ -31,6 +31,7 @@ main = do
   let res = generateAll "AST.Haskell" nodeTypes
   T.IO.writeFile "haskell-ast/src/AST/Haskell.hs" res
   callProcess "ormolu" ["--mode", "inplace", "haskell-ast/src/AST/Haskell.hs"]
+  putStrLn $ "Generated " ++ show (length nodeTypes) ++ " types"
 
 type M = Writer [Text]
 
@@ -239,6 +240,7 @@ wrapNode :: Text -> Text
 wrapNode ty = "(AST.Node.Node " <> ty <> ")"
 
 nodeTypesToTy :: NonEmpty NT.Type -> Text
+nodeTypesToTy (ty NE.:| []) = nodeTypeToTy ty
 nodeTypesToTy tys = "(" <> T.intercalate " Sum.:+ " (fmap nodeTypeToTy (NE.toList tys)) <> " Sum.:+ Sum.Nil)"
 
 nodeTypeToTy :: NT.Type -> Text
