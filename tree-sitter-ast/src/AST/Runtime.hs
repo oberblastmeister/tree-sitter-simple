@@ -3,9 +3,11 @@ module AST.Runtime
     listIsSingle,
     listOptionalSingle,
     flattenMaybeList,
+    justOrErr,
   )
 where
 
+import AST.Err (Err)
 import Data.Foldable (foldl')
 import Data.Map.Strict (Map)
 import Data.Map.Strict qualified as Map
@@ -46,3 +48,7 @@ listOptionalSingle :: [a] -> Maybe (Maybe a)
 listOptionalSingle [] = Just Nothing
 listOptionalSingle [x] = Just (Just x)
 listOptionalSingle _ = Nothing
+
+justOrErr :: Text -> Maybe a -> Err a
+justOrErr msg (Just x) = Right x
+justOrErr msg Nothing = Left msg
