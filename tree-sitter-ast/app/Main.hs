@@ -125,7 +125,7 @@ generateSumType name subtypes = do
   let innerTy = nodeTypesToTy subtypes
   emit
     [trimming|
-  data $hsName = $hsName { dynNode :: Api.Node, $hsFieldGetter :: $innerTy }
+  data $hsName = $hsName { dynNode :: AST.Node.WrappedDynNode, $hsFieldGetter :: $innerTy }
     $commonDerive
   |]
   emit
@@ -133,7 +133,7 @@ generateSumType name subtypes = do
   instance AST.Cast.Cast $hsName where
     cast dynNode = do
       $hsFieldGetter <- AST.Cast.cast dynNode
-      Prelude.pure ($hsName { dynNode = dynNode, $hsFieldGetter })
+      Prelude.pure ($hsName { dynNode = AST.Node.WrappedDynNode dynNode, $hsFieldGetter })
   |]
   pure ()
 
@@ -173,7 +173,7 @@ generateProductDecl nodeName fields = do
     let hsFieldName = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack fieldName))
     let hsTy = fieldToTy field
     emit [trimming|$hsFieldName :: $hsTy|]
-  emit ", dynNode :: Api.Node"
+  emit ", dynNode :: AST.Node.WrappedDynNode"
   emit "  }"
   emit [trimming| $commonDerive|]
 
@@ -220,7 +220,7 @@ genProductTypeCast nodeName fields = do
   commaList fields \(fieldName, _field) -> do
     let hsFieldName = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack fieldName))
     emit [trimming|$hsFieldName|]
-  emit ", dynNode = dynNode" -- add in the dynNode field
+  emit ", dynNode = AST.Node.WrappedDynNode dynNode" -- add in the dynNode field
   emit [trimming|} ;|]
   emit "}"
   -- function end
@@ -284,13 +284,13 @@ generateLeafType name NT.Named = do
   let ident = T.pack (Symbol.toHaskellPascalCaseIdentifier (T.unpack name))
   emit
     [trimming|
-    data $ident = $ident { dynNode :: Api.Node }
+    data $ident = $ident { dynNode :: AST.Node.WrappedDynNode }
       $commonDerive
 
     instance AST.Cast.Cast $ident where
       cast dynNode = do
         Control.Monad.guard (Api.nodeType dynNode Prelude.== "$name")
-        Prelude.pure ($ident { dynNode = dynNode })
+        Prelude.pure ($ident { dynNode = AST.Node.WrappedDynNode dynNode })
       |]
 generateLeafType _name NT.Anonymous = pure ()
 
