@@ -19,9 +19,8 @@ main = do
   [file] <- getArgs
   !tree <- parse tree_sitter_haskell <$> T.IO.readFile file
   let childDesc = Runtime.getChildDescription tree
-  -- pPrintOpt NoCheckColorTty (defaultOutputOptionsDarkBg {outputOptionsIndentAmount = 1}) childDesc
   let !(typedTree :: Maybe AST.Haskell.Haskell) = Cast.cast tree
-  -- pPrintOpt NoCheckColorTty (defaultOutputOptionsDarkBg {outputOptionsIndentAmount = 1}) tree
+  pPrintOpt NoCheckColorTty (defaultOutputOptionsDarkBg {outputOptionsIndentAmount = 1}) tree
   pPrintOpt NoCheckColorTty (defaultOutputOptionsDarkBg {outputOptionsIndentAmount = 1}) typedTree
   let !_ = DeepSeq.rnf typedTree
   pure ()

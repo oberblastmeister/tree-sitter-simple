@@ -83,7 +83,10 @@ data Node = Node
     nodeSymbol :: !Symbol,
     nodeRange :: !Range,
     nodeFieldName :: !(Maybe Text),
+    -- whether the node is named in the grammar or anonymous (like a token "->")
     nodeIsNamed :: !Bool,
+    -- whether the node is something like a comment
+    -- ERROR nodes will be considered extra
     nodeIsExtra :: !Bool,
     nodeText :: !Text,
     nodeChildren :: [Node]
