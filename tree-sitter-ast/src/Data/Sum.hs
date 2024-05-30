@@ -1,6 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module Data.Sum
   ( Nil,
@@ -12,15 +12,19 @@ module Data.Sum
   )
 where
 
+import Control.DeepSeq (NFData)
 import GHC.Generics (Generic)
 import GHC.TypeLits
-import Control.DeepSeq (NFData)
 
 data Nil
   deriving (Show, Eq, Ord, Generic, NFData)
 
 data a :+ b = X a | Rest b
-  deriving (Show, Eq, Ord, Generic, NFData)
+  deriving (Eq, Ord, Generic, NFData)
+
+instance (Show a, Show b) => Show (a :+ b) where
+  show (X a) = show a
+  show (Rest b) = show b
 
 infixr 5 :+
 

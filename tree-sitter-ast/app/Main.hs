@@ -13,6 +13,7 @@ import Data.Foldable (for_)
 import Data.List qualified as List
 import Data.List.NonEmpty (NonEmpty)
 import Data.List.NonEmpty qualified as NE
+import Data.Maybe qualified as Maybe
 import Data.Text (Text)
 import Data.Text qualified as T
 import Data.Text.IO qualified as T.IO
@@ -73,6 +74,8 @@ generateAllM moduleName nodeTypes = do
   import qualified Data.Map.Strict
   import qualified GHC.Generics
   import qualified Control.DeepSeq
+  import qualified Data.Text
+  import qualified Control.Monad
   |]
 
   for_ nodeTypes \dt -> do
@@ -117,7 +120,7 @@ generateSumType name subtypes = do
   let fieldGetter = [trimming|get_$name|]
   let hsFieldGetter = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack fieldGetter))
   let hsName = T.pack (Symbol.toHaskellPascalCaseIdentifier (T.unpack name))
-  let innerTy = wrapNode (nodeTypesToTy subtypes)
+  let innerTy = nodeTypesToTy subtypes
   emit
     [trimming|
   newtype $hsName = $hsName { $hsFieldGetter :: $innerTy }
@@ -134,6 +137,26 @@ generateSumType name subtypes = do
 
 generateProductType :: Text -> Maybe NT.Children -> [(Text, NT.Field)] -> M ()
 generateProductType nodeName children fields = do
+  -- rename the other field names so they dont conflict with the children name
+  fields <- pure $ fmap (\t@(fieldName, field) -> if fieldName == "children" then ("children'", field) else t) fields
+  -- add the children field in
+  fields <-
+    pure
+      ( Maybe.maybeToList
+          ( fmap
+              ( \children ->
+                  ("children", NT.getChildren children)
+              )
+              children
+          )
+          ++ fields
+      )
+  generateProductDecl nodeName fields
+  genProductTypeCast nodeName fields
+  pure ()
+
+generateProductDecl :: Text -> [(Text, NT.Field)] -> M ()
+generateProductDecl nodeName fields = do
   let name = convertName nodeName
   emit [trimming|data $name = $name {|]
   commaList fields \(fieldName, field) -> do
@@ -142,14 +165,10 @@ generateProductType nodeName children fields = do
     emit [trimming|$hsFieldName :: $hsTy|]
   emit "  }"
   emit [trimming| $commonDerive|]
-  genProductTypeCast nodeName children fields
-  pure ()
 
-genProductTypeCast :: Text -> Maybe NT.Children -> [(Text, NT.Field)] -> M ()
-genProductTypeCast nodeName children fields = do
+genProductTypeCast :: Text -> [(Text, NT.Field)] -> M ()
+genProductTypeCast nodeName fields = do
   let name = convertName nodeName
-  let fieldsWithNum = List.zip [0 :: Int ..] $ fmap fst fields
-  let argNames = fmap (\(i, _) -> "arg" <> T.pack (show i)) fieldsWithNum
 
   -- function start
   emit
@@ -157,13 +176,19 @@ genProductTypeCast nodeName children fields = do
   cast_$name :: Api.Node -> Prelude.Maybe $name
   cast_$name dynNode = do {
   |]
-  emit "let (positional, namedMap) = AST.Runtime.getChildDescription dynNode;"
+
+  emit [trimming|; Control.Monad.guard (Api.nodeType dynNode Prelude.== "$nodeName") ;|]
+
+  emit "; let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode ;"
+  -- insert the positionals as a field children
+  emit [trimming|; namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap) ;|]
 
   for_ fields \(fieldName, _field) -> do
     let hsFieldName = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack fieldName))
-    emit [trimming|; $hsFieldName <- (Data.Map.Strict.lookup "$fieldName" namedMap) ;|]
-    emit [trimming|; $hsFieldName <- (Prelude.mapM AST.Cast.cast $hsFieldName ) ;|]
+    emit [trimming|; $hsFieldName <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "$fieldName" namedMap)) ;|]
+    emit [trimming|; $hsFieldName <- Prelude.pure (Prelude.fmap AST.Node.castNode $hsFieldName ) ;|]
 
+  -- TODO: once we match the node name we need to commit here, if it doesn't work then emit a cast error
   for_ fields \(fieldName, field) -> do
     let hsFieldName = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack fieldName))
     case (NT.fieldRequired field, NT.fieldMultiple field) of
@@ -244,7 +269,9 @@ generateLeafType name NT.Named = do
       $commonDerive
 
     instance AST.Cast.Cast $ident where
-      cast _ = Prelude.pure $ident
+      cast dynNode = do
+        Control.Monad.guard (Api.nodeType dynNode Prelude.== "$name")
+        Prelude.pure $ident
       |]
 generateLeafType _name NT.Anonymous = pure ()
 

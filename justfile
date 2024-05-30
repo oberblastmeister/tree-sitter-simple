@@ -6,3 +6,6 @@ playground:
 
 gen:
     cabal run tree-sitter-ast
+
+parse file:
+    cabal run haskell-ast -- {{file}}

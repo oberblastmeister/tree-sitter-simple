@@ -84,7 +84,7 @@ data Field = MkField
 instance FromJSON Field where
   parseJSON = genericParseJSON customOptions
 
-newtype Children = MkChildren Field
+newtype Children = MkChildren {getChildren :: Field}
   deriving (Eq, Ord, Show, Generic)
   deriving newtype (ToJSON, FromJSON)
 

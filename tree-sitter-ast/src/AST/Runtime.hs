@@ -2,6 +2,7 @@ module AST.Runtime
   ( getChildDescription,
     listIsSingle,
     listOptionalSingle,
+    flattenMaybeList,
   )
 where
 
@@ -11,19 +12,31 @@ import Data.Map.Strict qualified as Map
 import Data.Text (Text)
 import TreeSitter.Api
 
-getChildDescription :: Node -> ([Node], Map Text [Node])
+-- returns (extra, positional, named)
+-- beware, the extra nodes won't appear in the node-types.json file as children or fields
+-- so that's why we filter them out into a separate field
+getChildDescription :: Node -> ([Node], [Node], Map Text [Node])
 getChildDescription node =
-  (reverse positionalRes, namedRes)
+  (reverse extraRes, reverse positionalRes, namedRes)
   where
-    (!positionalRes, !namedRes) =
+    (!extraRes, !positionalRes, !namedRes) =
       foldl'
-        ( \(!positional, !named) n ->
+        ( \(!extra, !positional, !named) n ->
             case nodeFieldName n of
-              Nothing -> (n : positional, named)
-              Just name -> (positional, Map.insertWith (++) name [n] named)
+              _ | nodeIsExtra n -> (n : extra, positional, named)
+              Nothing
+                -- tree-sitter specifies that only named nodes appear in the children field of node-types.json
+                -- so skip anonymous nodes
+                | nodeIsNamed n -> (extra, n : positional, named)
+                | otherwise -> (extra, positional, named)
+              Just name -> (extra, positional, Map.insertWith (++) name [n] named)
         )
-        undefined
+        ([], [], Map.empty)
         (nodeChildren node)
+
+flattenMaybeList :: Maybe [a] -> [a]
+flattenMaybeList Nothing = []
+flattenMaybeList (Just x) = x
 
 listIsSingle :: [a] -> Maybe a
 listIsSingle [x] = Just x
