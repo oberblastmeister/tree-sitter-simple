@@ -19,11 +19,12 @@ where
 
 import Control.Monad ((<$!>))
 import Data.ByteString qualified as B
+import Data.Foldable (foldl')
+import Data.Map qualified as Map
+import Data.Map.Strict (Map)
 import Data.Text (Text)
 import Data.Text qualified as T
 import Data.Text.Encoding qualified as T.Encoding
-import Data.Tree (Tree)
-import Data.Tree qualified as Tree
 import Foreign
 import Foreign.C
 import System.IO.Unsafe (unsafePerformIO)
@@ -65,11 +66,12 @@ convertSymbol language sym = do
 
 data Node = Node
   { nodeType :: !Text,
-    nodeSymbol :: Symbol,
-    nodeRange :: Range,
+    nodeSymbol :: !Symbol,
+    nodeRange :: !Range,
     nodeFieldName :: !(Maybe Text),
     nodeIsNamed :: !Bool,
-    nodeIsExtra :: !Bool
+    nodeIsExtra :: !Bool,
+    nodeChildren :: [Node]
   }
   deriving (Show, Eq, Ord)
 
@@ -81,7 +83,8 @@ defaultNode =
       nodeRange = Range {startByte = 0, startPoint = Point {row = 0, col = 0}, endByte = 0, endPoint = Point {row = 0, col = 0}},
       nodeFieldName = Nothing,
       nodeIsNamed = False,
-      nodeIsExtra = False
+      nodeIsExtra = False,
+      nodeChildren = []
     }
 
 convertCBool :: CBool -> Bool
@@ -108,26 +111,27 @@ convertNode language node@Raw.Node {nodeType, nodeSymbol, nodeEndPoint, nodeEndB
         nodeRange,
         nodeFieldName,
         nodeIsNamed = convertCBool nodeIsNamed,
-        nodeIsExtra = convertCBool nodeIsExtra
+        nodeIsExtra = convertCBool nodeIsExtra,
+        nodeChildren = []
       }
 
-parse :: Ptr Raw.Language -> Text -> Tree Node
+parse :: Ptr Raw.Language -> Text -> Node
 parse language source = unsafePerformIO $ parseIO language source
 
-parseIO :: Ptr Raw.Language -> Text -> IO (Tree Node)
+parseIO :: Ptr Raw.Language -> Text -> IO Node
 parseIO language source = do
   Raw.withParser language \parser -> do
     let !bs = T.Encoding.encodeUtf8 source
     Raw.withParseTree parser bs $ convertTree language
 
-convertTree :: Ptr Raw.Language -> Ptr Raw.Tree -> IO (Tree Node)
+convertTree :: Ptr Raw.Language -> Ptr Raw.Tree -> IO Node
 convertTree language tree = do
   rootNode <- treeRootNode tree
   let go node = do
         typedNode <- convertNode language node
         children <- getChildNodes node
         children <- mapM go children
-        pure $ Tree.Node typedNode children
+        pure $ typedNode {nodeChildren = children}
   go rootNode
 
 treeRootNode :: Ptr Raw.Tree -> IO Raw.Node
@@ -147,7 +151,7 @@ getChildNodes node = do
 
   children <- mallocArray childCount
   Raw.ts_node_copy_child_nodes tsNode children
-  
+
   let go i
         | i < childCount = do
             child <- peekElemOff children i

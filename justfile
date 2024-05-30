@@ -3,3 +3,6 @@ playground:
 	cd tree-sitter-haskell/vendor/tree-sitter-haskell/
 	tree-sitter build --wasm
 	tree-sitter playground
+
+gen:
+    cabal run tree-sitter-ast

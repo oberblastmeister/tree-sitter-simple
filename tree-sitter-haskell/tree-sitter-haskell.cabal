@@ -97,6 +97,7 @@ test-suite tree-sitter-haskell-test
     -- Arbitrary
   build-depends:
     base,
+    text,
     tree-sitter-haskell,
     tree-sitter-simple,
     containers,
