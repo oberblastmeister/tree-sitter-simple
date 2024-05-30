@@ -49,19 +49,19 @@ common common
         ExistentialQuantification,
         TypeOperators,
     build-depends:
-        base ^>=4.17.2.1,
+        base >=4.17.2.1,
         text,
         bytestring,
         containers,
         unordered-containers,
         tree-sitter-simple,
         tree-sitter-ast,
+        deepseq,
 
 library
     import:           common
     exposed-modules:
         AST.Haskell
-    build-depends:    base ^>=4.17.2.1
     hs-source-dirs:   src
     default-language: GHC2021
 

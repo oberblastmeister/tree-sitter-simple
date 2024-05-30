@@ -5,6 +5,8 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module TreeSitter.Api
   ( parse,
@@ -29,31 +31,45 @@ import Foreign
 import Foreign.C
 import System.IO.Unsafe (unsafePerformIO)
 import TreeSitter.Raw qualified as Raw
+import GHC.Generics (Generic)
+import Control.DeepSeq (NFData(..))
 
 data Point = Point
   { row :: !Int,
     col :: !Int
   }
-  deriving (Show, Eq, Ord)
+  deriving (Show, Eq, Ord, Generic)
 
+instance NFData Point where
+  rnf !p = ()
+  
 data Range = Range
   { startByte :: !Int,
     startPoint :: !Point,
     endByte :: !Int,
     endPoint :: !Point
   }
-  deriving (Show, Eq, Ord)
+  deriving (Show, Eq, Ord, Generic)
+  
+instance NFData Range where
+  rnf !r = ()
 
 data SymbolType = Regular | Anonymous | Auxiliary
-  deriving (Enum, Eq, Ord, Show)
+  deriving (Enum, Eq, Ord, Show, Generic)
 
+instance NFData SymbolType where
+  rnf !st = ()
+  
 data Symbol = Symbol
   { symbolType :: !SymbolType,
     symbolName :: !Text,
     symbolId :: !Int
   }
-  deriving (Show, Eq, Ord)
+  deriving (Show, Eq, Ord, Generic)
 
+instance NFData Symbol where
+  rnf !s = ()
+  
 convertPoint :: Raw.TSPoint -> Point
 convertPoint Raw.TSPoint {pointRow, pointColumn} = Point {row = fromIntegral pointRow, col = fromIntegral pointColumn}
 
@@ -73,7 +89,7 @@ data Node = Node
     nodeIsExtra :: !Bool,
     nodeChildren :: [Node]
   }
-  deriving (Show, Eq, Ord)
+  deriving (Show, Eq, Ord, Generic, NFData)
 
 defaultNode :: Node
 defaultNode =

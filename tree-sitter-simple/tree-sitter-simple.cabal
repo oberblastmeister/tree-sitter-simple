@@ -61,6 +61,7 @@ library
     -- , split                ^>= 0.2.3
     -- , template-haskell      >= 2.12 && < 3
     , unordered-containers ^>= 0.2.9
+    , deepseq
   exposed-modules:     TreeSitter.Raw.Parser
                      , TreeSitter.Raw.Language
                      , TreeSitter.Raw.Node
