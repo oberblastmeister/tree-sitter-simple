@@ -4,15 +4,24 @@ module AST.Runtime
     listOptionalSingle,
     flattenMaybeList,
     justOrErr,
+    List,
+    castManyToSingle,
+    castManyToMaybe,
+    castManyToList,
+    castManyToNonEmpty,
   )
 where
 
+import AST.Cast (Cast (..))
 import AST.Err (Err)
 import Data.Foldable (foldl')
+import Data.List.NonEmpty (NonEmpty (..))
 import Data.Map.Strict (Map)
 import Data.Map.Strict qualified as Map
 import Data.Text (Text)
 import TreeSitter.Api
+
+type List a = [a]
 
 -- returns (extra, positional, named)
 -- beware, the extra nodes won't appear in the node-types.json file as children or fields
@@ -50,5 +59,24 @@ listOptionalSingle [x] = Just (Just x)
 listOptionalSingle _ = Nothing
 
 justOrErr :: Text -> Maybe a -> Err a
-justOrErr msg (Just x) = Right x
+justOrErr _msg (Just x) = Right x
 justOrErr msg Nothing = Left msg
+
+castManyToSingle :: (Cast a) => [Node] -> Maybe a
+castManyToSingle [x] = cast x
+castManyToSingle _ = Nothing
+
+castManyToMaybe :: (Cast a) => [Node] -> Maybe (Maybe a)
+castManyToMaybe [] = Just Nothing
+castManyToMaybe [x] = Just (cast x)
+castManyToMaybe _ = Nothing
+
+castManyToList :: (Cast a) => [Node] -> Maybe [a]
+castManyToList = traverse cast
+
+castManyToNonEmpty :: (Cast a) => [Node] -> Maybe (NonEmpty a)
+castManyToNonEmpty [] = Nothing
+castManyToNonEmpty (x : xs) = do
+  x' <- cast x
+  xs' <- traverse cast xs
+  pure (x' :| xs')

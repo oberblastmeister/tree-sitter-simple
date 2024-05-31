@@ -127,13 +127,14 @@ generateSumType name subtypes = do
     [trimming|
   data $hsName = $hsName { dynNode :: AST.Node.WrappedDynNode, $hsFieldGetter :: $innerTy }
     $commonDerive
-  |]
-  emit
-    [trimming|
+
   instance AST.Cast.Cast $hsName where
     cast dynNode = do
       $hsFieldGetter <- AST.Cast.cast dynNode
       Prelude.pure ($hsName { dynNode = AST.Node.WrappedDynNode dynNode, $hsFieldGetter })
+
+  instance AST.Node.HasDynNode $hsName where
+    getDynNode ($hsName { dynNode }) = AST.Node.unDynNode dynNode
   |]
   pure ()
 
@@ -171,8 +172,9 @@ generateProductDecl nodeName fields = do
   emit [trimming|data $name = $name {|]
   commaList fields \(fieldName, field) -> do
     let hsFieldName = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack fieldName))
-    let hsTy = fieldToTy field
-    emit [trimming|$hsFieldName :: $hsTy|]
+    let tyPrefix = fieldToTyPrefix field
+    let innerTy = nodeTypesToTy (NT.fieldTypes field)
+    emit [trimming|$hsFieldName :: AST.Err.Err ($tyPrefix ($innerTy))|]
   emit ", dynNode :: AST.Node.WrappedDynNode"
   emit "  }"
   emit [trimming| $commonDerive|]
@@ -200,22 +202,11 @@ genProductTypeCast nodeName fields = do
   emitStmts do
     for_ fields \(fieldName, field) -> do
       let hsFieldName = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack fieldName))
+      let manyCastFun = fieldToManyCastFun field
       emit [trimming|$hsFieldName <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "$fieldName" namedMap))|]
-      
-      -- don't get extra semicolons added
-      emit $ runM do
-        emit [trimming|$hsFieldName <- Prelude.pure Prelude.$ do {|]
-        emitStmts do
-          emit [trimming|$hsFieldName <- AST.Runtime.justOrErr "cast each node" (Prelude.mapM AST.Cast.cast $hsFieldName)|]
-          case (NT.fieldRequired field, NT.fieldMultiple field) of
-            (NT.Required, NT.Multiple) -> emit [trimming|$hsFieldName <- AST.Runtime.justOrErr "nonEmpty" (Data.List.NonEmpty.nonEmpty $hsFieldName)|]
-            (NT.Required, NT.Single) -> emit [trimming|$hsFieldName <- AST.Runtime.justOrErr "required, single" (AST.Runtime.listIsSingle $hsFieldName)|]
-            -- its already a list
-            (NT.Optional, NT.Multiple) -> pure ()
-            (NT.Optional, NT.Single) -> emit [trimming|$hsFieldName <- AST.Runtime.justOrErr "optional, single" (AST.Runtime.listOptionalSingle $hsFieldName)|]
-          emit [trimming|Prelude.pure $hsFieldName|]
-        emit "}"
+      emit [trimming|$hsFieldName <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast $hsFieldName" ($manyCastFun $hsFieldName))|]
 
+  -- start creating the record
   emit [trimming|; Prelude.pure $name {|]
   commaList fields \(fieldName, _field) -> do
     let hsFieldName = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack fieldName))
@@ -223,11 +214,16 @@ genProductTypeCast nodeName fields = do
   emit ", dynNode = AST.Node.WrappedDynNode dynNode" -- add in the dynNode field
   emit [trimming|} ;|]
   emit "}"
+  -- end creating the record
+  
   -- function end
 
   -- instance start
   emit
     [trimming|
+    instance AST.Node.HasDynNode $name where
+      getDynNode ($name { dynNode }) = AST.Node.unDynNode dynNode
+
     instance AST.Cast.Cast $name where
       cast = cast_$name
     |]
@@ -243,18 +239,21 @@ commaList ts f = for_ (List.zip [0 ..] ts) \(i, t) -> do
   where
     len = List.length ts
 
-fieldToTy :: NT.Field -> Text
-fieldToTy field = 
-  wrapNode $ case (NT.fieldRequired field, NT.fieldMultiple field) of
-    (NT.Required, NT.Multiple) -> [trimming|(Data.List.NonEmpty.NonEmpty $innerTy)|]
-    (NT.Required, NT.Single) -> innerTy
-    (NT.Optional, NT.Multiple) -> [trimming|([$innerTy])|]
-    (NT.Optional, NT.Single) -> [trimming|(Prelude.Maybe $innerTy)|]
-  where
-    innerTy = nodeTypesToTy (NT.fieldTypes field)
+fieldToTyPrefix :: NT.Field -> Text
+fieldToTyPrefix field =
+  case (NT.fieldRequired field, NT.fieldMultiple field) of
+    (NT.Required, NT.Multiple) -> [trimming|Data.List.NonEmpty.NonEmpty|]
+    (NT.Required, NT.Single) -> ""
+    (NT.Optional, NT.Multiple) -> [trimming|AST.Runtime.List|]
+    (NT.Optional, NT.Single) -> [trimming|Prelude.Maybe|]
 
-wrapNode :: Text -> Text
-wrapNode ty = "(AST.Err.Err " <> ty <> ")"
+fieldToManyCastFun :: NT.Field -> Text
+fieldToManyCastFun field =
+  case (NT.fieldRequired field, NT.fieldMultiple field) of
+    (NT.Required, NT.Multiple) -> "AST.Runtime.castManyToNonEmpty"
+    (NT.Required, NT.Single) -> "AST.Runtime.castManyToSingle"
+    (NT.Optional, NT.Multiple) -> "AST.Runtime.castManyToList"
+    (NT.Optional, NT.Single) -> "AST.Runtime.castManyToMaybe"
 
 nodeTypesToTy :: NonEmpty NT.Type -> Text
 nodeTypesToTy (ty NE.:| []) = nodeTypeToTy ty
@@ -286,6 +285,9 @@ generateLeafType name NT.Named = do
     [trimming|
     data $ident = $ident { dynNode :: AST.Node.WrappedDynNode }
       $commonDerive
+
+    instance AST.Node.HasDynNode $ident where
+      getDynNode ($ident { dynNode }) = AST.Node.unDynNode dynNode
 
     instance AST.Cast.Cast $ident where
       cast dynNode = do

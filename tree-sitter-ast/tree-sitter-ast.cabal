@@ -72,6 +72,7 @@ library
         AST.Symbol
         AST.Runtime
         AST.Err
+        AST.Traversal
     build-depends:    base >=4.17.2.1
     hs-source-dirs:   src
     default-language: GHC2021
