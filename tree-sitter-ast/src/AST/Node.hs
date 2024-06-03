@@ -7,10 +7,8 @@ module AST.Node
   )
 where
 
-import AST.Cast (Cast (..), DynNode)
+import AST.Cast (DynNode)
 import Control.DeepSeq (NFData (rnf))
-import Data.Text (Text)
-import GHC.Generics (Generic)
 import TreeSitter.Api qualified as TS
 
 -- so we don't show these and compare for equality
