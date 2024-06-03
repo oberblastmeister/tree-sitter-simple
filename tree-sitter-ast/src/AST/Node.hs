@@ -10,6 +10,7 @@ where
 
 import AST.Cast (DynNode)
 import Control.DeepSeq (NFData (rnf))
+import Data.Sum
 import Data.Text qualified as T
 import TreeSitter.Api qualified as TS
 
@@ -35,8 +36,19 @@ defaultNode :: DynNode
 defaultNode =
   TS.Node
     { nodeType = T.pack "",
-      nodeSymbol = TS.Symbol {symbolType = TS.Regular, symbolName = T.pack "", symbolId = 0},
-      nodeRange = TS.Range {startByte = 0, startPoint = TS.Point {row = 0, col = 0}, endByte = 0, endPoint = TS.Point {row = 0, col = 0}},
+      nodeSymbol =
+        TS.Symbol
+          { symbolType = TS.Regular,
+            symbolName = T.pack "",
+            symbolId = 0
+          },
+      nodeRange =
+        TS.Range
+          { startByte = 0,
+            startPoint = TS.Point {row = 0, col = 0},
+            endByte = 0,
+            endPoint = TS.Point {row = 0, col = 0}
+          },
       nodeFieldName = Nothing,
       nodeIsNamed = False,
       nodeIsExtra = False,
@@ -44,3 +56,10 @@ defaultNode =
       nodeChildren = [],
       nodeParent = Nothing
     }
+
+instance HasDynNode Nil where
+  getDynNode = \case {}
+
+instance (HasDynNode x, HasDynNode xs) => HasDynNode (x :+ xs) where
+  getDynNode (X x) = getDynNode x
+  getDynNode (Rest xs) = getDynNode xs
