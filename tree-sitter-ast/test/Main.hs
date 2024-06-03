@@ -1,8 +1,11 @@
+{-# LANGUAGE QuasiQuotes #-}
+
 module Main (main) where
 
+import NeatInterpolation
+import SumSpec qualified
 import Test.Tasty
 import Test.Tasty.HUnit
-import qualified SumSpec
 
 main :: IO ()
 main =

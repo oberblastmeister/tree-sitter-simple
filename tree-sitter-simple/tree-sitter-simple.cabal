@@ -65,7 +65,6 @@ library
                      , TreeSitter.Raw.Tree
                      , TreeSitter.Raw
                      , TreeSitter.Api
-                     , TreeSitter.Query
   include-dirs:        vendor/tree-sitter/lib/include
                      , vendor/tree-sitter/lib/src
   install-includes:    tree_sitter/api.h

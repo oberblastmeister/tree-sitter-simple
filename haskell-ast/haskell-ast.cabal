@@ -54,6 +54,7 @@ common common
         bytestring,
         containers,
         unordered-containers,
+        tree-sitter-haskell,
         tree-sitter-simple,
         tree-sitter-ast,
         deepseq,
@@ -61,7 +62,8 @@ common common
 library
     import:           common
     exposed-modules:
-        AST.Haskell
+        AST.Haskell,
+        AST.Haskell.Generated
     hs-source-dirs:   src
     default-language: GHC2021
 
@@ -86,9 +88,12 @@ test-suite haskell-ast-test
     hs-source-dirs:   test
     main-is:          Main.hs
     other-modules:
-        SumSpec
     build-depends:
         haskell-ast,
+        directory,
         tasty,
         tasty-hunit,
         tasty-quickcheck,
+        neat-interpolation,
+        tasty-expect,
+        pretty-simple,

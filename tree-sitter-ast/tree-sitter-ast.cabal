@@ -100,3 +100,4 @@ test-suite tree-sitter-ast-test
         tasty,
         tasty-hunit,
         tasty-quickcheck,
+        neat-interpolation,

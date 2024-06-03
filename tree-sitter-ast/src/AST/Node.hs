@@ -3,6 +3,7 @@
 module AST.Node
   ( WrappedDynNode (..),
     HasDynNode (..),
+    DynNode,
   )
 where
 

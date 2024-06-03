@@ -1,3 +1,4 @@
+-- These functions are used by the generated code at runtime
 module AST.Runtime
   ( getChildDescription,
     listIsSingle,

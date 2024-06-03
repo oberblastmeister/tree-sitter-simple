@@ -32,22 +32,32 @@ import GHC.Generics (Generic)
 import System.IO.Unsafe (unsafePerformIO)
 import TreeSitter.Raw qualified as Raw
 
+-- row is in terms of 0-indexed lines
+-- col is in terms of 0-indexed bytes in the line
 data Point = Point
   { row :: !Int,
     col :: !Int
   }
-  deriving (Show, Eq, Ord, Generic)
+  deriving (Eq, Ord, Generic)
+
+instance Show Point where
+  show Point {row, col} = show row ++ ":" ++ show col
 
 instance NFData Point where
   rnf !p = ()
 
+-- the ends are not inclusive
 data Range = Range
   { startByte :: !Int,
     startPoint :: !Point,
     endByte :: !Int,
     endPoint :: !Point
   }
-  deriving (Show, Eq, Ord, Generic)
+  deriving (Eq, Ord, Generic)
+
+instance Show Range where
+  show Range {startPoint, endPoint} =
+    "[" ++ show startPoint ++ " - " ++ show endPoint ++ "]"
 
 instance NFData Range where
   rnf !r = ()
@@ -89,9 +99,34 @@ data Node = Node
     -- ERROR nodes will be considered extra
     nodeIsExtra :: !Bool,
     nodeText :: !Text,
-    nodeChildren :: [Node]
+    nodeChildren :: [Node],
+    -- this field ties the knot
+    -- make sure not to force this field!!!
+    nodeParent :: Maybe Node
   }
-  deriving (Show, Eq, Ord, Generic, NFData)
+  deriving (Generic)
+
+instance Show Node where
+  showsPrec d Node {nodeType, nodeRange, nodeChildren} =
+    showParen (d > appPrec) $
+      showString "\""
+        . showString (T.unpack nodeType)
+        . showString "@"
+        . showsPrec (appPrec + 1) nodeRange
+        . showString "\""
+        . showString " "
+        . showsPrec (appPrec + 1) nodeChildren
+    where
+      appPrec = 10
+
+instance NFData Node where
+  rnf Node {..} =
+    rnf nodeType `seq`
+      rnf nodeSymbol `seq`
+        rnf nodeRange `seq`
+          rnf nodeFieldName `seq`
+            rnf nodeText `seq`
+              rnf nodeChildren
 
 defaultNode :: Node
 defaultNode =
@@ -103,7 +138,8 @@ defaultNode =
       nodeIsNamed = False,
       nodeIsExtra = False,
       nodeText = T.pack "",
-      nodeChildren = []
+      nodeChildren = [],
+      nodeParent = Nothing
     }
 
 convertCBool :: CBool -> Bool
@@ -147,7 +183,8 @@ convertNode
           nodeIsNamed = convertCBool nodeIsNamed,
           nodeIsExtra = convertCBool nodeIsExtra,
           nodeText,
-          nodeChildren = []
+          nodeChildren = [],
+          nodeParent = Nothing
         }
 
 parse :: Ptr Raw.Language -> Text -> Node
@@ -163,10 +200,19 @@ convertTree :: Ptr Raw.Language -> Ptr Raw.Tree -> ByteString -> IO Node
 convertTree language tree source = do
   rootNode <- treeRootNode tree
   let go node = do
-        typedNode <- convertNode language node source
+        parent <- convertNode language node source
         children <- getChildNodes node
         children <- mapM go children
-        pure $ typedNode {nodeChildren = children}
+        pure $
+          parent
+            { nodeChildren =
+                -- tie the knot here
+                fmap
+                  ( \child ->
+                      child {nodeParent = Just parent}
+                  )
+                  children
+            }
   go rootNode
 
 treeRootNode :: Ptr Raw.Tree -> IO Raw.Node

@@ -28,9 +28,9 @@ main = do
     Nothing -> undefined
     Just nodeTypes -> pure nodeTypes
   PS.pPrintForceColor nodeTypes
-  let res = generateAll "AST.Haskell" nodeTypes
-  T.IO.writeFile "haskell-ast/src/AST/Haskell.hs" res
-  callProcess "ormolu" ["--mode", "inplace", "haskell-ast/src/AST/Haskell.hs"]
+  let res = generateAll "AST.Haskell.Generated" nodeTypes
+  T.IO.writeFile "haskell-ast/src/AST/Haskell/Generated.hs" res
+  callProcess "ormolu" ["--mode", "inplace", "haskell-ast/src/AST/Haskell/Generated.hs"]
   putStrLn $ "Generated " ++ show (length nodeTypes) ++ " types"
 
 type M = Writer [Text]
@@ -215,7 +215,7 @@ genProductTypeCast nodeName fields = do
   emit [trimming|} ;|]
   emit "}"
   -- end creating the record
-  
+
   -- function end
 
   -- instance start
