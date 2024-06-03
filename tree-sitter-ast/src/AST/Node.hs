@@ -4,11 +4,13 @@ module AST.Node
   ( WrappedDynNode (..),
     HasDynNode (..),
     DynNode,
+    defaultNode,
   )
 where
 
 import AST.Cast (DynNode)
 import Control.DeepSeq (NFData (rnf))
+import Data.Text qualified as T
 import TreeSitter.Api qualified as TS
 
 -- so we don't show these and compare for equality
@@ -28,3 +30,17 @@ instance NFData WrappedDynNode where
 
 class HasDynNode a where
   getDynNode :: a -> DynNode
+
+defaultNode :: DynNode
+defaultNode =
+  TS.Node
+    { nodeType = T.pack "",
+      nodeSymbol = TS.Symbol {symbolType = TS.Regular, symbolName = T.pack "", symbolId = 0},
+      nodeRange = TS.Range {startByte = 0, startPoint = TS.Point {row = 0, col = 0}, endByte = 0, endPoint = TS.Point {row = 0, col = 0}},
+      nodeFieldName = Nothing,
+      nodeIsNamed = False,
+      nodeIsExtra = False,
+      nodeText = T.pack "",
+      nodeChildren = [],
+      nodeParent = Nothing
+    }

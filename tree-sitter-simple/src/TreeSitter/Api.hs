@@ -11,7 +11,6 @@
 module TreeSitter.Api
   ( parse,
     Node (..),
-    defaultNode,
     Point (..),
     Range (..),
     Symbol (..),
@@ -127,20 +126,6 @@ instance NFData Node where
           rnf nodeFieldName `seq`
             rnf nodeText `seq`
               rnf nodeChildren
-
-defaultNode :: Node
-defaultNode =
-  Node
-    { nodeType = T.pack "",
-      nodeSymbol = Symbol {symbolType = Regular, symbolName = T.pack "", symbolId = 0},
-      nodeRange = Range {startByte = 0, startPoint = Point {row = 0, col = 0}, endByte = 0, endPoint = Point {row = 0, col = 0}},
-      nodeFieldName = Nothing,
-      nodeIsNamed = False,
-      nodeIsExtra = False,
-      nodeText = T.pack "",
-      nodeChildren = [],
-      nodeParent = Nothing
-    }
 
 convertCBool :: CBool -> Bool
 convertCBool (CBool b) = b /= 0
