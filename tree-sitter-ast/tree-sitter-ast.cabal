@@ -65,6 +65,7 @@ library
     import:           common
     exposed-modules:
         Data.Sum
+        AST
         AST.NodeTypes
         AST.Node
         AST.Token
