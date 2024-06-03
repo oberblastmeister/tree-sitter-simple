@@ -49,7 +49,7 @@ common common
         ExistentialQuantification,
         TypeOperators,
     build-depends:
-        base >=4.17.2.1,
+        base >=4.17,
         text,
         bytestring,
         containers,
@@ -75,7 +75,7 @@ library
         AST.Runtime
         AST.Err
         AST.Traversal
-    build-depends:    base >=4.17.2.1
+    build-depends:    base >=4.17
     hs-source-dirs:   src
     default-language: GHC2021
 

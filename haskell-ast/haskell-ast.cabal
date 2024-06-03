@@ -47,7 +47,7 @@ common common
         ExistentialQuantification,
         TypeOperators,
     build-depends:
-        base >=4.17.2.1,
+        base >=4.17,
         text,
         bytestring,
         containers,
@@ -78,7 +78,7 @@ executable parse
     , tree-sitter-haskell
     , pretty-simple
     , neat-interpolation
-    
+
 test-suite haskell-ast-test
     import:           common
     default-language: GHC2021
