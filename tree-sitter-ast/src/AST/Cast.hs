@@ -5,6 +5,7 @@ module AST.Cast
   )
 where
 
+import AST.Err
 import AST.Token (Token (..))
 import Control.Applicative ((<|>))
 import Control.Monad qualified as Monad
@@ -15,8 +16,13 @@ import TreeSitter.Api qualified as TS
 
 type DynNode = TS.Node
 
+-- the cast type class
 class Cast a where
+  -- when you want to use alternatives
   cast :: DynNode -> Maybe a
+  -- when you want to commit
+  castErr :: DynNode -> Err a
+  castErr = maybeToErr "Failed to cast node" . cast
 
 instance (Cast x) => Cast (x :+ Nil) where
   cast node = X <$> cast node

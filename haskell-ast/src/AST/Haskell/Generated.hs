@@ -378,10 +378,10 @@ instance AST.Cast.Cast AbstractFamily where
     Prelude.pure (AbstractFamily {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Alternative = Alternative
-  { binds :: AST.Err.Err (Prelude.Maybe (LocalBinds)),
-    match :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (Match)),
-    pattern' :: AST.Err.Err (Prelude.Maybe ((Pattern Sum.:+ Signature Sum.:+ Sum.Nil))),
-    patterns :: AST.Err.Err (Prelude.Maybe (Patterns)),
+  { binds :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (LocalBinds))),
+    match :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Match))),
+    pattern' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Patterns))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -392,13 +392,13 @@ cast_Alternative dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   binds <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "binds" namedMap))
-  binds <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast binds" (AST.Runtime.castManyToMaybe binds))
+  binds <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr binds))
   match <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "match" namedMap))
-  match <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast match" (AST.Runtime.castManyToNonEmpty match))
+  match <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr match))
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
-  pattern' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast pattern'" (AST.Runtime.castManyToMaybe pattern'))
+  pattern' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr pattern'))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
-  patterns <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast patterns" (AST.Runtime.castManyToMaybe patterns))
+  patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   Prelude.pure
     Alternative
       { binds,
@@ -415,7 +415,7 @@ instance AST.Cast.Cast Alternative where
   cast = cast_Alternative
 
 data Alternatives = Alternatives
-  { alternative :: AST.Err.Err (AST.Runtime.List (Alternative)),
+  { alternative :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Alternative))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -426,7 +426,7 @@ cast_Alternatives dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   alternative <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "alternative" namedMap))
-  alternative <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast alternative" (AST.Runtime.castManyToList alternative))
+  alternative <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr alternative))
   Prelude.pure
     Alternatives
       { alternative,
@@ -440,8 +440,8 @@ instance AST.Cast.Cast Alternatives where
   cast = cast_Alternatives
 
 data Annotated = Annotated
-  { children :: AST.Err.Err ((TypeParam)),
-    kind :: AST.Err.Err ((QuantifiedType)),
+  { children :: AST.Err.Err ((AST.Err.Err (TypeParam))),
+    kind :: AST.Err.Err ((AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -452,9 +452,9 @@ cast_Annotated dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   kind <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "kind" namedMap))
-  kind <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast kind" (AST.Runtime.castManyToSingle kind))
+  kind <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr kind))
   Prelude.pure
     Annotated
       { children,
@@ -469,9 +469,9 @@ instance AST.Cast.Cast Annotated where
   cast = cast_Annotated
 
 data Apply = Apply
-  { argument :: AST.Err.Err (((ExplicitType Sum.:+ Expression Sum.:+ KindApplication Sum.:+ Pattern Sum.:+ Type Sum.:+ TypeApplication Sum.:+ TypeBinder Sum.:+ Sum.Nil))),
-    constructor :: AST.Err.Err (Prelude.Maybe ((Constraint Sum.:+ Type Sum.:+ Sum.Nil))),
-    function :: AST.Err.Err (Prelude.Maybe ((Expression Sum.:+ Pattern Sum.:+ Sum.Nil))),
+  { argument :: AST.Err.Err ((AST.Err.Err ((ExplicitType Sum.:+ Expression Sum.:+ KindApplication Sum.:+ Pattern Sum.:+ Type Sum.:+ TypeApplication Sum.:+ TypeBinder Sum.:+ Sum.Nil)))),
+    constructor :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Constraint Sum.:+ Type Sum.:+ Sum.Nil)))),
+    function :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Expression Sum.:+ Pattern Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -482,11 +482,11 @@ cast_Apply dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   argument <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "argument" namedMap))
-  argument <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast argument" (AST.Runtime.castManyToSingle argument))
+  argument <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr argument))
   constructor <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructor" namedMap))
-  constructor <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast constructor" (AST.Runtime.castManyToMaybe constructor))
+  constructor <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr constructor))
   function <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "function" namedMap))
-  function <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast function" (AST.Runtime.castManyToMaybe function))
+  function <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr function))
   Prelude.pure
     Apply
       { argument,
@@ -502,9 +502,9 @@ instance AST.Cast.Cast Apply where
   cast = cast_Apply
 
 data ArithmeticSequence = ArithmeticSequence
-  { from :: AST.Err.Err (((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    step :: AST.Err.Err (Prelude.Maybe ((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    to :: AST.Err.Err (Prelude.Maybe ((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { from :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    step :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    to :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -515,11 +515,11 @@ cast_ArithmeticSequence dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   from <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "from" namedMap))
-  from <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast from" (AST.Runtime.castManyToSingle from))
+  from <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr from))
   step <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "step" namedMap))
-  step <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast step" (AST.Runtime.castManyToMaybe step))
+  step <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr step))
   to <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "to" namedMap))
-  to <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast to" (AST.Runtime.castManyToMaybe to))
+  to <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr to))
   Prelude.pure
     ArithmeticSequence
       { from,
@@ -535,8 +535,8 @@ instance AST.Cast.Cast ArithmeticSequence where
   cast = cast_ArithmeticSequence
 
 data As = As
-  { bind :: AST.Err.Err ((Variable)),
-    pattern' :: AST.Err.Err ((Pattern)),
+  { bind :: AST.Err.Err ((AST.Err.Err (Variable))),
+    pattern' :: AST.Err.Err ((AST.Err.Err (Pattern))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -547,9 +547,9 @@ cast_As dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   bind <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "bind" namedMap))
-  bind <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast bind" (AST.Runtime.castManyToSingle bind))
+  bind <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr bind))
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
-  pattern' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast pattern'" (AST.Runtime.castManyToSingle pattern'))
+  pattern' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr pattern'))
   Prelude.pure
     As
       { bind,
@@ -564,8 +564,8 @@ instance AST.Cast.Cast As where
   cast = cast_As
 
 data AssociatedType = AssociatedType
-  { namespace :: AST.Err.Err (((AST.Token.Token "type"))),
-    type' :: AST.Err.Err (((Name Sum.:+ Qualified Sum.:+ Sum.Nil))),
+  { namespace :: AST.Err.Err ((AST.Err.Err ((AST.Token.Token "type")))),
+    type' :: AST.Err.Err ((AST.Err.Err ((Name Sum.:+ Qualified Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -576,9 +576,9 @@ cast_AssociatedType dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   namespace <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "namespace" namedMap))
-  namespace <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast namespace" (AST.Runtime.castManyToSingle namespace))
+  namespace <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr namespace))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToSingle type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     AssociatedType
       { namespace,
@@ -593,13 +593,13 @@ instance AST.Cast.Cast AssociatedType where
   cast = cast_AssociatedType
 
 data Bind = Bind
-  { arrow :: AST.Err.Err (Prelude.Maybe (((AST.Token.Token "<-") Sum.:+ (AST.Token.Token "←") Sum.:+ Sum.Nil))),
-    binds :: AST.Err.Err (Prelude.Maybe (LocalBinds)),
-    expression :: AST.Err.Err (Prelude.Maybe ((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    implicit :: AST.Err.Err (Prelude.Maybe (ImplicitVariable)),
-    match :: AST.Err.Err (AST.Runtime.List (Match)),
-    name :: AST.Err.Err (Prelude.Maybe ((PrefixId Sum.:+ Variable Sum.:+ Sum.Nil))),
-    pattern' :: AST.Err.Err (Prelude.Maybe ((Pattern Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { arrow :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (((AST.Token.Token "<-") Sum.:+ (AST.Token.Token "←") Sum.:+ Sum.Nil)))),
+    binds :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (LocalBinds))),
+    expression :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    implicit :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (ImplicitVariable))),
+    match :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Match))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((PrefixId Sum.:+ Variable Sum.:+ Sum.Nil)))),
+    pattern' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -610,19 +610,19 @@ cast_Bind dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   arrow <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "arrow" namedMap))
-  arrow <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast arrow" (AST.Runtime.castManyToMaybe arrow))
+  arrow <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr arrow))
   binds <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "binds" namedMap))
-  binds <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast binds" (AST.Runtime.castManyToMaybe binds))
+  binds <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr binds))
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
-  expression <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast expression" (AST.Runtime.castManyToMaybe expression))
+  expression <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr expression))
   implicit <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "implicit" namedMap))
-  implicit <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast implicit" (AST.Runtime.castManyToMaybe implicit))
+  implicit <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr implicit))
   match <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "match" namedMap))
-  match <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast match" (AST.Runtime.castManyToList match))
+  match <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr match))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
-  pattern' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast pattern'" (AST.Runtime.castManyToMaybe pattern'))
+  pattern' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr pattern'))
   Prelude.pure
     Bind
       { arrow,
@@ -642,7 +642,7 @@ instance AST.Cast.Cast Bind where
   cast = cast_Bind
 
 data BindingList = BindingList
-  { name :: AST.Err.Err (Data.List.NonEmpty.NonEmpty ((Constructor Sum.:+ PrefixId Sum.:+ Variable Sum.:+ Sum.Nil))),
+  { name :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((Constructor Sum.:+ PrefixId Sum.:+ Variable Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -653,7 +653,7 @@ cast_BindingList dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToNonEmpty name))
+  name <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr name))
   Prelude.pure
     BindingList
       { name,
@@ -667,7 +667,7 @@ instance AST.Cast.Cast BindingList where
   cast = cast_BindingList
 
 data Boolean = Boolean
-  { children :: AST.Err.Err (((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -678,7 +678,7 @@ cast_Boolean dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     Boolean
       { children,
@@ -692,8 +692,8 @@ instance AST.Cast.Cast Boolean where
   cast = cast_Boolean
 
 data Case = Case
-  { children :: AST.Err.Err (((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    alternatives :: AST.Err.Err (Prelude.Maybe (Alternatives)),
+  { children :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    alternatives :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Alternatives))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -704,9 +704,9 @@ cast_Case dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   alternatives <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "alternatives" namedMap))
-  alternatives <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast alternatives" (AST.Runtime.castManyToMaybe alternatives))
+  alternatives <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr alternatives))
   Prelude.pure
     Case
       { children,
@@ -721,7 +721,7 @@ instance AST.Cast.Cast Case where
   cast = cast_Case
 
 data Children = Children
-  { element :: AST.Err.Err (AST.Runtime.List ((AllNames Sum.:+ AssociatedType Sum.:+ Constructor Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Variable Sum.:+ Sum.Nil))),
+  { element :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((AllNames Sum.:+ AssociatedType Sum.:+ Constructor Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -732,7 +732,7 @@ cast_Children dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   element <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "element" namedMap))
-  element <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast element" (AST.Runtime.castManyToList element))
+  element <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr element))
   Prelude.pure
     Children
       { element,
@@ -746,12 +746,12 @@ instance AST.Cast.Cast Children where
   cast = cast_Children
 
 data Class = Class
-  { children :: AST.Err.Err (Prelude.Maybe ((Infix Sum.:+ Parens Sum.:+ Sum.Nil))),
-    context :: AST.Err.Err (Prelude.Maybe (Context)),
-    declarations :: AST.Err.Err (Prelude.Maybe (ClassDeclarations)),
-    fundeps :: AST.Err.Err (Prelude.Maybe (Fundeps)),
-    name :: AST.Err.Err (Prelude.Maybe ((Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Unit Sum.:+ Sum.Nil))),
-    patterns :: AST.Err.Err (Prelude.Maybe (TypeParams)),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ Sum.Nil)))),
+    context :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Context))),
+    declarations :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (ClassDeclarations))),
+    fundeps :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Fundeps))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Unit Sum.:+ Sum.Nil)))),
+    patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (TypeParams))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -762,17 +762,17 @@ cast_Class dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   context <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "context" namedMap))
-  context <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast context" (AST.Runtime.castManyToMaybe context))
+  context <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr context))
   declarations <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "declarations" namedMap))
-  declarations <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast declarations" (AST.Runtime.castManyToMaybe declarations))
+  declarations <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr declarations))
   fundeps <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "fundeps" namedMap))
-  fundeps <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast fundeps" (AST.Runtime.castManyToMaybe fundeps))
+  fundeps <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr fundeps))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
-  patterns <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast patterns" (AST.Runtime.castManyToMaybe patterns))
+  patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   Prelude.pure
     Class
       { children,
@@ -791,7 +791,7 @@ instance AST.Cast.Cast Class where
   cast = cast_Class
 
 data ClassDeclarations = ClassDeclarations
-  { declaration :: AST.Err.Err (AST.Runtime.List (ClassDecl)),
+  { declaration :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (ClassDecl))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -802,7 +802,7 @@ cast_ClassDeclarations dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   declaration <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "declaration" namedMap))
-  declaration <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast declaration" (AST.Runtime.castManyToList declaration))
+  declaration <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr declaration))
   Prelude.pure
     ClassDeclarations
       { declaration,
@@ -816,9 +816,9 @@ instance AST.Cast.Cast ClassDeclarations where
   cast = cast_ClassDeclarations
 
 data Conditional = Conditional
-  { else' :: AST.Err.Err (((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    if' :: AST.Err.Err (((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    then' :: AST.Err.Err (((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { else' :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    if' :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    then' :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -829,11 +829,11 @@ cast_Conditional dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   else' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "else" namedMap))
-  else' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast else'" (AST.Runtime.castManyToSingle else'))
+  else' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr else'))
   if' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "if" namedMap))
-  if' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast if'" (AST.Runtime.castManyToSingle if'))
+  if' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr if'))
   then' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "then" namedMap))
-  then' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast then'" (AST.Runtime.castManyToSingle then'))
+  then' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr then'))
   Prelude.pure
     Conditional
       { else',
@@ -860,11 +860,11 @@ instance AST.Cast.Cast ConstructorOperator where
     Prelude.pure (ConstructorOperator {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data ConstructorSynonym = ConstructorSynonym
-  { binds :: AST.Err.Err (Prelude.Maybe (LocalBinds)),
-    implicit :: AST.Err.Err (Prelude.Maybe (ImplicitVariable)),
-    match :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (Match)),
-    name :: AST.Err.Err (Prelude.Maybe ((PrefixId Sum.:+ Variable Sum.:+ Sum.Nil))),
-    pattern' :: AST.Err.Err (Prelude.Maybe ((Pattern Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { binds :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (LocalBinds))),
+    implicit :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (ImplicitVariable))),
+    match :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Match))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((PrefixId Sum.:+ Variable Sum.:+ Sum.Nil)))),
+    pattern' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -875,15 +875,15 @@ cast_ConstructorSynonym dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   binds <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "binds" namedMap))
-  binds <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast binds" (AST.Runtime.castManyToMaybe binds))
+  binds <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr binds))
   implicit <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "implicit" namedMap))
-  implicit <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast implicit" (AST.Runtime.castManyToMaybe implicit))
+  implicit <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr implicit))
   match <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "match" namedMap))
-  match <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast match" (AST.Runtime.castManyToNonEmpty match))
+  match <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr match))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
-  pattern' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast pattern'" (AST.Runtime.castManyToMaybe pattern'))
+  pattern' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr pattern'))
   Prelude.pure
     ConstructorSynonym
       { binds,
@@ -901,7 +901,7 @@ instance AST.Cast.Cast ConstructorSynonym where
   cast = cast_ConstructorSynonym
 
 data ConstructorSynonyms = ConstructorSynonyms
-  { children :: AST.Err.Err (AST.Runtime.List (ConstructorSynonym)),
+  { children :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (ConstructorSynonym))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -912,7 +912,7 @@ cast_ConstructorSynonyms dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToList children))
+  children <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     ConstructorSynonyms
       { children,
@@ -926,10 +926,10 @@ instance AST.Cast.Cast ConstructorSynonyms where
   cast = cast_ConstructorSynonyms
 
 data Context = Context
-  { arrow :: AST.Err.Err ((((AST.Token.Token "=>") Sum.:+ (AST.Token.Token "⇒") Sum.:+ Sum.Nil))),
-    constraint :: AST.Err.Err (Prelude.Maybe (Constraints)),
-    context :: AST.Err.Err ((Constraint)),
-    type' :: AST.Err.Err (Prelude.Maybe (QuantifiedType)),
+  { arrow :: AST.Err.Err ((AST.Err.Err (((AST.Token.Token "=>") Sum.:+ (AST.Token.Token "⇒") Sum.:+ Sum.Nil)))),
+    constraint :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Constraints))),
+    context :: AST.Err.Err ((AST.Err.Err (Constraint))),
+    type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -940,13 +940,13 @@ cast_Context dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   arrow <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "arrow" namedMap))
-  arrow <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast arrow" (AST.Runtime.castManyToSingle arrow))
+  arrow <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr arrow))
   constraint <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constraint" namedMap))
-  constraint <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast constraint" (AST.Runtime.castManyToMaybe constraint))
+  constraint <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr constraint))
   context <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "context" namedMap))
-  context <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast context" (AST.Runtime.castManyToSingle context))
+  context <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr context))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToMaybe type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     Context
       { arrow,
@@ -963,9 +963,9 @@ instance AST.Cast.Cast Context where
   cast = cast_Context
 
 data DataConstructor = DataConstructor
-  { constructor :: AST.Err.Err (((Infix Sum.:+ Prefix Sum.:+ Record Sum.:+ Special Sum.:+ Sum.Nil))),
-    context :: AST.Err.Err (Prelude.Maybe (Context)),
-    forall' :: AST.Err.Err (Prelude.Maybe ((Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil))),
+  { constructor :: AST.Err.Err ((AST.Err.Err ((Infix Sum.:+ Prefix Sum.:+ Record Sum.:+ Special Sum.:+ Sum.Nil)))),
+    context :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Context))),
+    forall' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -976,11 +976,11 @@ cast_DataConstructor dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   constructor <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructor" namedMap))
-  constructor <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast constructor" (AST.Runtime.castManyToSingle constructor))
+  constructor <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr constructor))
   context <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "context" namedMap))
-  context <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast context" (AST.Runtime.castManyToMaybe context))
+  context <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr context))
   forall' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "forall" namedMap))
-  forall' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast forall'" (AST.Runtime.castManyToMaybe forall'))
+  forall' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr forall'))
   Prelude.pure
     DataConstructor
       { constructor,
@@ -996,7 +996,7 @@ instance AST.Cast.Cast DataConstructor where
   cast = cast_DataConstructor
 
 data DataConstructors = DataConstructors
-  { constructor :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (DataConstructor)),
+  { constructor :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (DataConstructor))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1007,7 +1007,7 @@ cast_DataConstructors dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   constructor <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructor" namedMap))
-  constructor <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast constructor" (AST.Runtime.castManyToNonEmpty constructor))
+  constructor <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr constructor))
   Prelude.pure
     DataConstructors
       { constructor,
@@ -1021,10 +1021,10 @@ instance AST.Cast.Cast DataConstructors where
   cast = cast_DataConstructors
 
 data DataFamily = DataFamily
-  { children :: AST.Err.Err (Prelude.Maybe ((Infix Sum.:+ Parens Sum.:+ Sum.Nil))),
-    kind :: AST.Err.Err (Prelude.Maybe (QuantifiedType)),
-    name :: AST.Err.Err (Prelude.Maybe ((Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Unit Sum.:+ Sum.Nil))),
-    patterns :: AST.Err.Err (Prelude.Maybe (TypeParams)),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ Sum.Nil)))),
+    kind :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Unit Sum.:+ Sum.Nil)))),
+    patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (TypeParams))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1035,13 +1035,13 @@ cast_DataFamily dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   kind <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "kind" namedMap))
-  kind <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast kind" (AST.Runtime.castManyToMaybe kind))
+  kind <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr kind))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
-  patterns <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast patterns" (AST.Runtime.castManyToMaybe patterns))
+  patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   Prelude.pure
     DataFamily
       { children,
@@ -1058,7 +1058,7 @@ instance AST.Cast.Cast DataFamily where
   cast = cast_DataFamily
 
 data DataInstance = DataInstance
-  { children :: AST.Err.Err (((DataType Sum.:+ Newtype Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err ((AST.Err.Err ((DataType Sum.:+ Newtype Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1069,7 +1069,7 @@ cast_DataInstance dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     DataInstance
       { children,
@@ -1083,14 +1083,14 @@ instance AST.Cast.Cast DataInstance where
   cast = cast_DataInstance
 
 data DataType = DataType
-  { children :: AST.Err.Err (Prelude.Maybe ((Infix Sum.:+ Parens Sum.:+ Sum.Nil))),
-    constructors :: AST.Err.Err (Prelude.Maybe ((DataConstructors Sum.:+ GadtConstructors Sum.:+ Sum.Nil))),
-    context :: AST.Err.Err (Prelude.Maybe (Context)),
-    deriving' :: AST.Err.Err (AST.Runtime.List (Deriving)),
-    forall' :: AST.Err.Err (Prelude.Maybe ((Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil))),
-    kind :: AST.Err.Err (Prelude.Maybe (QuantifiedType)),
-    name :: AST.Err.Err (Prelude.Maybe ((Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Qualified Sum.:+ Unit Sum.:+ Sum.Nil))),
-    patterns :: AST.Err.Err (Prelude.Maybe ((TypeParams Sum.:+ TypePatterns Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ Sum.Nil)))),
+    constructors :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((DataConstructors Sum.:+ GadtConstructors Sum.:+ Sum.Nil)))),
+    context :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Context))),
+    deriving' :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Deriving))),
+    forall' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil)))),
+    kind :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Qualified Sum.:+ Unit Sum.:+ Sum.Nil)))),
+    patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((TypeParams Sum.:+ TypePatterns Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1101,21 +1101,21 @@ cast_DataType dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   constructors <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructors" namedMap))
-  constructors <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast constructors" (AST.Runtime.castManyToMaybe constructors))
+  constructors <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr constructors))
   context <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "context" namedMap))
-  context <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast context" (AST.Runtime.castManyToMaybe context))
+  context <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr context))
   deriving' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "deriving" namedMap))
-  deriving' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast deriving'" (AST.Runtime.castManyToList deriving'))
+  deriving' <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr deriving'))
   forall' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "forall" namedMap))
-  forall' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast forall'" (AST.Runtime.castManyToMaybe forall'))
+  forall' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr forall'))
   kind <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "kind" namedMap))
-  kind <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast kind" (AST.Runtime.castManyToMaybe kind))
+  kind <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr kind))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
-  patterns <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast patterns" (AST.Runtime.castManyToMaybe patterns))
+  patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   Prelude.pure
     DataType
       { children,
@@ -1136,7 +1136,7 @@ instance AST.Cast.Cast DataType where
   cast = cast_DataType
 
 data Declarations = Declarations
-  { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty ((Declaration Sum.:+ Import Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((Declaration Sum.:+ Import Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1147,7 +1147,7 @@ cast_Declarations dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToNonEmpty children))
+  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     Declarations
       { children,
@@ -1161,7 +1161,7 @@ instance AST.Cast.Cast Declarations where
   cast = cast_Declarations
 
 data DefaultSignature = DefaultSignature
-  { signature :: AST.Err.Err ((Signature)),
+  { signature :: AST.Err.Err ((AST.Err.Err (Signature))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1172,7 +1172,7 @@ cast_DefaultSignature dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   signature <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "signature" namedMap))
-  signature <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast signature" (AST.Runtime.castManyToSingle signature))
+  signature <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr signature))
   Prelude.pure
     DefaultSignature
       { signature,
@@ -1186,7 +1186,7 @@ instance AST.Cast.Cast DefaultSignature where
   cast = cast_DefaultSignature
 
 data DefaultTypes = DefaultTypes
-  { type' :: AST.Err.Err (AST.Runtime.List ((QuantifiedType Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { type' :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((QuantifiedType Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1197,7 +1197,7 @@ cast_DefaultTypes dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToList type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     DefaultTypes
       { type',
@@ -1211,9 +1211,9 @@ instance AST.Cast.Cast DefaultTypes where
   cast = cast_DefaultTypes
 
 data Deriving = Deriving
-  { classes :: AST.Err.Err ((Constraint)),
-    strategy :: AST.Err.Err (Prelude.Maybe (DerivingStrategy)),
-    via :: AST.Err.Err (Prelude.Maybe (Via)),
+  { classes :: AST.Err.Err ((AST.Err.Err (Constraint))),
+    strategy :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (DerivingStrategy))),
+    via :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Via))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1224,11 +1224,11 @@ cast_Deriving dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   classes <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "classes" namedMap))
-  classes <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast classes" (AST.Runtime.castManyToSingle classes))
+  classes <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr classes))
   strategy <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "strategy" namedMap))
-  strategy <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast strategy" (AST.Runtime.castManyToMaybe strategy))
+  strategy <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr strategy))
   via <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "via" namedMap))
-  via <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast via" (AST.Runtime.castManyToMaybe via))
+  via <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr via))
   Prelude.pure
     Deriving
       { classes,
@@ -1244,13 +1244,13 @@ instance AST.Cast.Cast Deriving where
   cast = cast_Deriving
 
 data DerivingInstance = DerivingInstance
-  { children :: AST.Err.Err (Prelude.Maybe ((Infix Sum.:+ Parens Sum.:+ Sum.Nil))),
-    context :: AST.Err.Err (Prelude.Maybe (Context)),
-    forall' :: AST.Err.Err (Prelude.Maybe ((Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil))),
-    name :: AST.Err.Err (Prelude.Maybe ((Name Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Sum.Nil))),
-    patterns :: AST.Err.Err (Prelude.Maybe (TypePatterns)),
-    strategy :: AST.Err.Err (Prelude.Maybe (DerivingStrategy)),
-    via :: AST.Err.Err (Prelude.Maybe (Via)),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ Sum.Nil)))),
+    context :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Context))),
+    forall' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil)))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Name Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Sum.Nil)))),
+    patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (TypePatterns))),
+    strategy :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (DerivingStrategy))),
+    via :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Via))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1261,19 +1261,19 @@ cast_DerivingInstance dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   context <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "context" namedMap))
-  context <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast context" (AST.Runtime.castManyToMaybe context))
+  context <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr context))
   forall' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "forall" namedMap))
-  forall' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast forall'" (AST.Runtime.castManyToMaybe forall'))
+  forall' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr forall'))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
-  patterns <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast patterns" (AST.Runtime.castManyToMaybe patterns))
+  patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   strategy <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "strategy" namedMap))
-  strategy <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast strategy" (AST.Runtime.castManyToMaybe strategy))
+  strategy <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr strategy))
   via <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "via" namedMap))
-  via <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast via" (AST.Runtime.castManyToMaybe via))
+  via <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr via))
   Prelude.pure
     DerivingInstance
       { children,
@@ -1304,8 +1304,8 @@ instance AST.Cast.Cast DerivingStrategy where
     Prelude.pure (DerivingStrategy {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Do = Do
-  { children :: AST.Err.Err (Prelude.Maybe (DoModule)),
-    statement :: AST.Err.Err (AST.Runtime.List (Statement)),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (DoModule))),
+    statement :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Statement))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1316,9 +1316,9 @@ cast_Do dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   statement <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "statement" namedMap))
-  statement <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast statement" (AST.Runtime.castManyToList statement))
+  statement <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr statement))
   Prelude.pure
     Do
       { children,
@@ -1333,8 +1333,8 @@ instance AST.Cast.Cast Do where
   cast = cast_Do
 
 data DoModule = DoModule
-  { id :: AST.Err.Err ((((AST.Token.Token "do") Sum.:+ (AST.Token.Token "mdo") Sum.:+ Sum.Nil))),
-    module' :: AST.Err.Err ((Module)),
+  { id :: AST.Err.Err ((AST.Err.Err (((AST.Token.Token "do") Sum.:+ (AST.Token.Token "mdo") Sum.:+ Sum.Nil)))),
+    module' :: AST.Err.Err ((AST.Err.Err (Module))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1345,9 +1345,9 @@ cast_DoModule dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   id <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "id" namedMap))
-  id <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast id" (AST.Runtime.castManyToSingle id))
+  id <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr id))
   module' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "module" namedMap))
-  module' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast module'" (AST.Runtime.castManyToSingle module'))
+  module' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr module'))
   Prelude.pure
     DoModule
       { id,
@@ -1373,7 +1373,7 @@ instance AST.Cast.Cast EmptyList where
     Prelude.pure (EmptyList {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Entity = Entity
-  { children :: AST.Err.Err ((String)),
+  { children :: AST.Err.Err ((AST.Err.Err (String))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1384,7 +1384,7 @@ cast_Entity dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     Entity
       { children,
@@ -1398,13 +1398,13 @@ instance AST.Cast.Cast Entity where
   cast = cast_Entity
 
 data Equation = Equation
-  { children :: AST.Err.Err (AST.Runtime.List ((Infix Sum.:+ Parens Sum.:+ QuantifiedType Sum.:+ Sum.Nil))),
-    constructors :: AST.Err.Err (Prelude.Maybe (ConstructorSynonyms)),
-    forall' :: AST.Err.Err (Prelude.Maybe ((Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil))),
-    name :: AST.Err.Err (Prelude.Maybe ((Name Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Sum.Nil))),
-    pattern' :: AST.Err.Err (Prelude.Maybe ((Pattern Sum.:+ Signature Sum.:+ Sum.Nil))),
-    patterns :: AST.Err.Err (Prelude.Maybe (TypePatterns)),
-    synonym :: AST.Err.Err (Prelude.Maybe (Pattern)),
+  { children :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ QuantifiedType Sum.:+ Sum.Nil)))),
+    constructors :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (ConstructorSynonyms))),
+    forall' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil)))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Name Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Sum.Nil)))),
+    pattern' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (TypePatterns))),
+    synonym :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Pattern))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1415,19 +1415,19 @@ cast_Equation dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToList children))
+  children <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr children))
   constructors <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructors" namedMap))
-  constructors <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast constructors" (AST.Runtime.castManyToMaybe constructors))
+  constructors <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr constructors))
   forall' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "forall" namedMap))
-  forall' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast forall'" (AST.Runtime.castManyToMaybe forall'))
+  forall' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr forall'))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
-  pattern' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast pattern'" (AST.Runtime.castManyToMaybe pattern'))
+  pattern' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr pattern'))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
-  patterns <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast patterns" (AST.Runtime.castManyToMaybe patterns))
+  patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   synonym <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "synonym" namedMap))
-  synonym <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast synonym" (AST.Runtime.castManyToMaybe synonym))
+  synonym <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr synonym))
   Prelude.pure
     Equation
       { children,
@@ -1447,7 +1447,7 @@ instance AST.Cast.Cast Equation where
   cast = cast_Equation
 
 data Equations = Equations
-  { equation :: AST.Err.Err (AST.Runtime.List (Equation)),
+  { equation :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Equation))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1458,7 +1458,7 @@ cast_Equations dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   equation <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "equation" namedMap))
-  equation <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast equation" (AST.Runtime.castManyToList equation))
+  equation <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr equation))
   Prelude.pure
     Equations
       { equation,
@@ -1472,7 +1472,7 @@ instance AST.Cast.Cast Equations where
   cast = cast_Equations
 
 data Exp = Exp
-  { children :: AST.Err.Err (((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1483,7 +1483,7 @@ cast_Exp dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     Exp
       { children,
@@ -1497,7 +1497,7 @@ instance AST.Cast.Cast Exp where
   cast = cast_Exp
 
 data ExplicitType = ExplicitType
-  { type' :: AST.Err.Err ((Type)),
+  { type' :: AST.Err.Err ((AST.Err.Err (Type))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1508,7 +1508,7 @@ cast_ExplicitType dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToSingle type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     ExplicitType
       { type',
@@ -1522,11 +1522,11 @@ instance AST.Cast.Cast ExplicitType where
   cast = cast_ExplicitType
 
 data Export = Export
-  { childrenSQuote :: AST.Err.Err (Prelude.Maybe (Children)),
-    namespace :: AST.Err.Err (Prelude.Maybe (Namespace)),
-    operator :: AST.Err.Err (Prelude.Maybe (PrefixId)),
-    type' :: AST.Err.Err (Prelude.Maybe ((Name Sum.:+ Qualified Sum.:+ Sum.Nil))),
-    variable :: AST.Err.Err (Prelude.Maybe ((Qualified Sum.:+ Variable Sum.:+ Sum.Nil))),
+  { childrenSQuote :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Children))),
+    namespace :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Namespace))),
+    operator :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (PrefixId))),
+    type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Name Sum.:+ Qualified Sum.:+ Sum.Nil)))),
+    variable :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1537,15 +1537,15 @@ cast_Export dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   childrenSQuote <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children'" namedMap))
-  childrenSQuote <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast childrenSQuote" (AST.Runtime.castManyToMaybe childrenSQuote))
+  childrenSQuote <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr childrenSQuote))
   namespace <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "namespace" namedMap))
-  namespace <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast namespace" (AST.Runtime.castManyToMaybe namespace))
+  namespace <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr namespace))
   operator <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "operator" namedMap))
-  operator <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast operator" (AST.Runtime.castManyToMaybe operator))
+  operator <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr operator))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToMaybe type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr type'))
   variable <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "variable" namedMap))
-  variable <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast variable" (AST.Runtime.castManyToMaybe variable))
+  variable <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr variable))
   Prelude.pure
     Export
       { childrenSQuote,
@@ -1563,8 +1563,8 @@ instance AST.Cast.Cast Export where
   cast = cast_Export
 
 data Exports = Exports
-  { children :: AST.Err.Err (AST.Runtime.List (ModuleExport)),
-    export :: AST.Err.Err (AST.Runtime.List (Export)),
+  { children :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (ModuleExport))),
+    export :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Export))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1575,9 +1575,9 @@ cast_Exports dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToList children))
+  children <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr children))
   export <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "export" namedMap))
-  export <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast export" (AST.Runtime.castManyToList export))
+  export <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr export))
   Prelude.pure
     Exports
       { children,
@@ -1592,10 +1592,10 @@ instance AST.Cast.Cast Exports where
   cast = cast_Exports
 
 data Field = Field
-  { children :: AST.Err.Err (Prelude.Maybe (Type)),
-    name :: AST.Err.Err (AST.Runtime.List (FieldName)),
-    parameter :: AST.Err.Err (Prelude.Maybe ((LazyField Sum.:+ QuantifiedType Sum.:+ StrictField Sum.:+ Sum.Nil))),
-    type' :: AST.Err.Err (Prelude.Maybe ((LazyField Sum.:+ QuantifiedType Sum.:+ StrictField Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Type))),
+    name :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (FieldName))),
+    parameter :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((LazyField Sum.:+ QuantifiedType Sum.:+ StrictField Sum.:+ Sum.Nil)))),
+    type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((LazyField Sum.:+ QuantifiedType Sum.:+ StrictField Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1606,13 +1606,13 @@ cast_Field dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToList name))
+  name <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr name))
   parameter <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "parameter" namedMap))
-  parameter <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast parameter" (AST.Runtime.castManyToMaybe parameter))
+  parameter <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr parameter))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToMaybe type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     Field
       { children,
@@ -1629,7 +1629,7 @@ instance AST.Cast.Cast Field where
   cast = cast_Field
 
 data FieldName = FieldName
-  { children :: AST.Err.Err ((Variable)),
+  { children :: AST.Err.Err ((AST.Err.Err (Variable))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1640,7 +1640,7 @@ cast_FieldName dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     FieldName
       { children,
@@ -1654,8 +1654,8 @@ instance AST.Cast.Cast FieldName where
   cast = cast_FieldName
 
 data FieldPath = FieldPath
-  { field :: AST.Err.Err (((FieldName Sum.:+ Qualified Sum.:+ Sum.Nil))),
-    subfield :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (FieldName)),
+  { field :: AST.Err.Err ((AST.Err.Err ((FieldName Sum.:+ Qualified Sum.:+ Sum.Nil)))),
+    subfield :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (FieldName))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1666,9 +1666,9 @@ cast_FieldPath dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   field <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "field" namedMap))
-  field <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast field" (AST.Runtime.castManyToSingle field))
+  field <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr field))
   subfield <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "subfield" namedMap))
-  subfield <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast subfield" (AST.Runtime.castManyToNonEmpty subfield))
+  subfield <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr subfield))
   Prelude.pure
     FieldPath
       { field,
@@ -1683,9 +1683,9 @@ instance AST.Cast.Cast FieldPath where
   cast = cast_FieldPath
 
 data FieldPattern = FieldPattern
-  { children :: AST.Err.Err (Prelude.Maybe (Wildcard)),
-    field :: AST.Err.Err (Prelude.Maybe ((FieldName Sum.:+ Qualified Sum.:+ Sum.Nil))),
-    pattern' :: AST.Err.Err (Prelude.Maybe ((Pattern Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Wildcard))),
+    field :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((FieldName Sum.:+ Qualified Sum.:+ Sum.Nil)))),
+    pattern' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1696,11 +1696,11 @@ cast_FieldPattern dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   field <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "field" namedMap))
-  field <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast field" (AST.Runtime.castManyToMaybe field))
+  field <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr field))
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
-  pattern' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast pattern'" (AST.Runtime.castManyToMaybe pattern'))
+  pattern' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr pattern'))
   Prelude.pure
     FieldPattern
       { children,
@@ -1716,9 +1716,9 @@ instance AST.Cast.Cast FieldPattern where
   cast = cast_FieldPattern
 
 data FieldUpdate = FieldUpdate
-  { children :: AST.Err.Err (Prelude.Maybe (Wildcard)),
-    expression :: AST.Err.Err (Prelude.Maybe ((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    field :: AST.Err.Err (Prelude.Maybe ((FieldName Sum.:+ FieldPath Sum.:+ Qualified Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Wildcard))),
+    expression :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    field :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((FieldName Sum.:+ FieldPath Sum.:+ Qualified Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1729,11 +1729,11 @@ cast_FieldUpdate dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
-  expression <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast expression" (AST.Runtime.castManyToMaybe expression))
+  expression <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr expression))
   field <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "field" namedMap))
-  field <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast field" (AST.Runtime.castManyToMaybe field))
+  field <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr field))
   Prelude.pure
     FieldUpdate
       { children,
@@ -1749,7 +1749,7 @@ instance AST.Cast.Cast FieldUpdate where
   cast = cast_FieldUpdate
 
 data Fields = Fields
-  { field :: AST.Err.Err (AST.Runtime.List (Field)),
+  { field :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Field))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1760,7 +1760,7 @@ cast_Fields dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   field <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "field" namedMap))
-  field <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast field" (AST.Runtime.castManyToList field))
+  field <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr field))
   Prelude.pure
     Fields
       { field,
@@ -1774,9 +1774,9 @@ instance AST.Cast.Cast Fields where
   cast = cast_Fields
 
 data Fixity = Fixity
-  { associativity :: AST.Err.Err ((((AST.Token.Token "infix") Sum.:+ (AST.Token.Token "infixl") Sum.:+ (AST.Token.Token "infixr") Sum.:+ Sum.Nil))),
-    operator :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (((AST.Token.Token ",") Sum.:+ ConstructorOperator Sum.:+ InfixId Sum.:+ Operator Sum.:+ Sum.Nil))),
-    precedence :: AST.Err.Err (Prelude.Maybe (Integer)),
+  { associativity :: AST.Err.Err ((AST.Err.Err (((AST.Token.Token "infix") Sum.:+ (AST.Token.Token "infixl") Sum.:+ (AST.Token.Token "infixr") Sum.:+ Sum.Nil)))),
+    operator :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (((AST.Token.Token ",") Sum.:+ ConstructorOperator Sum.:+ InfixId Sum.:+ Operator Sum.:+ Sum.Nil)))),
+    precedence :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Integer))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1787,11 +1787,11 @@ cast_Fixity dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   associativity <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "associativity" namedMap))
-  associativity <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast associativity" (AST.Runtime.castManyToSingle associativity))
+  associativity <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr associativity))
   operator <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "operator" namedMap))
-  operator <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast operator" (AST.Runtime.castManyToNonEmpty operator))
+  operator <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr operator))
   precedence <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "precedence" namedMap))
-  precedence <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast precedence" (AST.Runtime.castManyToMaybe precedence))
+  precedence <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr precedence))
   Prelude.pure
     Fixity
       { associativity,
@@ -1807,10 +1807,10 @@ instance AST.Cast.Cast Fixity where
   cast = cast_Fixity
 
 data Forall = Forall
-  { constraint :: AST.Err.Err (Prelude.Maybe (Constraints)),
-    quantifier :: AST.Err.Err ((((AST.Token.Token "forall") Sum.:+ (AST.Token.Token "∀") Sum.:+ Sum.Nil))),
-    type' :: AST.Err.Err (Prelude.Maybe (QuantifiedType)),
-    variables :: AST.Err.Err (Prelude.Maybe (QuantifiedVariables)),
+  { constraint :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Constraints))),
+    quantifier :: AST.Err.Err ((AST.Err.Err (((AST.Token.Token "forall") Sum.:+ (AST.Token.Token "∀") Sum.:+ Sum.Nil)))),
+    type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
+    variables :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedVariables))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1821,13 +1821,13 @@ cast_Forall dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   constraint <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constraint" namedMap))
-  constraint <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast constraint" (AST.Runtime.castManyToMaybe constraint))
+  constraint <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr constraint))
   quantifier <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "quantifier" namedMap))
-  quantifier <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast quantifier" (AST.Runtime.castManyToSingle quantifier))
+  quantifier <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr quantifier))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToMaybe type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr type'))
   variables <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "variables" namedMap))
-  variables <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast variables" (AST.Runtime.castManyToMaybe variables))
+  variables <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr variables))
   Prelude.pure
     Forall
       { constraint,
@@ -1844,9 +1844,9 @@ instance AST.Cast.Cast Forall where
   cast = cast_Forall
 
 data ForallRequired = ForallRequired
-  { quantifier :: AST.Err.Err ((((AST.Token.Token "forall") Sum.:+ (AST.Token.Token "∀") Sum.:+ Sum.Nil))),
-    type' :: AST.Err.Err (Prelude.Maybe (QuantifiedType)),
-    variables :: AST.Err.Err (Prelude.Maybe (QuantifiedVariables)),
+  { quantifier :: AST.Err.Err ((AST.Err.Err (((AST.Token.Token "forall") Sum.:+ (AST.Token.Token "∀") Sum.:+ Sum.Nil)))),
+    type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
+    variables :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedVariables))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1857,11 +1857,11 @@ cast_ForallRequired dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   quantifier <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "quantifier" namedMap))
-  quantifier <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast quantifier" (AST.Runtime.castManyToSingle quantifier))
+  quantifier <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr quantifier))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToMaybe type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr type'))
   variables <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "variables" namedMap))
-  variables <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast variables" (AST.Runtime.castManyToMaybe variables))
+  variables <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr variables))
   Prelude.pure
     ForallRequired
       { quantifier,
@@ -1877,9 +1877,9 @@ instance AST.Cast.Cast ForallRequired where
   cast = cast_ForallRequired
 
 data ForeignExport = ForeignExport
-  { callingConvention :: AST.Err.Err ((CallingConvention)),
-    entity :: AST.Err.Err (Prelude.Maybe (Entity)),
-    signature :: AST.Err.Err ((Signature)),
+  { callingConvention :: AST.Err.Err ((AST.Err.Err (CallingConvention))),
+    entity :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Entity))),
+    signature :: AST.Err.Err ((AST.Err.Err (Signature))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1890,11 +1890,11 @@ cast_ForeignExport dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   callingConvention <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "calling_convention" namedMap))
-  callingConvention <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast callingConvention" (AST.Runtime.castManyToSingle callingConvention))
+  callingConvention <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr callingConvention))
   entity <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "entity" namedMap))
-  entity <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast entity" (AST.Runtime.castManyToMaybe entity))
+  entity <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr entity))
   signature <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "signature" namedMap))
-  signature <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast signature" (AST.Runtime.castManyToSingle signature))
+  signature <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr signature))
   Prelude.pure
     ForeignExport
       { callingConvention,
@@ -1910,10 +1910,10 @@ instance AST.Cast.Cast ForeignExport where
   cast = cast_ForeignExport
 
 data ForeignImport = ForeignImport
-  { callingConvention :: AST.Err.Err ((CallingConvention)),
-    entity :: AST.Err.Err (Prelude.Maybe (Entity)),
-    safety :: AST.Err.Err (Prelude.Maybe (Safety)),
-    signature :: AST.Err.Err ((Signature)),
+  { callingConvention :: AST.Err.Err ((AST.Err.Err (CallingConvention))),
+    entity :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Entity))),
+    safety :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Safety))),
+    signature :: AST.Err.Err ((AST.Err.Err (Signature))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1924,13 +1924,13 @@ cast_ForeignImport dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   callingConvention <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "calling_convention" namedMap))
-  callingConvention <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast callingConvention" (AST.Runtime.castManyToSingle callingConvention))
+  callingConvention <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr callingConvention))
   entity <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "entity" namedMap))
-  entity <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast entity" (AST.Runtime.castManyToMaybe entity))
+  entity <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr entity))
   safety <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "safety" namedMap))
-  safety <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast safety" (AST.Runtime.castManyToMaybe safety))
+  safety <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr safety))
   signature <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "signature" namedMap))
-  signature <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast signature" (AST.Runtime.castManyToSingle signature))
+  signature <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr signature))
   Prelude.pure
     ForeignImport
       { callingConvention,
@@ -1947,15 +1947,15 @@ instance AST.Cast.Cast ForeignImport where
   cast = cast_ForeignImport
 
 data Function = Function
-  { children :: AST.Err.Err (Prelude.Maybe (Infix)),
-    arrow :: AST.Err.Err (Prelude.Maybe (((AST.Token.Token "->") Sum.:+ (AST.Token.Token "→") Sum.:+ Sum.Nil))),
-    binds :: AST.Err.Err (Prelude.Maybe (LocalBinds)),
-    match :: AST.Err.Err (AST.Runtime.List (Match)),
-    name :: AST.Err.Err (Prelude.Maybe ((PrefixId Sum.:+ Variable Sum.:+ Sum.Nil))),
-    parameter :: AST.Err.Err (Prelude.Maybe ((LazyField Sum.:+ QuantifiedType Sum.:+ StrictField Sum.:+ Sum.Nil))),
-    parens :: AST.Err.Err (Prelude.Maybe (FunctionHeadParens)),
-    patterns :: AST.Err.Err (Prelude.Maybe (Patterns)),
-    result :: AST.Err.Err (Prelude.Maybe (QuantifiedType)),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Infix))),
+    arrow :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (((AST.Token.Token "->") Sum.:+ (AST.Token.Token "→") Sum.:+ Sum.Nil)))),
+    binds :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (LocalBinds))),
+    match :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Match))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((PrefixId Sum.:+ Variable Sum.:+ Sum.Nil)))),
+    parameter :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((LazyField Sum.:+ QuantifiedType Sum.:+ StrictField Sum.:+ Sum.Nil)))),
+    parens :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (FunctionHeadParens))),
+    patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Patterns))),
+    result :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -1966,23 +1966,23 @@ cast_Function dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   arrow <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "arrow" namedMap))
-  arrow <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast arrow" (AST.Runtime.castManyToMaybe arrow))
+  arrow <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr arrow))
   binds <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "binds" namedMap))
-  binds <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast binds" (AST.Runtime.castManyToMaybe binds))
+  binds <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr binds))
   match <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "match" namedMap))
-  match <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast match" (AST.Runtime.castManyToList match))
+  match <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr match))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   parameter <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "parameter" namedMap))
-  parameter <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast parameter" (AST.Runtime.castManyToMaybe parameter))
+  parameter <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr parameter))
   parens <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "parens" namedMap))
-  parens <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast parens" (AST.Runtime.castManyToMaybe parens))
+  parens <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr parens))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
-  patterns <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast patterns" (AST.Runtime.castManyToMaybe patterns))
+  patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   result <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "result" namedMap))
-  result <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast result" (AST.Runtime.castManyToMaybe result))
+  result <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr result))
   Prelude.pure
     Function
       { children,
@@ -2004,10 +2004,10 @@ instance AST.Cast.Cast Function where
   cast = cast_Function
 
 data FunctionHeadParens = FunctionHeadParens
-  { children :: AST.Err.Err (Prelude.Maybe (Infix)),
-    name :: AST.Err.Err (Prelude.Maybe ((PrefixId Sum.:+ Variable Sum.:+ Sum.Nil))),
-    parens :: AST.Err.Err (Prelude.Maybe (FunctionHeadParens)),
-    patterns :: AST.Err.Err (Prelude.Maybe (Patterns)),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Infix))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((PrefixId Sum.:+ Variable Sum.:+ Sum.Nil)))),
+    parens :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (FunctionHeadParens))),
+    patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Patterns))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2018,13 +2018,13 @@ cast_FunctionHeadParens dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   parens <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "parens" namedMap))
-  parens <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast parens" (AST.Runtime.castManyToMaybe parens))
+  parens <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr parens))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
-  patterns <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast patterns" (AST.Runtime.castManyToMaybe patterns))
+  patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   Prelude.pure
     FunctionHeadParens
       { children,
@@ -2041,8 +2041,8 @@ instance AST.Cast.Cast FunctionHeadParens where
   cast = cast_FunctionHeadParens
 
 data Fundep = Fundep
-  { determined :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (Variable)),
-    matched :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (Variable)),
+  { determined :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Variable))),
+    matched :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Variable))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2053,9 +2053,9 @@ cast_Fundep dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   determined <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "determined" namedMap))
-  determined <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast determined" (AST.Runtime.castManyToNonEmpty determined))
+  determined <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr determined))
   matched <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "matched" namedMap))
-  matched <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast matched" (AST.Runtime.castManyToNonEmpty matched))
+  matched <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr matched))
   Prelude.pure
     Fundep
       { determined,
@@ -2070,7 +2070,7 @@ instance AST.Cast.Cast Fundep where
   cast = cast_Fundep
 
 data Fundeps = Fundeps
-  { fundep :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (Fundep)),
+  { fundep :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Fundep))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2081,7 +2081,7 @@ cast_Fundeps dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   fundep <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "fundep" namedMap))
-  fundep <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast fundep" (AST.Runtime.castManyToNonEmpty fundep))
+  fundep <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr fundep))
   Prelude.pure
     Fundeps
       { fundep,
@@ -2095,11 +2095,11 @@ instance AST.Cast.Cast Fundeps where
   cast = cast_Fundeps
 
 data GadtConstructor = GadtConstructor
-  { context :: AST.Err.Err (Prelude.Maybe (Context)),
-    forall' :: AST.Err.Err (Prelude.Maybe ((Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil))),
-    name :: AST.Err.Err (Prelude.Maybe ((Constructor Sum.:+ PrefixId Sum.:+ Sum.Nil))),
-    names :: AST.Err.Err (Prelude.Maybe (BindingList)),
-    type' :: AST.Err.Err (((Prefix Sum.:+ Record Sum.:+ Sum.Nil))),
+  { context :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Context))),
+    forall' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil)))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Constructor Sum.:+ PrefixId Sum.:+ Sum.Nil)))),
+    names :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (BindingList))),
+    type' :: AST.Err.Err ((AST.Err.Err ((Prefix Sum.:+ Record Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2110,15 +2110,15 @@ cast_GadtConstructor dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   context <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "context" namedMap))
-  context <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast context" (AST.Runtime.castManyToMaybe context))
+  context <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr context))
   forall' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "forall" namedMap))
-  forall' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast forall'" (AST.Runtime.castManyToMaybe forall'))
+  forall' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr forall'))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   names <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "names" namedMap))
-  names <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast names" (AST.Runtime.castManyToMaybe names))
+  names <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr names))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToSingle type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     GadtConstructor
       { context,
@@ -2136,7 +2136,7 @@ instance AST.Cast.Cast GadtConstructor where
   cast = cast_GadtConstructor
 
 data GadtConstructors = GadtConstructors
-  { constructor :: AST.Err.Err (AST.Runtime.List (GadtConstructor)),
+  { constructor :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (GadtConstructor))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2147,7 +2147,7 @@ cast_GadtConstructors dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   constructor <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructor" namedMap))
-  constructor <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast constructor" (AST.Runtime.castManyToList constructor))
+  constructor <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr constructor))
   Prelude.pure
     GadtConstructors
       { constructor,
@@ -2161,9 +2161,9 @@ instance AST.Cast.Cast GadtConstructors where
   cast = cast_GadtConstructors
 
 data Generator = Generator
-  { arrow :: AST.Err.Err ((((AST.Token.Token "<-") Sum.:+ (AST.Token.Token "←") Sum.:+ Sum.Nil))),
-    expression :: AST.Err.Err (((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    pattern' :: AST.Err.Err (((Pattern Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { arrow :: AST.Err.Err ((AST.Err.Err (((AST.Token.Token "<-") Sum.:+ (AST.Token.Token "←") Sum.:+ Sum.Nil)))),
+    expression :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    pattern' :: AST.Err.Err ((AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2174,11 +2174,11 @@ cast_Generator dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   arrow <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "arrow" namedMap))
-  arrow <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast arrow" (AST.Runtime.castManyToSingle arrow))
+  arrow <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr arrow))
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
-  expression <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast expression" (AST.Runtime.castManyToSingle expression))
+  expression <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr expression))
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
-  pattern' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast pattern'" (AST.Runtime.castManyToSingle pattern'))
+  pattern' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr pattern'))
   Prelude.pure
     Generator
       { arrow,
@@ -2194,8 +2194,8 @@ instance AST.Cast.Cast Generator where
   cast = cast_Generator
 
 data Group = Group
-  { classifier :: AST.Err.Err (((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    key :: AST.Err.Err (Prelude.Maybe ((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { classifier :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    key :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2206,9 +2206,9 @@ cast_Group dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   classifier <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "classifier" namedMap))
-  classifier <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast classifier" (AST.Runtime.castManyToSingle classifier))
+  classifier <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr classifier))
   key <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "key" namedMap))
-  key <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast key" (AST.Runtime.castManyToMaybe key))
+  key <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr key))
   Prelude.pure
     Group
       { classifier,
@@ -2223,7 +2223,7 @@ instance AST.Cast.Cast Group where
   cast = cast_Group
 
 data Guards = Guards
-  { guard :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (Guard)),
+  { guard :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Guard))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2234,7 +2234,7 @@ cast_Guards dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   guard <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "guard" namedMap))
-  guard <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast guard" (AST.Runtime.castManyToNonEmpty guard))
+  guard <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr guard))
   Prelude.pure
     Guards
       { guard,
@@ -2248,9 +2248,9 @@ instance AST.Cast.Cast Guards where
   cast = cast_Guards
 
 data Haskell = Haskell
-  { children :: AST.Err.Err (Prelude.Maybe (Header)),
-    declarations :: AST.Err.Err (Prelude.Maybe (Declarations)),
-    imports :: AST.Err.Err (Prelude.Maybe (Imports)),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Header))),
+    declarations :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Declarations))),
+    imports :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Imports))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2261,11 +2261,11 @@ cast_Haskell dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   declarations <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "declarations" namedMap))
-  declarations <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast declarations" (AST.Runtime.castManyToMaybe declarations))
+  declarations <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr declarations))
   imports <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "imports" namedMap))
-  imports <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast imports" (AST.Runtime.castManyToMaybe imports))
+  imports <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr imports))
   Prelude.pure
     Haskell
       { children,
@@ -2281,8 +2281,8 @@ instance AST.Cast.Cast Haskell where
   cast = cast_Haskell
 
 data Header = Header
-  { exports :: AST.Err.Err (Prelude.Maybe (Exports)),
-    module' :: AST.Err.Err ((Module)),
+  { exports :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Exports))),
+    module' :: AST.Err.Err ((AST.Err.Err (Module))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2293,9 +2293,9 @@ cast_Header dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   exports <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "exports" namedMap))
-  exports <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast exports" (AST.Runtime.castManyToMaybe exports))
+  exports <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr exports))
   module' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "module" namedMap))
-  module' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast module'" (AST.Runtime.castManyToSingle module'))
+  module' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr module'))
   Prelude.pure
     Header
       { exports,
@@ -2310,8 +2310,8 @@ instance AST.Cast.Cast Header where
   cast = cast_Header
 
 data ImplicitParameter = ImplicitParameter
-  { name :: AST.Err.Err ((ImplicitVariable)),
-    type' :: AST.Err.Err ((QuantifiedType)),
+  { name :: AST.Err.Err ((AST.Err.Err (ImplicitVariable))),
+    type' :: AST.Err.Err ((AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2322,9 +2322,9 @@ cast_ImplicitParameter dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToSingle name))
+  name <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr name))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToSingle type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     ImplicitParameter
       { name,
@@ -2339,10 +2339,10 @@ instance AST.Cast.Cast ImplicitParameter where
   cast = cast_ImplicitParameter
 
 data Import = Import
-  { alias :: AST.Err.Err (Prelude.Maybe (Module)),
-    module' :: AST.Err.Err ((Module)),
-    names :: AST.Err.Err (Prelude.Maybe (ImportList)),
-    package :: AST.Err.Err (Prelude.Maybe (ImportPackage)),
+  { alias :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Module))),
+    module' :: AST.Err.Err ((AST.Err.Err (Module))),
+    names :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (ImportList))),
+    package :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (ImportPackage))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2353,13 +2353,13 @@ cast_Import dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   alias <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "alias" namedMap))
-  alias <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast alias" (AST.Runtime.castManyToMaybe alias))
+  alias <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr alias))
   module' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "module" namedMap))
-  module' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast module'" (AST.Runtime.castManyToSingle module'))
+  module' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr module'))
   names <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "names" namedMap))
-  names <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast names" (AST.Runtime.castManyToMaybe names))
+  names <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr names))
   package <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "package" namedMap))
-  package <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast package" (AST.Runtime.castManyToMaybe package))
+  package <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr package))
   Prelude.pure
     Import
       { alias,
@@ -2376,7 +2376,7 @@ instance AST.Cast.Cast Import where
   cast = cast_Import
 
 data ImportList = ImportList
-  { name :: AST.Err.Err (AST.Runtime.List (ImportName)),
+  { name :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (ImportName))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2387,7 +2387,7 @@ cast_ImportList dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToList name))
+  name <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr name))
   Prelude.pure
     ImportList
       { name,
@@ -2401,11 +2401,11 @@ instance AST.Cast.Cast ImportList where
   cast = cast_ImportList
 
 data ImportName = ImportName
-  { childrenSQuote :: AST.Err.Err (Prelude.Maybe (Children)),
-    namespace :: AST.Err.Err (Prelude.Maybe (Namespace)),
-    operator :: AST.Err.Err (Prelude.Maybe (PrefixId)),
-    type' :: AST.Err.Err (Prelude.Maybe ((Name Sum.:+ Qualified Sum.:+ Sum.Nil))),
-    variable :: AST.Err.Err (Prelude.Maybe ((Qualified Sum.:+ Variable Sum.:+ Sum.Nil))),
+  { childrenSQuote :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Children))),
+    namespace :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Namespace))),
+    operator :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (PrefixId))),
+    type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Name Sum.:+ Qualified Sum.:+ Sum.Nil)))),
+    variable :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2416,15 +2416,15 @@ cast_ImportName dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   childrenSQuote <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children'" namedMap))
-  childrenSQuote <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast childrenSQuote" (AST.Runtime.castManyToMaybe childrenSQuote))
+  childrenSQuote <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr childrenSQuote))
   namespace <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "namespace" namedMap))
-  namespace <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast namespace" (AST.Runtime.castManyToMaybe namespace))
+  namespace <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr namespace))
   operator <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "operator" namedMap))
-  operator <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast operator" (AST.Runtime.castManyToMaybe operator))
+  operator <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr operator))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToMaybe type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr type'))
   variable <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "variable" namedMap))
-  variable <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast variable" (AST.Runtime.castManyToMaybe variable))
+  variable <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr variable))
   Prelude.pure
     ImportName
       { childrenSQuote,
@@ -2442,7 +2442,7 @@ instance AST.Cast.Cast ImportName where
   cast = cast_ImportName
 
 data Imports = Imports
-  { import' :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (Import)),
+  { import' :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Import))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2453,7 +2453,7 @@ cast_Imports dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   import' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "import" namedMap))
-  import' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast import'" (AST.Runtime.castManyToNonEmpty import'))
+  import' <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr import'))
   Prelude.pure
     Imports
       { import',
@@ -2467,7 +2467,7 @@ instance AST.Cast.Cast Imports where
   cast = cast_Imports
 
 data Inferred = Inferred
-  { children :: AST.Err.Err (((Annotated Sum.:+ TypeParam Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err ((AST.Err.Err ((Annotated Sum.:+ TypeParam Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2478,7 +2478,7 @@ cast_Inferred dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     Inferred
       { children,
@@ -2492,9 +2492,9 @@ instance AST.Cast.Cast Inferred where
   cast = cast_Inferred
 
 data Infix = Infix
-  { leftOperand :: AST.Err.Err (((Expression Sum.:+ LazyField Sum.:+ Pattern Sum.:+ StrictField Sum.:+ Type Sum.:+ TypeParam Sum.:+ Sum.Nil))),
-    operator :: AST.Err.Err (Data.List.NonEmpty.NonEmpty ((ConstructorOperator Sum.:+ InfixId Sum.:+ Operator Sum.:+ Promoted Sum.:+ Qualified Sum.:+ Sum.Nil))),
-    rightOperand :: AST.Err.Err (((Expression Sum.:+ LazyField Sum.:+ Pattern Sum.:+ StrictField Sum.:+ Type Sum.:+ TypeParam Sum.:+ Sum.Nil))),
+  { leftOperand :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ LazyField Sum.:+ Pattern Sum.:+ StrictField Sum.:+ Type Sum.:+ TypeParam Sum.:+ Sum.Nil)))),
+    operator :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((ConstructorOperator Sum.:+ InfixId Sum.:+ Operator Sum.:+ Promoted Sum.:+ Qualified Sum.:+ Sum.Nil)))),
+    rightOperand :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ LazyField Sum.:+ Pattern Sum.:+ StrictField Sum.:+ Type Sum.:+ TypeParam Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2505,11 +2505,11 @@ cast_Infix dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   leftOperand <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "left_operand" namedMap))
-  leftOperand <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast leftOperand" (AST.Runtime.castManyToSingle leftOperand))
+  leftOperand <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr leftOperand))
   operator <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "operator" namedMap))
-  operator <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast operator" (AST.Runtime.castManyToNonEmpty operator))
+  operator <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr operator))
   rightOperand <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "right_operand" namedMap))
-  rightOperand <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast rightOperand" (AST.Runtime.castManyToSingle rightOperand))
+  rightOperand <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr rightOperand))
   Prelude.pure
     Infix
       { leftOperand,
@@ -2525,7 +2525,7 @@ instance AST.Cast.Cast Infix where
   cast = cast_Infix
 
 data InfixId = InfixId
-  { children :: AST.Err.Err (((Constructor Sum.:+ Name Sum.:+ Qualified Sum.:+ Variable Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err ((AST.Err.Err ((Constructor Sum.:+ Name Sum.:+ Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2536,7 +2536,7 @@ cast_InfixId dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     InfixId
       { children,
@@ -2550,12 +2550,12 @@ instance AST.Cast.Cast InfixId where
   cast = cast_InfixId
 
 data Instance = Instance
-  { children :: AST.Err.Err (Prelude.Maybe ((Infix Sum.:+ Parens Sum.:+ Sum.Nil))),
-    context :: AST.Err.Err (Prelude.Maybe (Context)),
-    declarations :: AST.Err.Err (Prelude.Maybe (InstanceDeclarations)),
-    forall' :: AST.Err.Err (Prelude.Maybe ((Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil))),
-    name :: AST.Err.Err (Prelude.Maybe ((Name Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Sum.Nil))),
-    patterns :: AST.Err.Err (Prelude.Maybe (TypePatterns)),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ Sum.Nil)))),
+    context :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Context))),
+    declarations :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (InstanceDeclarations))),
+    forall' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil)))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Name Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Sum.Nil)))),
+    patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (TypePatterns))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2566,17 +2566,17 @@ cast_Instance dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   context <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "context" namedMap))
-  context <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast context" (AST.Runtime.castManyToMaybe context))
+  context <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr context))
   declarations <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "declarations" namedMap))
-  declarations <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast declarations" (AST.Runtime.castManyToMaybe declarations))
+  declarations <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr declarations))
   forall' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "forall" namedMap))
-  forall' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast forall'" (AST.Runtime.castManyToMaybe forall'))
+  forall' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr forall'))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
-  patterns <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast patterns" (AST.Runtime.castManyToMaybe patterns))
+  patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   Prelude.pure
     Instance
       { children,
@@ -2595,7 +2595,7 @@ instance AST.Cast.Cast Instance where
   cast = cast_Instance
 
 data InstanceDeclarations = InstanceDeclarations
-  { declaration :: AST.Err.Err (AST.Runtime.List (InstanceDecl)),
+  { declaration :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (InstanceDecl))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2606,7 +2606,7 @@ cast_InstanceDeclarations dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   declaration <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "declaration" namedMap))
-  declaration <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast declaration" (AST.Runtime.castManyToList declaration))
+  declaration <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr declaration))
   Prelude.pure
     InstanceDeclarations
       { declaration,
@@ -2631,7 +2631,7 @@ instance AST.Cast.Cast Integer where
     Prelude.pure (Integer {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Invisible = Invisible
-  { bind :: AST.Err.Err ((TypeParam)),
+  { bind :: AST.Err.Err ((AST.Err.Err (TypeParam))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2642,7 +2642,7 @@ cast_Invisible dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   bind <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "bind" namedMap))
-  bind <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast bind" (AST.Runtime.castManyToSingle bind))
+  bind <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr bind))
   Prelude.pure
     Invisible
       { bind,
@@ -2656,7 +2656,7 @@ instance AST.Cast.Cast Invisible where
   cast = cast_Invisible
 
 data Irrefutable = Irrefutable
-  { pattern' :: AST.Err.Err ((Pattern)),
+  { pattern' :: AST.Err.Err ((AST.Err.Err (Pattern))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2667,7 +2667,7 @@ cast_Irrefutable dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
-  pattern' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast pattern'" (AST.Runtime.castManyToSingle pattern'))
+  pattern' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr pattern'))
   Prelude.pure
     Irrefutable
       { pattern',
@@ -2681,7 +2681,7 @@ instance AST.Cast.Cast Irrefutable where
   cast = cast_Irrefutable
 
 data KindApplication = KindApplication
-  { type' :: AST.Err.Err ((Type)),
+  { type' :: AST.Err.Err ((AST.Err.Err (Type))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2692,7 +2692,7 @@ cast_KindApplication dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToSingle type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     KindApplication
       { type',
@@ -2706,10 +2706,10 @@ instance AST.Cast.Cast KindApplication where
   cast = cast_KindApplication
 
 data KindSignature = KindSignature
-  { children :: AST.Err.Err (Prelude.Maybe ((Infix Sum.:+ Parens Sum.:+ Sum.Nil))),
-    kind :: AST.Err.Err ((QuantifiedType)),
-    name :: AST.Err.Err (Prelude.Maybe ((Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Unit Sum.:+ Sum.Nil))),
-    patterns :: AST.Err.Err (Prelude.Maybe (TypeParams)),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ Sum.Nil)))),
+    kind :: AST.Err.Err ((AST.Err.Err (QuantifiedType))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Unit Sum.:+ Sum.Nil)))),
+    patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (TypeParams))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2720,13 +2720,13 @@ cast_KindSignature dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   kind <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "kind" namedMap))
-  kind <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast kind" (AST.Runtime.castManyToSingle kind))
+  kind <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr kind))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
-  patterns <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast patterns" (AST.Runtime.castManyToMaybe patterns))
+  patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   Prelude.pure
     KindSignature
       { children,
@@ -2743,8 +2743,8 @@ instance AST.Cast.Cast KindSignature where
   cast = cast_KindSignature
 
 data Lambda = Lambda
-  { expression :: AST.Err.Err (((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    patterns :: AST.Err.Err ((Patterns)),
+  { expression :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    patterns :: AST.Err.Err ((AST.Err.Err (Patterns))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2755,9 +2755,9 @@ cast_Lambda dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
-  expression <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast expression" (AST.Runtime.castManyToSingle expression))
+  expression <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr expression))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
-  patterns <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast patterns" (AST.Runtime.castManyToSingle patterns))
+  patterns <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr patterns))
   Prelude.pure
     Lambda
       { expression,
@@ -2772,7 +2772,7 @@ instance AST.Cast.Cast Lambda where
   cast = cast_Lambda
 
 data LambdaCase = LambdaCase
-  { alternatives :: AST.Err.Err (Prelude.Maybe (Alternatives)),
+  { alternatives :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Alternatives))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2783,7 +2783,7 @@ cast_LambdaCase dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   alternatives <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "alternatives" namedMap))
-  alternatives <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast alternatives" (AST.Runtime.castManyToMaybe alternatives))
+  alternatives <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr alternatives))
   Prelude.pure
     LambdaCase
       { alternatives,
@@ -2797,7 +2797,7 @@ instance AST.Cast.Cast LambdaCase where
   cast = cast_LambdaCase
 
 data LambdaCases = LambdaCases
-  { alternatives :: AST.Err.Err (Prelude.Maybe (Alternatives)),
+  { alternatives :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Alternatives))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2808,7 +2808,7 @@ cast_LambdaCases dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   alternatives <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "alternatives" namedMap))
-  alternatives <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast alternatives" (AST.Runtime.castManyToMaybe alternatives))
+  alternatives <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr alternatives))
   Prelude.pure
     LambdaCases
       { alternatives,
@@ -2822,7 +2822,7 @@ instance AST.Cast.Cast LambdaCases where
   cast = cast_LambdaCases
 
 data LazyField = LazyField
-  { type' :: AST.Err.Err ((Type)),
+  { type' :: AST.Err.Err ((AST.Err.Err (Type))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2833,7 +2833,7 @@ cast_LazyField dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToSingle type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     LazyField
       { type',
@@ -2847,8 +2847,8 @@ instance AST.Cast.Cast LazyField where
   cast = cast_LazyField
 
 data LeftSection = LeftSection
-  { leftOperand :: AST.Err.Err ((Expression)),
-    operator :: AST.Err.Err (((ConstructorOperator Sum.:+ InfixId Sum.:+ Operator Sum.:+ Qualified Sum.:+ Sum.Nil))),
+  { leftOperand :: AST.Err.Err ((AST.Err.Err (Expression))),
+    operator :: AST.Err.Err ((AST.Err.Err ((ConstructorOperator Sum.:+ InfixId Sum.:+ Operator Sum.:+ Qualified Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2859,9 +2859,9 @@ cast_LeftSection dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   leftOperand <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "left_operand" namedMap))
-  leftOperand <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast leftOperand" (AST.Runtime.castManyToSingle leftOperand))
+  leftOperand <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr leftOperand))
   operator <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "operator" namedMap))
-  operator <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast operator" (AST.Runtime.castManyToSingle operator))
+  operator <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr operator))
   Prelude.pure
     LeftSection
       { leftOperand,
@@ -2876,7 +2876,7 @@ instance AST.Cast.Cast LeftSection where
   cast = cast_LeftSection
 
 data Let = Let
-  { binds :: AST.Err.Err (Prelude.Maybe (LocalBinds)),
+  { binds :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (LocalBinds))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2887,7 +2887,7 @@ cast_Let dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   binds <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "binds" namedMap))
-  binds <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast binds" (AST.Runtime.castManyToMaybe binds))
+  binds <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr binds))
   Prelude.pure
     Let
       { binds,
@@ -2901,8 +2901,8 @@ instance AST.Cast.Cast Let where
   cast = cast_Let
 
 data LetIn = LetIn
-  { binds :: AST.Err.Err (Prelude.Maybe (LocalBinds)),
-    expression :: AST.Err.Err (((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { binds :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (LocalBinds))),
+    expression :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2913,9 +2913,9 @@ cast_LetIn dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   binds <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "binds" namedMap))
-  binds <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast binds" (AST.Runtime.castManyToMaybe binds))
+  binds <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr binds))
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
-  expression <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast expression" (AST.Runtime.castManyToSingle expression))
+  expression <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr expression))
   Prelude.pure
     LetIn
       { binds,
@@ -2930,10 +2930,10 @@ instance AST.Cast.Cast LetIn where
   cast = cast_LetIn
 
 data LinearFunction = LinearFunction
-  { arrow :: AST.Err.Err ((((AST.Token.Token "->") Sum.:+ (AST.Token.Token "->.") Sum.:+ (AST.Token.Token "→") Sum.:+ (AST.Token.Token "⊸") Sum.:+ Sum.Nil))),
-    multiplicity :: AST.Err.Err (Prelude.Maybe (Modifier)),
-    parameter :: AST.Err.Err (((LazyField Sum.:+ QuantifiedType Sum.:+ StrictField Sum.:+ Sum.Nil))),
-    result :: AST.Err.Err ((QuantifiedType)),
+  { arrow :: AST.Err.Err ((AST.Err.Err (((AST.Token.Token "->") Sum.:+ (AST.Token.Token "->.") Sum.:+ (AST.Token.Token "→") Sum.:+ (AST.Token.Token "⊸") Sum.:+ Sum.Nil)))),
+    multiplicity :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Modifier))),
+    parameter :: AST.Err.Err ((AST.Err.Err ((LazyField Sum.:+ QuantifiedType Sum.:+ StrictField Sum.:+ Sum.Nil)))),
+    result :: AST.Err.Err ((AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2944,13 +2944,13 @@ cast_LinearFunction dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   arrow <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "arrow" namedMap))
-  arrow <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast arrow" (AST.Runtime.castManyToSingle arrow))
+  arrow <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr arrow))
   multiplicity <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "multiplicity" namedMap))
-  multiplicity <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast multiplicity" (AST.Runtime.castManyToMaybe multiplicity))
+  multiplicity <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr multiplicity))
   parameter <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "parameter" namedMap))
-  parameter <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast parameter" (AST.Runtime.castManyToSingle parameter))
+  parameter <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr parameter))
   result <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "result" namedMap))
-  result <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast result" (AST.Runtime.castManyToSingle result))
+  result <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr result))
   Prelude.pure
     LinearFunction
       { arrow,
@@ -2967,7 +2967,7 @@ instance AST.Cast.Cast LinearFunction where
   cast = cast_LinearFunction
 
 data List = List
-  { element :: AST.Err.Err (AST.Runtime.List ((Expression Sum.:+ Pattern Sum.:+ QuantifiedType Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil))),
+  { element :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((Expression Sum.:+ Pattern Sum.:+ QuantifiedType Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -2978,7 +2978,7 @@ cast_List dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   element <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "element" namedMap))
-  element <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast element" (AST.Runtime.castManyToList element))
+  element <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr element))
   Prelude.pure
     List
       { element,
@@ -2992,8 +2992,8 @@ instance AST.Cast.Cast List where
   cast = cast_List
 
 data ListComprehension = ListComprehension
-  { expression :: AST.Err.Err (((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    qualifiers :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (Qualifiers)),
+  { expression :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    qualifiers :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Qualifiers))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3004,9 +3004,9 @@ cast_ListComprehension dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
-  expression <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast expression" (AST.Runtime.castManyToSingle expression))
+  expression <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr expression))
   qualifiers <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "qualifiers" namedMap))
-  qualifiers <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast qualifiers" (AST.Runtime.castManyToNonEmpty qualifiers))
+  qualifiers <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr qualifiers))
   Prelude.pure
     ListComprehension
       { expression,
@@ -3021,7 +3021,7 @@ instance AST.Cast.Cast ListComprehension where
   cast = cast_ListComprehension
 
 data Literal = Literal
-  { children :: AST.Err.Err (((Char Sum.:+ Float Sum.:+ Integer Sum.:+ String Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err ((AST.Err.Err ((Char Sum.:+ Float Sum.:+ Integer Sum.:+ String Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3032,7 +3032,7 @@ cast_Literal dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     Literal
       { children,
@@ -3046,7 +3046,7 @@ instance AST.Cast.Cast Literal where
   cast = cast_Literal
 
 data LocalBinds = LocalBinds
-  { decl :: AST.Err.Err (AST.Runtime.List ((Decl Sum.:+ Fixity Sum.:+ Sum.Nil))),
+  { decl :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((Decl Sum.:+ Fixity Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3057,7 +3057,7 @@ cast_LocalBinds dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   decl <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "decl" namedMap))
-  decl <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast decl" (AST.Runtime.castManyToList decl))
+  decl <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr decl))
   Prelude.pure
     LocalBinds
       { decl,
@@ -3071,8 +3071,8 @@ instance AST.Cast.Cast LocalBinds where
   cast = cast_LocalBinds
 
 data Match = Match
-  { expression :: AST.Err.Err (((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    guards :: AST.Err.Err (Prelude.Maybe (Guards)),
+  { expression :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    guards :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Guards))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3083,9 +3083,9 @@ cast_Match dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
-  expression <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast expression" (AST.Runtime.castManyToSingle expression))
+  expression <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr expression))
   guards <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "guards" namedMap))
-  guards <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast guards" (AST.Runtime.castManyToMaybe guards))
+  guards <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr guards))
   Prelude.pure
     Match
       { expression,
@@ -3100,7 +3100,7 @@ instance AST.Cast.Cast Match where
   cast = cast_Match
 
 data Modifier = Modifier
-  { children :: AST.Err.Err ((Type)),
+  { children :: AST.Err.Err ((AST.Err.Err (Type))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3111,7 +3111,7 @@ cast_Modifier dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     Modifier
       { children,
@@ -3125,7 +3125,7 @@ instance AST.Cast.Cast Modifier where
   cast = cast_Modifier
 
 data Module = Module
-  { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (ModuleId)),
+  { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (ModuleId))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3136,7 +3136,7 @@ cast_Module dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToNonEmpty children))
+  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     Module
       { children,
@@ -3150,7 +3150,7 @@ instance AST.Cast.Cast Module where
   cast = cast_Module
 
 data ModuleExport = ModuleExport
-  { module' :: AST.Err.Err ((Module)),
+  { module' :: AST.Err.Err ((AST.Err.Err (Module))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3161,7 +3161,7 @@ cast_ModuleExport dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   module' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "module" namedMap))
-  module' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast module'" (AST.Runtime.castManyToSingle module'))
+  module' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr module'))
   Prelude.pure
     ModuleExport
       { module',
@@ -3175,7 +3175,7 @@ instance AST.Cast.Cast ModuleExport where
   cast = cast_ModuleExport
 
 data MultiWayIf = MultiWayIf
-  { match :: AST.Err.Err (AST.Runtime.List (Match)),
+  { match :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Match))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3186,7 +3186,7 @@ cast_MultiWayIf dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   match <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "match" namedMap))
-  match <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast match" (AST.Runtime.castManyToList match))
+  match <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr match))
   Prelude.pure
     MultiWayIf
       { match,
@@ -3211,9 +3211,9 @@ instance AST.Cast.Cast Namespace where
     Prelude.pure (Namespace {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Negation = Negation
-  { expression :: AST.Err.Err (Prelude.Maybe (Expression)),
-    minus :: AST.Err.Err (Prelude.Maybe ((AST.Token.Token "-"))),
-    number :: AST.Err.Err (Prelude.Maybe ((Float Sum.:+ Integer Sum.:+ Sum.Nil))),
+  { expression :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Expression))),
+    minus :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((AST.Token.Token "-")))),
+    number :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Float Sum.:+ Integer Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3224,11 +3224,11 @@ cast_Negation dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
-  expression <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast expression" (AST.Runtime.castManyToMaybe expression))
+  expression <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr expression))
   minus <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "minus" namedMap))
-  minus <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast minus" (AST.Runtime.castManyToMaybe minus))
+  minus <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr minus))
   number <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "number" namedMap))
-  number <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast number" (AST.Runtime.castManyToMaybe number))
+  number <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr number))
   Prelude.pure
     Negation
       { expression,
@@ -3244,15 +3244,15 @@ instance AST.Cast.Cast Negation where
   cast = cast_Negation
 
 data Newtype = Newtype
-  { children :: AST.Err.Err (Prelude.Maybe ((Infix Sum.:+ Parens Sum.:+ Sum.Nil))),
-    constructor :: AST.Err.Err (Prelude.Maybe (NewtypeConstructor)),
-    constructors :: AST.Err.Err (Prelude.Maybe (GadtConstructors)),
-    context :: AST.Err.Err (Prelude.Maybe (Context)),
-    deriving' :: AST.Err.Err (AST.Runtime.List (Deriving)),
-    forall' :: AST.Err.Err (Prelude.Maybe ((Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil))),
-    kind :: AST.Err.Err (Prelude.Maybe (QuantifiedType)),
-    name :: AST.Err.Err (Prelude.Maybe ((Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Qualified Sum.:+ Unit Sum.:+ Sum.Nil))),
-    patterns :: AST.Err.Err (Prelude.Maybe ((TypeParams Sum.:+ TypePatterns Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ Sum.Nil)))),
+    constructor :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (NewtypeConstructor))),
+    constructors :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (GadtConstructors))),
+    context :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Context))),
+    deriving' :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Deriving))),
+    forall' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil)))),
+    kind :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Qualified Sum.:+ Unit Sum.:+ Sum.Nil)))),
+    patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((TypeParams Sum.:+ TypePatterns Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3263,23 +3263,23 @@ cast_Newtype dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   constructor <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructor" namedMap))
-  constructor <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast constructor" (AST.Runtime.castManyToMaybe constructor))
+  constructor <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr constructor))
   constructors <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructors" namedMap))
-  constructors <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast constructors" (AST.Runtime.castManyToMaybe constructors))
+  constructors <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr constructors))
   context <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "context" namedMap))
-  context <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast context" (AST.Runtime.castManyToMaybe context))
+  context <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr context))
   deriving' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "deriving" namedMap))
-  deriving' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast deriving'" (AST.Runtime.castManyToList deriving'))
+  deriving' <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr deriving'))
   forall' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "forall" namedMap))
-  forall' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast forall'" (AST.Runtime.castManyToMaybe forall'))
+  forall' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr forall'))
   kind <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "kind" namedMap))
-  kind <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast kind" (AST.Runtime.castManyToMaybe kind))
+  kind <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr kind))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
-  patterns <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast patterns" (AST.Runtime.castManyToMaybe patterns))
+  patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   Prelude.pure
     Newtype
       { children,
@@ -3301,8 +3301,8 @@ instance AST.Cast.Cast Newtype where
   cast = cast_Newtype
 
 data NewtypeConstructor = NewtypeConstructor
-  { field :: AST.Err.Err (((Field Sum.:+ Record Sum.:+ Sum.Nil))),
-    name :: AST.Err.Err (((Constructor Sum.:+ PrefixId Sum.:+ Sum.Nil))),
+  { field :: AST.Err.Err ((AST.Err.Err ((Field Sum.:+ Record Sum.:+ Sum.Nil)))),
+    name :: AST.Err.Err ((AST.Err.Err ((Constructor Sum.:+ PrefixId Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3313,9 +3313,9 @@ cast_NewtypeConstructor dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   field <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "field" namedMap))
-  field <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast field" (AST.Runtime.castManyToSingle field))
+  field <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr field))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToSingle name))
+  name <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr name))
   Prelude.pure
     NewtypeConstructor
       { field,
@@ -3341,13 +3341,13 @@ instance AST.Cast.Cast Operator where
     Prelude.pure (Operator {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Parens = Parens
-  { children :: AST.Err.Err (Prelude.Maybe ((Annotated Sum.:+ Constraints Sum.:+ Infix Sum.:+ TypeParam Sum.:+ Sum.Nil))),
-    expression :: AST.Err.Err (Prelude.Maybe ((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    kind :: AST.Err.Err (Prelude.Maybe (QuantifiedType)),
-    name :: AST.Err.Err (Prelude.Maybe ((Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Qualified Sum.:+ Unit Sum.:+ Sum.Nil))),
-    pattern' :: AST.Err.Err (Prelude.Maybe ((Pattern Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil))),
-    patterns :: AST.Err.Err (Prelude.Maybe ((TypeParams Sum.:+ TypePatterns Sum.:+ Sum.Nil))),
-    type' :: AST.Err.Err (Prelude.Maybe ((QuantifiedType Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Annotated Sum.:+ Constraints Sum.:+ Infix Sum.:+ TypeParam Sum.:+ Sum.Nil)))),
+    expression :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    kind :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Qualified Sum.:+ Unit Sum.:+ Sum.Nil)))),
+    pattern' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
+    patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((TypeParams Sum.:+ TypePatterns Sum.:+ Sum.Nil)))),
+    type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((QuantifiedType Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3358,19 +3358,19 @@ cast_Parens dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
-  expression <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast expression" (AST.Runtime.castManyToMaybe expression))
+  expression <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr expression))
   kind <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "kind" namedMap))
-  kind <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast kind" (AST.Runtime.castManyToMaybe kind))
+  kind <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr kind))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
-  pattern' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast pattern'" (AST.Runtime.castManyToMaybe pattern'))
+  pattern' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr pattern'))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
-  patterns <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast patterns" (AST.Runtime.castManyToMaybe patterns))
+  patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToMaybe type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     Parens
       { children,
@@ -3390,9 +3390,9 @@ instance AST.Cast.Cast Parens where
   cast = cast_Parens
 
 data PatternGuard = PatternGuard
-  { arrow :: AST.Err.Err ((((AST.Token.Token "<-") Sum.:+ (AST.Token.Token "←") Sum.:+ Sum.Nil))),
-    expression :: AST.Err.Err (((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    pattern' :: AST.Err.Err (((Pattern Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { arrow :: AST.Err.Err ((AST.Err.Err (((AST.Token.Token "<-") Sum.:+ (AST.Token.Token "←") Sum.:+ Sum.Nil)))),
+    expression :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    pattern' :: AST.Err.Err ((AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3403,11 +3403,11 @@ cast_PatternGuard dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   arrow <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "arrow" namedMap))
-  arrow <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast arrow" (AST.Runtime.castManyToSingle arrow))
+  arrow <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr arrow))
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
-  expression <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast expression" (AST.Runtime.castManyToSingle expression))
+  expression <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr expression))
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
-  pattern' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast pattern'" (AST.Runtime.castManyToSingle pattern'))
+  pattern' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr pattern'))
   Prelude.pure
     PatternGuard
       { arrow,
@@ -3423,7 +3423,7 @@ instance AST.Cast.Cast PatternGuard where
   cast = cast_PatternGuard
 
 data PatternSynonym = PatternSynonym
-  { children :: AST.Err.Err (((Equation Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err ((AST.Err.Err ((Equation Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3434,7 +3434,7 @@ cast_PatternSynonym dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     PatternSynonym
       { children,
@@ -3448,7 +3448,7 @@ instance AST.Cast.Cast PatternSynonym where
   cast = cast_PatternSynonym
 
 data Patterns = Patterns
-  { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty ((ExplicitType Sum.:+ Pattern Sum.:+ TypeBinder Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((ExplicitType Sum.:+ Pattern Sum.:+ TypeBinder Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3459,7 +3459,7 @@ cast_Patterns dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToNonEmpty children))
+  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     Patterns
       { children,
@@ -3473,9 +3473,9 @@ instance AST.Cast.Cast Patterns where
   cast = cast_Patterns
 
 data Prefix = Prefix
-  { field :: AST.Err.Err (AST.Runtime.List ((LazyField Sum.:+ StrictField Sum.:+ Type Sum.:+ Sum.Nil))),
-    name :: AST.Err.Err (Prelude.Maybe ((Constructor Sum.:+ PrefixId Sum.:+ Sum.Nil))),
-    type' :: AST.Err.Err (Prelude.Maybe (QuantifiedType)),
+  { field :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((LazyField Sum.:+ StrictField Sum.:+ Type Sum.:+ Sum.Nil)))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Constructor Sum.:+ PrefixId Sum.:+ Sum.Nil)))),
+    type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3486,11 +3486,11 @@ cast_Prefix dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   field <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "field" namedMap))
-  field <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast field" (AST.Runtime.castManyToList field))
+  field <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr field))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToMaybe type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     Prefix
       { field,
@@ -3506,7 +3506,7 @@ instance AST.Cast.Cast Prefix where
   cast = cast_Prefix
 
 data PrefixId = PrefixId
-  { children :: AST.Err.Err (((ConstructorOperator Sum.:+ Operator Sum.:+ Qualified Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err ((AST.Err.Err ((ConstructorOperator Sum.:+ Operator Sum.:+ Qualified Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3517,7 +3517,7 @@ cast_PrefixId dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     PrefixId
       { children,
@@ -3575,8 +3575,8 @@ instance AST.Cast.Cast PrefixUnboxedTuple where
     Prelude.pure (PrefixUnboxedTuple {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Projection = Projection
-  { expression :: AST.Err.Err ((Expression)),
-    field :: AST.Err.Err ((FieldName)),
+  { expression :: AST.Err.Err ((AST.Err.Err (Expression))),
+    field :: AST.Err.Err ((AST.Err.Err (FieldName))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3587,9 +3587,9 @@ cast_Projection dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
-  expression <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast expression" (AST.Runtime.castManyToSingle expression))
+  expression <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr expression))
   field <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "field" namedMap))
-  field <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast field" (AST.Runtime.castManyToSingle field))
+  field <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr field))
   Prelude.pure
     Projection
       { expression,
@@ -3604,7 +3604,7 @@ instance AST.Cast.Cast Projection where
   cast = cast_Projection
 
 data ProjectionSelector = ProjectionSelector
-  { field :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (Variable)),
+  { field :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Variable))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3615,7 +3615,7 @@ cast_ProjectionSelector dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   field <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "field" namedMap))
-  field <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast field" (AST.Runtime.castManyToNonEmpty field))
+  field <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr field))
   Prelude.pure
     ProjectionSelector
       { field,
@@ -3629,7 +3629,7 @@ instance AST.Cast.Cast ProjectionSelector where
   cast = cast_ProjectionSelector
 
 data Promoted = Promoted
-  { children :: AST.Err.Err (((Constructor Sum.:+ ConstructorOperator Sum.:+ EmptyList Sum.:+ InfixId Sum.:+ List Sum.:+ Operator Sum.:+ PrefixId Sum.:+ PrefixTuple Sum.:+ Qualified Sum.:+ Tuple Sum.:+ Unit Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err ((AST.Err.Err ((Constructor Sum.:+ ConstructorOperator Sum.:+ EmptyList Sum.:+ InfixId Sum.:+ List Sum.:+ Operator Sum.:+ PrefixId Sum.:+ PrefixTuple Sum.:+ Qualified Sum.:+ Tuple Sum.:+ Unit Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3640,7 +3640,7 @@ cast_Promoted dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     Promoted
       { children,
@@ -3654,8 +3654,8 @@ instance AST.Cast.Cast Promoted where
   cast = cast_Promoted
 
 data Qualified = Qualified
-  { id :: AST.Err.Err (((Constructor Sum.:+ ConstructorOperator Sum.:+ FieldName Sum.:+ Name Sum.:+ Operator Sum.:+ Variable Sum.:+ Sum.Nil))),
-    module' :: AST.Err.Err ((Module)),
+  { id :: AST.Err.Err ((AST.Err.Err ((Constructor Sum.:+ ConstructorOperator Sum.:+ FieldName Sum.:+ Name Sum.:+ Operator Sum.:+ Variable Sum.:+ Sum.Nil)))),
+    module' :: AST.Err.Err ((AST.Err.Err (Module))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3666,9 +3666,9 @@ cast_Qualified dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   id <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "id" namedMap))
-  id <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast id" (AST.Runtime.castManyToSingle id))
+  id <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr id))
   module' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "module" namedMap))
-  module' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast module'" (AST.Runtime.castManyToSingle module'))
+  module' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr module'))
   Prelude.pure
     Qualified
       { id,
@@ -3683,7 +3683,7 @@ instance AST.Cast.Cast Qualified where
   cast = cast_Qualified
 
 data Qualifiers = Qualifiers
-  { qualifier :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (Qualifier)),
+  { qualifier :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Qualifier))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3694,7 +3694,7 @@ cast_Qualifiers dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   qualifier <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "qualifier" namedMap))
-  qualifier <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast qualifier" (AST.Runtime.castManyToNonEmpty qualifier))
+  qualifier <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr qualifier))
   Prelude.pure
     Qualifiers
       { qualifier,
@@ -3708,7 +3708,7 @@ instance AST.Cast.Cast Qualifiers where
   cast = cast_Qualifiers
 
 data QuantifiedVariables = QuantifiedVariables
-  { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty ((Inferred Sum.:+ TypeParam Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((Inferred Sum.:+ TypeParam Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3719,7 +3719,7 @@ cast_QuantifiedVariables dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToNonEmpty children))
+  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     QuantifiedVariables
       { children,
@@ -3733,8 +3733,8 @@ instance AST.Cast.Cast QuantifiedVariables where
   cast = cast_QuantifiedVariables
 
 data Quasiquote = Quasiquote
-  { body :: AST.Err.Err (Prelude.Maybe (QuasiquoteBody)),
-    quoter :: AST.Err.Err ((Quoter)),
+  { body :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuasiquoteBody))),
+    quoter :: AST.Err.Err ((AST.Err.Err (Quoter))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3745,9 +3745,9 @@ cast_Quasiquote dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   body <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "body" namedMap))
-  body <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast body" (AST.Runtime.castManyToMaybe body))
+  body <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr body))
   quoter <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "quoter" namedMap))
-  quoter <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast quoter" (AST.Runtime.castManyToSingle quoter))
+  quoter <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr quoter))
   Prelude.pure
     Quasiquote
       { body,
@@ -3762,8 +3762,8 @@ instance AST.Cast.Cast Quasiquote where
   cast = cast_Quasiquote
 
 data Quote = Quote
-  { children :: AST.Err.Err (Prelude.Maybe ((QuotedDecls Sum.:+ QuotedExpression Sum.:+ QuotedPattern Sum.:+ QuotedType Sum.:+ Sum.Nil))),
-    quoter :: AST.Err.Err (Prelude.Maybe (((AST.Token.Token "d") Sum.:+ (AST.Token.Token "e") Sum.:+ (AST.Token.Token "p") Sum.:+ (AST.Token.Token "t") Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((QuotedDecls Sum.:+ QuotedExpression Sum.:+ QuotedPattern Sum.:+ QuotedType Sum.:+ Sum.Nil)))),
+    quoter :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (((AST.Token.Token "d") Sum.:+ (AST.Token.Token "e") Sum.:+ (AST.Token.Token "p") Sum.:+ (AST.Token.Token "t") Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3774,9 +3774,9 @@ cast_Quote dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   quoter <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "quoter" namedMap))
-  quoter <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast quoter" (AST.Runtime.castManyToMaybe quoter))
+  quoter <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr quoter))
   Prelude.pure
     Quote
       { children,
@@ -3791,7 +3791,7 @@ instance AST.Cast.Cast Quote where
   cast = cast_Quote
 
 data QuotedDecls = QuotedDecls
-  { declaration :: AST.Err.Err (AST.Runtime.List (Declaration)),
+  { declaration :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Declaration))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3802,7 +3802,7 @@ cast_QuotedDecls dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   declaration <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "declaration" namedMap))
-  declaration <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast declaration" (AST.Runtime.castManyToList declaration))
+  declaration <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr declaration))
   Prelude.pure
     QuotedDecls
       { declaration,
@@ -3816,7 +3816,7 @@ instance AST.Cast.Cast QuotedDecls where
   cast = cast_QuotedDecls
 
 data QuotedExpression = QuotedExpression
-  { children :: AST.Err.Err (((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3827,7 +3827,7 @@ cast_QuotedExpression dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     QuotedExpression
       { children,
@@ -3841,7 +3841,7 @@ instance AST.Cast.Cast QuotedExpression where
   cast = cast_QuotedExpression
 
 data QuotedPattern = QuotedPattern
-  { children :: AST.Err.Err (((Pattern Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err ((AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3852,7 +3852,7 @@ cast_QuotedPattern dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     QuotedPattern
       { children,
@@ -3866,7 +3866,7 @@ instance AST.Cast.Cast QuotedPattern where
   cast = cast_QuotedPattern
 
 data QuotedType = QuotedType
-  { children :: AST.Err.Err (((QuantifiedType Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err ((AST.Err.Err ((QuantifiedType Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3877,7 +3877,7 @@ cast_QuotedType dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     QuotedType
       { children,
@@ -3891,7 +3891,7 @@ instance AST.Cast.Cast QuotedType where
   cast = cast_QuotedType
 
 data Quoter = Quoter
-  { children :: AST.Err.Err (((Qualified Sum.:+ Variable Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err ((AST.Err.Err ((Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3902,7 +3902,7 @@ cast_Quoter dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     Quoter
       { children,
@@ -3916,7 +3916,7 @@ instance AST.Cast.Cast Quoter where
   cast = cast_Quoter
 
 data Rec = Rec
-  { statement :: AST.Err.Err (AST.Runtime.List (Statement)),
+  { statement :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Statement))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3927,7 +3927,7 @@ cast_Rec dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   statement <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "statement" namedMap))
-  statement <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast statement" (AST.Runtime.castManyToList statement))
+  statement <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr statement))
   Prelude.pure
     Rec
       { statement,
@@ -3941,13 +3941,13 @@ instance AST.Cast.Cast Rec where
   cast = cast_Rec
 
 data Record = Record
-  { arrow :: AST.Err.Err (AST.Runtime.List (((AST.Token.Token "->") Sum.:+ (AST.Token.Token "→") Sum.:+ Sum.Nil))),
-    constructor :: AST.Err.Err (Prelude.Maybe (Pattern)),
-    expression :: AST.Err.Err (Prelude.Maybe (Expression)),
-    field :: AST.Err.Err (AST.Runtime.List ((Field Sum.:+ FieldPattern Sum.:+ FieldUpdate Sum.:+ Sum.Nil))),
-    fields :: AST.Err.Err (Prelude.Maybe (Fields)),
-    name :: AST.Err.Err (Prelude.Maybe (Constructor)),
-    type' :: AST.Err.Err (Prelude.Maybe (QuantifiedType)),
+  { arrow :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (((AST.Token.Token "->") Sum.:+ (AST.Token.Token "→") Sum.:+ Sum.Nil)))),
+    constructor :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Pattern))),
+    expression :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Expression))),
+    field :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((Field Sum.:+ FieldPattern Sum.:+ FieldUpdate Sum.:+ Sum.Nil)))),
+    fields :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Fields))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Constructor))),
+    type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -3958,19 +3958,19 @@ cast_Record dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   arrow <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "arrow" namedMap))
-  arrow <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast arrow" (AST.Runtime.castManyToList arrow))
+  arrow <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr arrow))
   constructor <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructor" namedMap))
-  constructor <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast constructor" (AST.Runtime.castManyToMaybe constructor))
+  constructor <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr constructor))
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
-  expression <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast expression" (AST.Runtime.castManyToMaybe expression))
+  expression <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr expression))
   field <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "field" namedMap))
-  field <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast field" (AST.Runtime.castManyToList field))
+  field <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr field))
   fields <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "fields" namedMap))
-  fields <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast fields" (AST.Runtime.castManyToMaybe fields))
+  fields <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr fields))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToMaybe type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     Record
       { arrow,
@@ -3990,8 +3990,8 @@ instance AST.Cast.Cast Record where
   cast = cast_Record
 
 data RightSection = RightSection
-  { children :: AST.Err.Err (((ConstructorOperator Sum.:+ InfixId Sum.:+ Operator Sum.:+ Qualified Sum.:+ Sum.Nil))),
-    rightOperand :: AST.Err.Err ((Expression)),
+  { children :: AST.Err.Err ((AST.Err.Err ((ConstructorOperator Sum.:+ InfixId Sum.:+ Operator Sum.:+ Qualified Sum.:+ Sum.Nil)))),
+    rightOperand :: AST.Err.Err ((AST.Err.Err (Expression))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4002,9 +4002,9 @@ cast_RightSection dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   rightOperand <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "right_operand" namedMap))
-  rightOperand <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast rightOperand" (AST.Runtime.castManyToSingle rightOperand))
+  rightOperand <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr rightOperand))
   Prelude.pure
     RightSection
       { children,
@@ -4019,8 +4019,8 @@ instance AST.Cast.Cast RightSection where
   cast = cast_RightSection
 
 data RoleAnnotation = RoleAnnotation
-  { role :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (TypeRole)),
-    type' :: AST.Err.Err (((Name Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Sum.Nil))),
+  { role :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (TypeRole))),
+    type' :: AST.Err.Err ((AST.Err.Err ((Name Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4031,9 +4031,9 @@ cast_RoleAnnotation dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   role <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "role" namedMap))
-  role <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast role" (AST.Runtime.castManyToNonEmpty role))
+  role <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr role))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToSingle type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     RoleAnnotation
       { role,
@@ -4048,14 +4048,14 @@ instance AST.Cast.Cast RoleAnnotation where
   cast = cast_RoleAnnotation
 
 data Signature = Signature
-  { constraint :: AST.Err.Err (Prelude.Maybe (Constraints)),
-    expression :: AST.Err.Err (Prelude.Maybe (Expression)),
-    kind :: AST.Err.Err (Prelude.Maybe (QuantifiedType)),
-    name :: AST.Err.Err (Prelude.Maybe ((PrefixId Sum.:+ Variable Sum.:+ Sum.Nil))),
-    names :: AST.Err.Err (Prelude.Maybe (BindingList)),
-    pattern' :: AST.Err.Err (Prelude.Maybe (Pattern)),
-    synonym :: AST.Err.Err (Prelude.Maybe ((BindingList Sum.:+ Constructor Sum.:+ PrefixId Sum.:+ Sum.Nil))),
-    type' :: AST.Err.Err (Prelude.Maybe (QuantifiedType)),
+  { constraint :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Constraints))),
+    expression :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Expression))),
+    kind :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((PrefixId Sum.:+ Variable Sum.:+ Sum.Nil)))),
+    names :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (BindingList))),
+    pattern' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Pattern))),
+    synonym :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((BindingList Sum.:+ Constructor Sum.:+ PrefixId Sum.:+ Sum.Nil)))),
+    type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4066,21 +4066,21 @@ cast_Signature dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   constraint <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constraint" namedMap))
-  constraint <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast constraint" (AST.Runtime.castManyToMaybe constraint))
+  constraint <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr constraint))
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
-  expression <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast expression" (AST.Runtime.castManyToMaybe expression))
+  expression <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr expression))
   kind <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "kind" namedMap))
-  kind <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast kind" (AST.Runtime.castManyToMaybe kind))
+  kind <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr kind))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   names <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "names" namedMap))
-  names <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast names" (AST.Runtime.castManyToMaybe names))
+  names <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr names))
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
-  pattern' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast pattern'" (AST.Runtime.castManyToMaybe pattern'))
+  pattern' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr pattern'))
   synonym <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "synonym" namedMap))
-  synonym <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast synonym" (AST.Runtime.castManyToMaybe synonym))
+  synonym <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr synonym))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToMaybe type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     Signature
       { constraint,
@@ -4101,7 +4101,7 @@ instance AST.Cast.Cast Signature where
   cast = cast_Signature
 
 data Special = Special
-  { children :: AST.Err.Err (((EmptyList Sum.:+ Tuple Sum.:+ UnboxedSum Sum.:+ UnboxedTuple Sum.:+ UnboxedUnit Sum.:+ Unit Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err ((AST.Err.Err ((EmptyList Sum.:+ Tuple Sum.:+ UnboxedSum Sum.:+ UnboxedTuple Sum.:+ UnboxedUnit Sum.:+ Unit Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4112,7 +4112,7 @@ cast_Special dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     Special
       { children,
@@ -4126,7 +4126,7 @@ instance AST.Cast.Cast Special where
   cast = cast_Special
 
 data Splice = Splice
-  { expression :: AST.Err.Err (((Constructor Sum.:+ ImplicitVariable Sum.:+ Label Sum.:+ Literal Sum.:+ Parens Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Variable Sum.:+ Sum.Nil))),
+  { expression :: AST.Err.Err ((AST.Err.Err ((Constructor Sum.:+ ImplicitVariable Sum.:+ Label Sum.:+ Literal Sum.:+ Parens Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4137,7 +4137,7 @@ cast_Splice dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
-  expression <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast expression" (AST.Runtime.castManyToSingle expression))
+  expression <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr expression))
   Prelude.pure
     Splice
       { expression,
@@ -4162,7 +4162,7 @@ instance AST.Cast.Cast Star where
     Prelude.pure (Star {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Strict = Strict
-  { pattern' :: AST.Err.Err ((Pattern)),
+  { pattern' :: AST.Err.Err ((AST.Err.Err (Pattern))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4173,7 +4173,7 @@ cast_Strict dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
-  pattern' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast pattern'" (AST.Runtime.castManyToSingle pattern'))
+  pattern' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr pattern'))
   Prelude.pure
     Strict
       { pattern',
@@ -4187,7 +4187,7 @@ instance AST.Cast.Cast Strict where
   cast = cast_Strict
 
 data StrictField = StrictField
-  { type' :: AST.Err.Err ((Type)),
+  { type' :: AST.Err.Err ((AST.Err.Err (Type))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4198,7 +4198,7 @@ cast_StrictField dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToSingle type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     StrictField
       { type',
@@ -4212,8 +4212,8 @@ instance AST.Cast.Cast StrictField where
   cast = cast_StrictField
 
 data ThQuotedName = ThQuotedName
-  { name :: AST.Err.Err (Prelude.Maybe ((Constructor Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Variable Sum.:+ Sum.Nil))),
-    type' :: AST.Err.Err (Prelude.Maybe (Type)),
+  { name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Constructor Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
+    type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Type))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4224,9 +4224,9 @@ cast_ThQuotedName dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToMaybe type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     ThQuotedName
       { name,
@@ -4241,7 +4241,7 @@ instance AST.Cast.Cast ThQuotedName where
   cast = cast_ThQuotedName
 
 data TopSplice = TopSplice
-  { children :: AST.Err.Err ((Expression)),
+  { children :: AST.Err.Err ((AST.Err.Err (Expression))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4252,7 +4252,7 @@ cast_TopSplice dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToSingle children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     TopSplice
       { children,
@@ -4266,8 +4266,8 @@ instance AST.Cast.Cast TopSplice where
   cast = cast_TopSplice
 
 data Transform = Transform
-  { key :: AST.Err.Err (Prelude.Maybe ((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    transformation :: AST.Err.Err (((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { key :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    transformation :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4278,9 +4278,9 @@ cast_Transform dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   key <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "key" namedMap))
-  key <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast key" (AST.Runtime.castManyToMaybe key))
+  key <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr key))
   transformation <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "transformation" namedMap))
-  transformation <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast transformation" (AST.Runtime.castManyToSingle transformation))
+  transformation <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr transformation))
   Prelude.pure
     Transform
       { key,
@@ -4295,8 +4295,8 @@ instance AST.Cast.Cast Transform where
   cast = cast_Transform
 
 data Tuple = Tuple
-  { children :: AST.Err.Err (AST.Runtime.List (Constraints)),
-    element :: AST.Err.Err (AST.Runtime.List ((Expression Sum.:+ Pattern Sum.:+ QuantifiedType Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Constraints))),
+    element :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((Expression Sum.:+ Pattern Sum.:+ QuantifiedType Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4307,9 +4307,9 @@ cast_Tuple dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToList children))
+  children <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr children))
   element <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "element" namedMap))
-  element <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast element" (AST.Runtime.castManyToList element))
+  element <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr element))
   Prelude.pure
     Tuple
       { children,
@@ -4324,7 +4324,7 @@ instance AST.Cast.Cast Tuple where
   cast = cast_Tuple
 
 data TypeApplication = TypeApplication
-  { type' :: AST.Err.Err ((Type)),
+  { type' :: AST.Err.Err ((AST.Err.Err (Type))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4335,7 +4335,7 @@ cast_TypeApplication dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToSingle type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     TypeApplication
       { type',
@@ -4349,7 +4349,7 @@ instance AST.Cast.Cast TypeApplication where
   cast = cast_TypeApplication
 
 data TypeBinder = TypeBinder
-  { type' :: AST.Err.Err ((Type)),
+  { type' :: AST.Err.Err ((AST.Err.Err (Type))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4360,7 +4360,7 @@ cast_TypeBinder dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToSingle type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     TypeBinder
       { type',
@@ -4374,11 +4374,11 @@ instance AST.Cast.Cast TypeBinder where
   cast = cast_TypeBinder
 
 data TypeFamily = TypeFamily
-  { children :: AST.Err.Err (AST.Runtime.List ((Infix Sum.:+ Parens Sum.:+ TypeFamilyInjectivity Sum.:+ TypeFamilyResult Sum.:+ Sum.Nil))),
-    closedFamily :: AST.Err.Err (Prelude.Maybe ((AbstractFamily Sum.:+ Equations Sum.:+ Sum.Nil))),
-    kind :: AST.Err.Err (Prelude.Maybe (QuantifiedType)),
-    name :: AST.Err.Err (Prelude.Maybe ((Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Unit Sum.:+ Sum.Nil))),
-    patterns :: AST.Err.Err (Prelude.Maybe (TypeParams)),
+  { children :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ TypeFamilyInjectivity Sum.:+ TypeFamilyResult Sum.:+ Sum.Nil)))),
+    closedFamily :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((AbstractFamily Sum.:+ Equations Sum.:+ Sum.Nil)))),
+    kind :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Unit Sum.:+ Sum.Nil)))),
+    patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (TypeParams))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4389,15 +4389,15 @@ cast_TypeFamily dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToList children))
+  children <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr children))
   closedFamily <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "closed_family" namedMap))
-  closedFamily <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast closedFamily" (AST.Runtime.castManyToMaybe closedFamily))
+  closedFamily <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr closedFamily))
   kind <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "kind" namedMap))
-  kind <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast kind" (AST.Runtime.castManyToMaybe kind))
+  kind <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr kind))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
-  patterns <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast patterns" (AST.Runtime.castManyToMaybe patterns))
+  patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   Prelude.pure
     TypeFamily
       { children,
@@ -4415,8 +4415,8 @@ instance AST.Cast.Cast TypeFamily where
   cast = cast_TypeFamily
 
 data TypeFamilyInjectivity = TypeFamilyInjectivity
-  { determined :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (Variable)),
-    result :: AST.Err.Err ((Variable)),
+  { determined :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Variable))),
+    result :: AST.Err.Err ((AST.Err.Err (Variable))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4427,9 +4427,9 @@ cast_TypeFamilyInjectivity dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   determined <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "determined" namedMap))
-  determined <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast determined" (AST.Runtime.castManyToNonEmpty determined))
+  determined <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr determined))
   result <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "result" namedMap))
-  result <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast result" (AST.Runtime.castManyToSingle result))
+  result <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr result))
   Prelude.pure
     TypeFamilyInjectivity
       { determined,
@@ -4444,7 +4444,7 @@ instance AST.Cast.Cast TypeFamilyInjectivity where
   cast = cast_TypeFamilyInjectivity
 
 data TypeFamilyResult = TypeFamilyResult
-  { result :: AST.Err.Err ((QuantifiedType)),
+  { result :: AST.Err.Err ((AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4455,7 +4455,7 @@ cast_TypeFamilyResult dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   result <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "result" namedMap))
-  result <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast result" (AST.Runtime.castManyToSingle result))
+  result <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr result))
   Prelude.pure
     TypeFamilyResult
       { result,
@@ -4469,10 +4469,10 @@ instance AST.Cast.Cast TypeFamilyResult where
   cast = cast_TypeFamilyResult
 
 data TypeInstance = TypeInstance
-  { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty ((Infix Sum.:+ Parens Sum.:+ QuantifiedType Sum.:+ Sum.Nil))),
-    forall' :: AST.Err.Err (Prelude.Maybe ((Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil))),
-    name :: AST.Err.Err (Prelude.Maybe ((Name Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Sum.Nil))),
-    patterns :: AST.Err.Err (Prelude.Maybe (TypePatterns)),
+  { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ QuantifiedType Sum.:+ Sum.Nil)))),
+    forall' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil)))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Name Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Sum.Nil)))),
+    patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (TypePatterns))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4483,13 +4483,13 @@ cast_TypeInstance dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToNonEmpty children))
+  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr children))
   forall' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "forall" namedMap))
-  forall' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast forall'" (AST.Runtime.castManyToMaybe forall'))
+  forall' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr forall'))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
-  patterns <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast patterns" (AST.Runtime.castManyToMaybe patterns))
+  patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   Prelude.pure
     TypeInstance
       { children,
@@ -4506,7 +4506,7 @@ instance AST.Cast.Cast TypeInstance where
   cast = cast_TypeInstance
 
 data TypeParams = TypeParams
-  { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (TypeParam)),
+  { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (TypeParam))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4517,7 +4517,7 @@ cast_TypeParams dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToNonEmpty children))
+  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     TypeParams
       { children,
@@ -4531,7 +4531,7 @@ instance AST.Cast.Cast TypeParams where
   cast = cast_TypeParams
 
 data TypePatterns = TypePatterns
-  { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty ((KindApplication Sum.:+ Type Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((KindApplication Sum.:+ Type Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4542,7 +4542,7 @@ cast_TypePatterns dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToNonEmpty children))
+  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     TypePatterns
       { children,
@@ -4567,10 +4567,10 @@ instance AST.Cast.Cast TypeRole where
     Prelude.pure (TypeRole {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data TypeSynomym = TypeSynomym
-  { children :: AST.Err.Err (Prelude.Maybe ((Infix Sum.:+ Parens Sum.:+ Sum.Nil))),
-    name :: AST.Err.Err (Prelude.Maybe ((Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Unit Sum.:+ Sum.Nil))),
-    patterns :: AST.Err.Err (Prelude.Maybe (TypeParams)),
-    type' :: AST.Err.Err (((QuantifiedType Sum.:+ Signature Sum.:+ Sum.Nil))),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ Sum.Nil)))),
+    name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Name Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ Unit Sum.:+ Sum.Nil)))),
+    patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (TypeParams))),
+    type' :: AST.Err.Err ((AST.Err.Err ((QuantifiedType Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4581,13 +4581,13 @@ cast_TypeSynomym dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
-  name <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast name" (AST.Runtime.castManyToMaybe name))
+  name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
-  patterns <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast patterns" (AST.Runtime.castManyToMaybe patterns))
+  patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToSingle type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     TypeSynomym
       { children,
@@ -4604,7 +4604,7 @@ instance AST.Cast.Cast TypeSynomym where
   cast = cast_TypeSynomym
 
 data TypedQuote = TypedQuote
-  { children :: AST.Err.Err (Prelude.Maybe (QuotedExpression)),
+  { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuotedExpression))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4615,7 +4615,7 @@ cast_TypedQuote dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast children" (AST.Runtime.castManyToMaybe children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   Prelude.pure
     TypedQuote
       { children,
@@ -4629,7 +4629,7 @@ instance AST.Cast.Cast TypedQuote where
   cast = cast_TypedQuote
 
 data UnboxedSum = UnboxedSum
-  { element :: AST.Err.Err (Data.List.NonEmpty.NonEmpty ((Expression Sum.:+ Pattern Sum.:+ QuantifiedType Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil))),
+  { element :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((Expression Sum.:+ Pattern Sum.:+ QuantifiedType Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4640,7 +4640,7 @@ cast_UnboxedSum dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   element <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "element" namedMap))
-  element <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast element" (AST.Runtime.castManyToNonEmpty element))
+  element <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr element))
   Prelude.pure
     UnboxedSum
       { element,
@@ -4654,7 +4654,7 @@ instance AST.Cast.Cast UnboxedSum where
   cast = cast_UnboxedSum
 
 data UnboxedTuple = UnboxedTuple
-  { element :: AST.Err.Err (Data.List.NonEmpty.NonEmpty ((Expression Sum.:+ Pattern Sum.:+ QuantifiedType Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil))),
+  { element :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((Expression Sum.:+ Pattern Sum.:+ QuantifiedType Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4665,7 +4665,7 @@ cast_UnboxedTuple dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   element <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "element" namedMap))
-  element <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast element" (AST.Runtime.castManyToNonEmpty element))
+  element <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr element))
   Prelude.pure
     UnboxedTuple
       { element,
@@ -4701,7 +4701,7 @@ instance AST.Cast.Cast Unit where
     Prelude.pure (Unit {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Via = Via
-  { type' :: AST.Err.Err ((QuantifiedType)),
+  { type' :: AST.Err.Err ((AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4712,7 +4712,7 @@ cast_Via dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
-  type' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast type'" (AST.Runtime.castManyToSingle type'))
+  type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
     Via
       { type',
@@ -4726,8 +4726,8 @@ instance AST.Cast.Cast Via where
   cast = cast_Via
 
 data ViewPattern = ViewPattern
-  { expression :: AST.Err.Err (((Expression Sum.:+ Signature Sum.:+ Sum.Nil))),
-    pattern' :: AST.Err.Err (((Pattern Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil))),
+  { expression :: AST.Err.Err ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
+    pattern' :: AST.Err.Err ((AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
   deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
@@ -4738,9 +4738,9 @@ cast_ViewPattern dynNode = do
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
-  expression <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast expression" (AST.Runtime.castManyToSingle expression))
+  expression <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr expression))
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
-  pattern' <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast pattern'" (AST.Runtime.castManyToSingle pattern'))
+  pattern' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr pattern'))
   Prelude.pure
     ViewPattern
       { expression,

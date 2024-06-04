@@ -63,21 +63,18 @@ justOrErr :: Text -> Maybe a -> Err a
 justOrErr _msg (Just x) = Right x
 justOrErr msg Nothing = Left msg
 
-castManyToSingle :: (Cast a) => [Node] -> Maybe a
-castManyToSingle [x] = cast x
-castManyToSingle _ = Nothing
+castManyToSingle :: [a] -> Err a
+castManyToSingle [x] = Right x
+castManyToSingle _ = Left "expected a single node"
 
-castManyToMaybe :: (Cast a) => [Node] -> Maybe (Maybe a)
-castManyToMaybe [] = Just Nothing
-castManyToMaybe [x] = Just (cast x)
-castManyToMaybe _ = Nothing
+castManyToMaybe :: [a] -> Err (Maybe a)
+castManyToMaybe [] = Right Nothing
+castManyToMaybe [x] = Right (Just x)
+castManyToMaybe _ = Left "expected zero or one node"
 
-castManyToList :: (Cast a) => [Node] -> Maybe [a]
-castManyToList = traverse cast
+castManyToList :: [a] -> Err [a]
+castManyToList = Right
 
-castManyToNonEmpty :: (Cast a) => [Node] -> Maybe (NonEmpty a)
-castManyToNonEmpty [] = Nothing
-castManyToNonEmpty (x : xs) = do
-  x' <- cast x
-  xs' <- traverse cast xs
-  pure (x' :| xs')
+castManyToNonEmpty :: [a] -> Err (NonEmpty a)
+castManyToNonEmpty [] = Left "expected at least one node"
+castManyToNonEmpty (x : xs) = Right (x :| xs)

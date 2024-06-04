@@ -174,7 +174,7 @@ generateProductDecl nodeName fields = do
     let hsFieldName = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack fieldName))
     let tyPrefix = fieldToTyPrefix field
     let innerTy = nodeTypesToTy (NT.fieldTypes field)
-    emit [trimming|$hsFieldName :: AST.Err.Err ($tyPrefix ($innerTy))|]
+    emit [trimming|$hsFieldName :: AST.Err.Err ($tyPrefix (AST.Err.Err ($innerTy)))|]
   emit ", dynNode :: AST.Node.WrappedDynNode"
   emit "  }"
   emit [trimming| $commonDerive|]
@@ -204,7 +204,7 @@ genProductTypeCast nodeName fields = do
       let hsFieldName = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack fieldName))
       let manyCastFun = fieldToManyCastFun field
       emit [trimming|$hsFieldName <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "$fieldName" namedMap))|]
-      emit [trimming|$hsFieldName <- Prelude.pure (AST.Runtime.justOrErr "Failed to cast $hsFieldName" ($manyCastFun $hsFieldName))|]
+      emit [trimming|$hsFieldName <- Prelude.pure ($manyCastFun (Prelude.fmap AST.Cast.castErr $hsFieldName))|]
 
   -- start creating the record
   emit [trimming|; Prelude.pure $name {|]
@@ -213,6 +213,7 @@ genProductTypeCast nodeName fields = do
     emit [trimming|$hsFieldName|]
   emit ", dynNode = AST.Node.WrappedDynNode dynNode" -- add in the dynNode field
   emit [trimming|} ;|]
+
   emit "}"
   -- end creating the record
 
