@@ -13,7 +13,6 @@ module AST.Runtime
   )
 where
 
-import AST.Cast (Cast (..))
 import AST.Err (Err)
 import Data.Foldable (foldl')
 import Data.List.NonEmpty (NonEmpty (..))

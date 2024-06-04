@@ -5,13 +5,17 @@ module AST.Node
     HasDynNode (..),
     DynNode,
     defaultNode,
+    nodeToText,
+    nodeToRange,
   )
 where
 
 import AST.Cast (DynNode)
 import Control.DeepSeq (NFData (rnf))
 import Data.Sum
+import Data.Text (Text)
 import Data.Text qualified as T
+import TreeSitter.Api (Node (..))
 import TreeSitter.Api qualified as TS
 
 -- so we don't show these and compare for equality
@@ -31,6 +35,9 @@ instance NFData WrappedDynNode where
 
 class HasDynNode a where
   getDynNode :: a -> DynNode
+
+instance HasDynNode DynNode where
+  getDynNode = id
 
 defaultNode :: DynNode
 defaultNode =
@@ -63,3 +70,9 @@ instance HasDynNode Nil where
 instance (HasDynNode x, HasDynNode xs) => HasDynNode (x :+ xs) where
   getDynNode (X x) = getDynNode x
   getDynNode (Rest xs) = getDynNode xs
+
+nodeToText :: (HasDynNode n) => n -> Text
+nodeToText = nodeText . getDynNode
+
+nodeToRange :: (HasDynNode n) => n -> TS.Range
+nodeToRange = nodeRange . getDynNode
