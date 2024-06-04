@@ -9,10 +9,16 @@ module Data.Sum
     ElementDeep (..),
     pattern Inj,
     pattern PrjDeep,
+    Apply (..),
+    Produce (..),
+    Populate (..),
   )
 where
 
+import Control.Applicative ((<|>))
 import Control.DeepSeq (NFData)
+import Control.Monad (MonadPlus)
+import Data.Kind (Constraint, Type)
 import GHC.Generics (Generic)
 import GHC.TypeLits
 
@@ -128,3 +134,28 @@ type family ShowSum t where
 type family ShowSum' p t where
   ShowSum' p (l :+ r) = ShowSum' p l ':$$: ShowSum' ('Text ", ") r
   ShowSum' p t = p ':<>: 'ShowType t
+
+class Apply (c :: Type -> Constraint) (xs :: Type) where
+  -- should always type apply the constraint
+  -- like this:
+  -- apply @Show f xs
+  apply :: (forall x. (c x) => x -> b) -> xs -> b
+
+instance Apply c Nil where
+  apply _ = \case {}
+
+instance (Apply c xs, c x) => Apply c (x :+ xs) where
+  apply f (X x) = f x
+  apply f (Rest xs) = apply @c f xs
+
+class Populate m xs where
+  populate :: m xs
+
+class Produce m x where
+  produce :: m x
+
+instance (Produce m x, MonadPlus m) => Populate m (x :+ Nil) where
+  populate = fmap X produce
+
+instance {-# OVERLAPPABLE #-} (Produce m x, Populate m xs, MonadPlus m) => Populate m (x :+ xs) where
+  populate = fmap X produce <|> fmap Rest populate

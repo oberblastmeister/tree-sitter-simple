@@ -48,5 +48,24 @@ tests =
         case x of
           Inj @Second _ -> error "wrong"
           _ -> pure ()
+        pure (),
+      testCase "populate" $ do
+        let x = populate @Maybe @S
+        let str = apply @Show show <$> x
+        str @?= Just "A"
         pure ()
     ]
+
+data A = A
+  deriving (Show)
+
+data B = B
+  deriving (Show)
+
+type S = A :+ B :+ Nil
+
+instance Produce Maybe A where
+  produce = pure A
+
+instance Produce Maybe B where
+  produce = pure B
