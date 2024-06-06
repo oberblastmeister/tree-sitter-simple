@@ -174,7 +174,8 @@ generateProductDecl nodeName fields = do
     let hsFieldName = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack fieldName))
     let tyPrefix = fieldToTyPrefix field
     let innerTy = nodeTypesToTy (NT.fieldTypes field)
-    emit [trimming|$hsFieldName :: AST.Err.Err ($tyPrefix (AST.Err.Err ($innerTy)))|]
+    let outsideErr = if tyPrefix == "" then "" else "AST.Err.Err"
+    emit [trimming|$hsFieldName :: $outsideErr ($tyPrefix (AST.Err.Err ($innerTy)))|]
   emit ", dynNode :: AST.Node.WrappedDynNode"
   emit "  }"
   emit [trimming| $commonDerive|]

@@ -90,7 +90,6 @@ main = do
             ""
             [expect|Just
     ( "literal@[4:4 - 4:7]"
-        [ "string@[4:4 - 4:7]" [] ]
     )|]
             do
               let hs = Haskell.parse emojiCode

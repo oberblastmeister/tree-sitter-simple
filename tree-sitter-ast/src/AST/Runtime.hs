@@ -62,8 +62,8 @@ justOrErr :: Text -> Maybe a -> Err a
 justOrErr _msg (Just x) = Right x
 justOrErr msg Nothing = Left msg
 
-castManyToSingle :: [a] -> Err a
-castManyToSingle [x] = Right x
+castManyToSingle :: [Err a] -> Err a
+castManyToSingle [x] = x
 castManyToSingle _ = Left "expected a single node"
 
 castManyToMaybe :: [a] -> Err (Maybe a)
