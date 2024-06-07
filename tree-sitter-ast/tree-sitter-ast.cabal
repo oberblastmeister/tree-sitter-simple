@@ -1,105 +1,204 @@
-cabal-version:      3.4
-name:               tree-sitter-ast
-version:            0.1.0.0
-license:            MIT
-license-file:       LICENSE
-author:             Brian Shu
-maintainer:         littlebubu.shu@gmail.com
-build-type:         Simple
-extra-doc-files:    CHANGELOG.md
+cabal-version: 1.12
 
-common common
-    ghc-options: -Wall
-    default-language: GHC2021
-    default-extensions:
-        FlexibleInstances,
-        FlexibleContexts,
-        InstanceSigs,
-        MultiParamTypeClasses,
-        ConstraintKinds,
-        LambdaCase,
-        EmptyCase,
-        TupleSections,
-        BangPatterns,
-        TypeApplications,
-        StandaloneDeriving,
-        OverloadedStrings,
-        RankNTypes,
-        ScopedTypeVariables,
-        NamedFieldPuns,
-        DuplicateRecordFields,
-        DataKinds,
-        ConstraintKinds,
-        TypeApplications,
-        KindSignatures,
-        DeriveFoldable,
-        DeriveFunctor,
-        DeriveGeneric,
-        DeriveDataTypeable,
-        DeriveLift,
-        DeriveTraversable ,
-        GeneralizedNewtypeDeriving,
-        GADTs,
-        PolyKinds,
-        ViewPatterns,
-        PatternSynonyms,
-        TypeFamilies,
-        TypeFamilyDependencies,
-        FunctionalDependencies,
-        ExistentialQuantification,
-        TypeOperators,
-    build-depends:
-        base >=4.17,
-        text,
-        bytestring,
-        containers,
-        unordered-containers,
-        aeson,
-        tree-sitter-simple,
-        transformers,
-        mtl,
-        split,
-        deepseq,
+-- This file has been generated from package.yaml by hpack version 0.36.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           tree-sitter-ast
+version:        0.0.0
+author:         Brian Shu
+maintainer:     littlebubu.shu@gmail.com
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
 
 library
-    import:           common
-    exposed-modules:
-        Data.Sum
-        AST
-        AST.Range
-        AST.NodeTypes
-        AST.Node
-        AST.Token
-        AST.Cast
-        AST.Symbol
-        AST.Runtime
-        AST.Err
-        AST.Traversal
-    build-depends:    base >=4.17
-    hs-source-dirs:   src
-    default-language: GHC2021
+  exposed-modules:
+      AST
+      AST.Cast
+      AST.Err
+      AST.Node
+      AST.NodeTypes
+      AST.Range
+      AST.Runtime
+      AST.Symbol
+      AST.Token
+      AST.Traversal
+      Data.Sum
+  other-modules:
+      Paths_tree_sitter_ast
+  hs-source-dirs:
+      src
+  default-extensions:
+      FlexibleInstances
+      FlexibleContexts
+      InstanceSigs
+      MultiParamTypeClasses
+      ConstraintKinds
+      LambdaCase
+      EmptyCase
+      TupleSections
+      BangPatterns
+      TypeApplications
+      StandaloneDeriving
+      OverloadedStrings
+      RankNTypes
+      ScopedTypeVariables
+      NamedFieldPuns
+      DuplicateRecordFields
+      DataKinds
+      ConstraintKinds
+      TypeApplications
+      KindSignatures
+      DeriveFoldable
+      DeriveFunctor
+      DeriveGeneric
+      DeriveDataTypeable
+      DeriveLift
+      DeriveTraversable
+      GeneralizedNewtypeDeriving
+      PolyKinds
+      ViewPatterns
+      PatternSynonyms
+      ExistentialQuantification
+      TypeOperators
+      TypeFamilies
+      FunctionalDependencies
+  ghc-options: -Wall
+  build-depends:
+      aeson
+    , base >=4.17
+    , bytestring
+    , containers
+    , deepseq
+    , mtl
+    , split
+    , text
+    , transformers
+    , tree-sitter-simple
+    , unordered-containers
+  default-language: GHC2021
 
 executable gen-ast
-    import:           common
-    main-is:          Main.hs
-    build-depends:
-        tree-sitter-ast,
-        neat-interpolation,
-        pretty-simple,
-        process,
-    hs-source-dirs:   app
+  main-is: Main.hs
+  other-modules:
+      Paths_tree_sitter_ast
+  hs-source-dirs:
+      app
+  default-extensions:
+      FlexibleInstances
+      FlexibleContexts
+      InstanceSigs
+      MultiParamTypeClasses
+      ConstraintKinds
+      LambdaCase
+      EmptyCase
+      TupleSections
+      BangPatterns
+      TypeApplications
+      StandaloneDeriving
+      OverloadedStrings
+      RankNTypes
+      ScopedTypeVariables
+      NamedFieldPuns
+      DuplicateRecordFields
+      DataKinds
+      ConstraintKinds
+      TypeApplications
+      KindSignatures
+      DeriveFoldable
+      DeriveFunctor
+      DeriveGeneric
+      DeriveDataTypeable
+      DeriveLift
+      DeriveTraversable
+      GeneralizedNewtypeDeriving
+      PolyKinds
+      ViewPatterns
+      PatternSynonyms
+      ExistentialQuantification
+      TypeOperators
+      TypeFamilies
+      FunctionalDependencies
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , base >=4.17
+    , bytestring
+    , containers
+    , deepseq
+    , mtl
+    , neat-interpolation
+    , pretty-simple
+    , process
+    , split
+    , text
+    , transformers
+    , tree-sitter-ast
+    , tree-sitter-simple
+    , unordered-containers
+  default-language: GHC2021
 
 test-suite tree-sitter-ast-test
-    import:           common
-    default-language: GHC2021
-    type:             exitcode-stdio-1.0
-    hs-source-dirs:   test
-    main-is:          Main.hs
-    other-modules:
-        SumSpec
-    build-depends:
-        tree-sitter-ast,
-        tasty,
-        tasty-hunit,
-        tasty-quickcheck,
-        neat-interpolation,
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      ParseSpec
+      SumSpec
+      Paths_tree_sitter_ast
+  hs-source-dirs:
+      test
+  default-extensions:
+      FlexibleInstances
+      FlexibleContexts
+      InstanceSigs
+      MultiParamTypeClasses
+      ConstraintKinds
+      LambdaCase
+      EmptyCase
+      TupleSections
+      BangPatterns
+      TypeApplications
+      StandaloneDeriving
+      OverloadedStrings
+      RankNTypes
+      ScopedTypeVariables
+      NamedFieldPuns
+      DuplicateRecordFields
+      DataKinds
+      ConstraintKinds
+      TypeApplications
+      KindSignatures
+      DeriveFoldable
+      DeriveFunctor
+      DeriveGeneric
+      DeriveDataTypeable
+      DeriveLift
+      DeriveTraversable
+      GeneralizedNewtypeDeriving
+      PolyKinds
+      ViewPatterns
+      PatternSynonyms
+      ExistentialQuantification
+      TypeOperators
+      TypeFamilies
+      FunctionalDependencies
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , base >=4.17
+    , bytestring
+    , containers
+    , deepseq
+    , mtl
+    , neat-interpolation
+    , split
+    , tasty
+    , tasty-hunit
+    , tasty-quickcheck
+    , text
+    , transformers
+    , tree-sitter-ast
+    , tree-sitter-simple
+    , unordered-containers
+  default-language: GHC2021

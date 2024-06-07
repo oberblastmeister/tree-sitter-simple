@@ -1,0 +1,38 @@
+<<: !include ../hpack-common/defaults.yaml
+
+name: haskell-ast
+
+dependencies:
+  - base >= 4.17
+  - text >= 2.0 && < 2.2
+  - bytestring
+  - containers
+  - unordered-containers
+  - tree-sitter-haskell
+  - tree-sitter-simple
+  - tree-sitter-ast
+  - deepseq
+  
+library:
+  source-dirs: src
+  
+executables:
+  parse:
+    <<: *default_app
+    dependencies:
+      - haskell-ast
+      - neat-interpolation
+      - pretty-simple
+
+tests:
+  haskell-ast-test:
+    <<: *default_test
+    dependencies:
+      - haskell-ast
+      - directory
+      - tasty
+      - tasty-hunit
+      - tasty-quickcheck
+      - neat-interpolation
+      - tasty-expect
+      - pretty-simple

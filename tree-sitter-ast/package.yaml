@@ -1,0 +1,38 @@
+<<: !include ../hpack-common/defaults.yaml
+
+name: tree-sitter-ast
+
+dependencies:
+  - base >= 4.17
+  - text
+  - bytestring
+  - containers
+  - unordered-containers
+  - aeson
+  - tree-sitter-simple
+  - transformers
+  - mtl
+  - split
+  - deepseq
+  
+library:
+  <<: *default_library
+  
+executables:
+  gen-ast:
+    <<: *default_app
+    dependencies:
+      - tree-sitter-ast
+      - neat-interpolation
+      - pretty-simple
+      - process
+
+tests:
+  tree-sitter-ast-test:
+    <<: *default_test
+    dependencies:
+      - tree-sitter-ast
+      - tasty
+      - tasty-hunit
+      - tasty-quickcheck
+      - neat-interpolation

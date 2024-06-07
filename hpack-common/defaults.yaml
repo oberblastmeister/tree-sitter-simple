@@ -1,0 +1,57 @@
+license: MIT
+author: Brian Shu
+maintainer: littlebubu.shu@gmail.com
+language: GHC2021
+ghc-options:
+  - -Wall
+default-extensions:
+  - FlexibleInstances
+  - FlexibleContexts
+  - InstanceSigs
+  - MultiParamTypeClasses
+  - ConstraintKinds
+  - LambdaCase
+  - EmptyCase
+  - TupleSections
+  - BangPatterns
+  - TypeApplications
+  - StandaloneDeriving
+  - OverloadedStrings
+  - RankNTypes
+  - ScopedTypeVariables
+  - NamedFieldPuns
+  - DuplicateRecordFields
+  - DataKinds
+  - ConstraintKinds
+  - TypeApplications
+  - KindSignatures
+  - DeriveFoldable
+  - DeriveFunctor
+  - DeriveGeneric
+  - DeriveDataTypeable
+  - DeriveLift
+  - DeriveTraversable
+  - GeneralizedNewtypeDeriving
+  - PolyKinds
+  - ViewPatterns
+  - PatternSynonyms
+  - ExistentialQuantification
+  - TypeOperators
+  - TypeFamilies
+  - FunctionalDependencies
+
+_default_deps: &default_deps
+  - base >= 4.17
+  
+_default_library: &default_library
+  - source-dirs: src
+  
+_default_test: &default_test
+  - main: Main.hs
+  - source-dirs: test
+  - ghc-options: -threaded -rtsopts -with-rtsopts=-N
+
+_default_app: &default_app
+  - main: Main.hs
+  - source-dirs: app
+  - ghc-options: -threaded -rtsopts -with-rtsopts=-N

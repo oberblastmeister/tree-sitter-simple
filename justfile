@@ -9,3 +9,7 @@ gen:
 
 parse file:
     cabal run haskell-ast -- {{file}}
+    
+hpack:
+    hpack haskell-ast
+    hpack tree-sitter-ast
