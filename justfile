@@ -13,3 +13,5 @@ parse file:
 hpack:
     hpack haskell-ast
     hpack tree-sitter-ast
+    hpack tree-sitter-simple
+    hpack tree-sitter-haskell

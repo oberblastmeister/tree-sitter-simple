@@ -37,8 +37,7 @@ default-extensions:
   - PatternSynonyms
   - ExistentialQuantification
   - TypeOperators
-  - TypeFamilies
-  - FunctionalDependencies
+  - DeepSubsumption
 
 _default_deps: &default_deps
   - base >= 4.17

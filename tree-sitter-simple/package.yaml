@@ -1,0 +1,45 @@
+<<: !include ../hpack-common/defaults.yaml
+
+name:                tree-sitter-simple
+version:             0.1.0.0
+synopsis:            Simple bindings for the tree-sitter parsing library.
+description:         Tree-sitter is a parser generator tool and an incremental parsing library.
+homepage:            http://github.com/tree-sitter/haskell-tree-sitter#readme
+license:             BSD-3-Clause
+license-file:        LICENSE
+author:              Rob Rix, Josh Vera, Tim Clem, Rick Winfrey, Max Brunsfeld, Ayman Nadeem, Patrick Thomson, Brian Shu
+maintainer:          rob.rix@github.com
+copyright:           2019 GitHub
+category:            Parsing, Tree-sitter
+
+extra-source-files:
+  - vendor/tree-sitter/lib/src/**/*.c
+  - vendor/tree-sitter/lib/src/**/*.h
+  - ChangeLog.md
+
+library:
+  <<: *default_library
+  dependencies:
+    - base                  >= 4.14.3.0 && < 5
+    - text >= 2.0 && < 2.2
+    - bytestring            >= 0.10.8.2 && < 0.13
+    - containers           ^>= 0.6.0.1
+    - unordered-containers ^>= 0.2.9
+    - deepseq
+  include-dirs:      
+    - vendor/tree-sitter/lib/include
+    - vendor/tree-sitter/lib/src
+  install-includes:    tree_sitter/api.h
+  c-sources:         
+    - src/bridge.c
+    - vendor/tree-sitter/lib/src/lib.c
+  cc-options:
+    - -std=c99
+
+tests:
+  test:
+    <<: *default_test
+    dependencies: 
+     - base
+     - tree-sitter-simple
+     - hedgehog >= 0.6 && <2

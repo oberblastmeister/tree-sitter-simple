@@ -1,89 +1,182 @@
-cabal-version:       2.4
-name:                tree-sitter-simple
-version:             0.1.0.0
-synopsis:            Simple bindings for the tree-sitter parsing library.
-description:         Tree-sitter is a parser generator tool and an incremental parsing library.
-                     .
-                     We strongly recommend against depending on this library at this time;
-                     the data types and API are subject to rapid change. Future versions
-                     will provide more reliable parsers and a more stable API.
-homepage:            http://github.com/tree-sitter/haskell-tree-sitter#readme
-license:             BSD-3-Clause
-license-file:        LICENSE
-author:              Rob Rix, Josh Vera, Tim Clem, Rick Winfrey, Max Brunsfeld, Ayman Nadeem, Patrick Thomson, Brian Shu
-maintainer:          rob.rix@github.com
-copyright:           2019 GitHub
-category:            Parsing, Tree-sitter
-build-type:          Simple
+cabal-version: 2.2
 
-tested-with:
-  GHC == 8.10.7
-  GHC == 9.0.2
-  GHC == 9.2.8
-  GHC == 9.4.8
+-- This file has been generated from package.yaml by hpack version 0.36.0.
+--
+-- see: https://github.com/sol/hpack
 
-extra-source-files:  vendor/tree-sitter/lib/src/**/*.c
-                   , vendor/tree-sitter/lib/src/**/*.h
-                   , ChangeLog.md
-
-common common
-  default-language: Haskell2010
-  ghc-options:
-    -Weverything
-    -Wno-all-missed-specialisations
-    -Wno-implicit-prelude
-    -Wno-missed-specialisations
-    -Wno-missing-import-lists
-    -Wno-missing-local-signatures
-    -Wno-monomorphism-restriction
-    -Wno-name-shadowing
-    -Wno-safe
-    -Wno-unsafe
-    -Wno-star-is-type
-    -Wno-missing-deriving-strategies
-    -Wno-missing-safe-haskell-mode
-    -Wno-prepositive-qualified-module
-  if (impl(ghc >= 9.2))
-    ghc-options:
-      -Wno-missing-kind-signatures
-      -Wno-implicit-lift
+name:           tree-sitter-simple
+version:        0.1.0.0
+synopsis:       Simple bindings for the tree-sitter parsing library.
+description:    Tree-sitter is a parser generator tool and an incremental parsing library.
+category:       Parsing, Tree-sitter
+homepage:       http://github.com/tree-sitter/haskell-tree-sitter#readme
+author:         Rob Rix, Josh Vera, Tim Clem, Rick Winfrey, Max Brunsfeld, Ayman Nadeem, Patrick Thomson, Brian Shu
+maintainer:     rob.rix@github.com
+copyright:      2019 GitHub
+license:        BSD-3-Clause
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    vendor/tree-sitter/lib/src/alloc.c
+    vendor/tree-sitter/lib/src/get_changed_ranges.c
+    vendor/tree-sitter/lib/src/language.c
+    vendor/tree-sitter/lib/src/lexer.c
+    vendor/tree-sitter/lib/src/lib.c
+    vendor/tree-sitter/lib/src/node.c
+    vendor/tree-sitter/lib/src/parser.c
+    vendor/tree-sitter/lib/src/query.c
+    vendor/tree-sitter/lib/src/stack.c
+    vendor/tree-sitter/lib/src/subtree.c
+    vendor/tree-sitter/lib/src/tree.c
+    vendor/tree-sitter/lib/src/tree_cursor.c
+    vendor/tree-sitter/lib/src/wasm/stdlib.c
+    vendor/tree-sitter/lib/src/wasm_store.c
+    vendor/tree-sitter/lib/src/alloc.h
+    vendor/tree-sitter/lib/src/array.h
+    vendor/tree-sitter/lib/src/atomic.h
+    vendor/tree-sitter/lib/src/clock.h
+    vendor/tree-sitter/lib/src/error_costs.h
+    vendor/tree-sitter/lib/src/get_changed_ranges.h
+    vendor/tree-sitter/lib/src/host.h
+    vendor/tree-sitter/lib/src/language.h
+    vendor/tree-sitter/lib/src/length.h
+    vendor/tree-sitter/lib/src/lexer.h
+    vendor/tree-sitter/lib/src/parser.h
+    vendor/tree-sitter/lib/src/point.h
+    vendor/tree-sitter/lib/src/reduce_action.h
+    vendor/tree-sitter/lib/src/reusable_node.h
+    vendor/tree-sitter/lib/src/stack.h
+    vendor/tree-sitter/lib/src/subtree.h
+    vendor/tree-sitter/lib/src/tree.h
+    vendor/tree-sitter/lib/src/tree_cursor.h
+    vendor/tree-sitter/lib/src/unicode.h
+    vendor/tree-sitter/lib/src/unicode/ptypes.h
+    vendor/tree-sitter/lib/src/unicode/umachine.h
+    vendor/tree-sitter/lib/src/unicode/urename.h
+    vendor/tree-sitter/lib/src/unicode/utf.h
+    vendor/tree-sitter/lib/src/unicode/utf16.h
+    vendor/tree-sitter/lib/src/unicode/utf8.h
+    vendor/tree-sitter/lib/src/wasm/wasm-stdlib.h
+    vendor/tree-sitter/lib/src/wasm_store.h
+    ChangeLog.md
 
 library
-  import: common
-  hs-source-dirs:      src
+  exposed-modules:
+      TreeSitter.Api
+      TreeSitter.Raw
+      TreeSitter.Raw.Language
+      TreeSitter.Raw.Node
+      TreeSitter.Raw.Parser
+      TreeSitter.Raw.Symbol
+      TreeSitter.Raw.Tree
+  other-modules:
+      Paths_tree_sitter_simple
+  autogen-modules:
+      Paths_tree_sitter_simple
+  hs-source-dirs:
+      src
+  default-extensions:
+      FlexibleInstances
+      FlexibleContexts
+      InstanceSigs
+      MultiParamTypeClasses
+      ConstraintKinds
+      LambdaCase
+      EmptyCase
+      TupleSections
+      BangPatterns
+      TypeApplications
+      StandaloneDeriving
+      OverloadedStrings
+      RankNTypes
+      ScopedTypeVariables
+      NamedFieldPuns
+      DuplicateRecordFields
+      DataKinds
+      ConstraintKinds
+      TypeApplications
+      KindSignatures
+      DeriveFoldable
+      DeriveFunctor
+      DeriveGeneric
+      DeriveDataTypeable
+      DeriveLift
+      DeriveTraversable
+      GeneralizedNewtypeDeriving
+      PolyKinds
+      ViewPatterns
+      PatternSynonyms
+      ExistentialQuantification
+      TypeOperators
+      DeepSubsumption
+  ghc-options: -Wall
+  cc-options: -std=c99
+  include-dirs:
+      vendor/tree-sitter/lib/include
+      vendor/tree-sitter/lib/src
+  install-includes:
+      tree_sitter/api.h
+  c-sources:
+      src/bridge.c
+      vendor/tree-sitter/lib/src/lib.c
   build-depends:
-    , base                  >= 4.14.3.0 && < 5
-    , text >= 2.0 && < 2.2
-    , bytestring            >= 0.10.8.2 && < 0.13
-    , containers           ^>= 0.6.0.1
-    , unordered-containers ^>= 0.2.9
+      base >=4.14.3.0 && <5
+    , bytestring >=0.10.8.2 && <0.13
+    , containers >=0.6.0.1 && <0.7
     , deepseq
-  exposed-modules:     TreeSitter.Raw.Parser
-                     , TreeSitter.Raw.Language
-                     , TreeSitter.Raw.Node
-                     , TreeSitter.Raw.Symbol
-                     , TreeSitter.Raw.Tree
-                     , TreeSitter.Raw
-                     , TreeSitter.Api
-  include-dirs:        vendor/tree-sitter/lib/include
-                     , vendor/tree-sitter/lib/src
-  install-includes:    tree_sitter/api.h
-  c-sources:           src/bridge.c
-                     , vendor/tree-sitter/lib/src/lib.c
-  cc-options:          -std=c99
+    , text >=2.0 && <2.2
+    , unordered-containers >=0.2.9 && <0.3
+  default-language: GHC2021
 
 test-suite test
-  import: common
-  type:                exitcode-stdio-1.0
-  hs-source-dirs:      test
-  main-is:             Test.hs
-  other-modules:       TreeSitter.Example
-                     , TreeSitter.Strings.Example
-  build-depends:       base
-                     , tree-sitter
-                     , hedgehog >= 0.6 && <2
-  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
-
-source-repository head
-  type:     git
-  location: https://github.com/tree-sitter/haskell-tree-sitter
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Test
+      TreeSitter.Example
+      TreeSitter.Strings.Example
+      Paths_tree_sitter_simple
+  autogen-modules:
+      Paths_tree_sitter_simple
+  hs-source-dirs:
+      test
+  default-extensions:
+      FlexibleInstances
+      FlexibleContexts
+      InstanceSigs
+      MultiParamTypeClasses
+      ConstraintKinds
+      LambdaCase
+      EmptyCase
+      TupleSections
+      BangPatterns
+      TypeApplications
+      StandaloneDeriving
+      OverloadedStrings
+      RankNTypes
+      ScopedTypeVariables
+      NamedFieldPuns
+      DuplicateRecordFields
+      DataKinds
+      ConstraintKinds
+      TypeApplications
+      KindSignatures
+      DeriveFoldable
+      DeriveFunctor
+      DeriveGeneric
+      DeriveDataTypeable
+      DeriveLift
+      DeriveTraversable
+      GeneralizedNewtypeDeriving
+      PolyKinds
+      ViewPatterns
+      PatternSynonyms
+      ExistentialQuantification
+      TypeOperators
+      DeepSubsumption
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base
+    , hedgehog >=0.6 && <2
+    , tree-sitter-simple
+  default-language: GHC2021

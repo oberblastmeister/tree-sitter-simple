@@ -1,4 +1,4 @@
-packages: tree-sitter-simple tree-sitter-* haskell-ast
+packages: tree-sitter-simple tree-sitter-haskell tree-sitter-ast haskell-ast
 
 test-show-details: direct
 

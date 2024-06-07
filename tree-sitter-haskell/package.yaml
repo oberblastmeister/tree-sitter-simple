@@ -1,70 +1,47 @@
-# <<: !include ../hpack-common/defaults.yaml
+<<: !include ../hpack-common/defaults.yaml
 
-# name: tree-sitter-haskell
-# version: 0.3.0.2
-# synopsis: Tree-sitter grammar/parser for Haskell (with GHC extensions)
-# description: This package provides a parser for Haskell suitable for use with the tree-sitter package.
-# license: BSD-3-Clause
-# homepage: https://github.com/tree-sitter/haskell-tree-sitter/tree/master/tree-sitter-haskell
-# author: Max Brunsfeld, Tim Clem, Rob Rix, Josh Vera, Rick Winfrey, Ayman Nadeem, Patrick Thomson
-# maintainer: tclem@github.com
-# copyright: 2019 GitHub
-# category: Tree-sitter, Haskell
-# build-type: Simple
-# extra-source-files: ChangeLog.md
+name: tree-sitter-haskell
+version: 0.3.0.2
+synopsis: Tree-sitter grammar/parser for Haskell (with GHC extensions)
+description: This package provides a parser for Haskell suitable for use with the tree-sitter package.
+license: BSD-3-Clause
+homepage: https://github.com/tree-sitter/haskell-tree-sitter/tree/master/tree-sitter-haskell
+author: Max Brunsfeld, Tim Clem, Rob Rix, Josh Vera, Rick Winfrey, Ayman Nadeem, Patrick Thomson
+maintainer: tclem@github.com
+copyright: 2019 GitHub
+category: Tree-sitter, Haskell
+extra-source-files: ChangeLog.md
 
-# library:
-#   exposed-modules:     TreeSitter.Haskell
-#   autogen-modules:     Paths_tree_sitter_haskell
-#   other-modules:       Paths_tree_sitter_haskell
-#   build-depends:
-#     - base >= 4.12 && < 5
-#     - tree-sitter-simple
-#   include-dirs: vendor/tree-sitter-haskell/src
-#   # Might want to change this to normal includes?
-#   # install-includes is intended for headers that will be exposed to other libraries 
-#   install-includes:
-#     - tree_sitter/parser.h
-#     - tree_sitter/alloc.h
-#     - tree_sitter/array.h
-#     - unicode.h
-#   c-sources:         
-#     - vendor/tree-sitter-haskell/src/parser.c
-#     - vendor/tree-sitter-haskell/src/scanner.c
-
-# source-repository head
-#   type:     git
-#   location: https://github.com/tree-sitter/haskell-tree-sitter
-
-# executable parse
-#   import: common
-#   main-is: Main.hs
-#   hs-source-dirs: app
-#   ghc-options: -threaded -rtsopts -with-rtsopts=-N
-#   build-depends:
-#       base
-#     , text >= 2.0 && < 2.2
-#     , tree-sitter-simple
-#     , tree-sitter-haskell
-#     , pretty-simple
+dependencies:
+  - base >= 4.12 && < 5
+  - tree-sitter-simple
     
-# test-suite tree-sitter-haskell-test
-#   import: common
-#   type: exitcode-stdio-1.0
-#   hs-source-dirs: test
-#   main-is: Main.hs
-#   other-modules:
-#     -- Properties
-#     -- Arbitrary
-#   build-depends:
-#     base,
-#     text,
-#     tree-sitter-haskell,
-#     tree-sitter-simple,
-#     containers,
-#     tasty,
-#     tasty-hunit,
-#     tasty-quickcheck,
-#     QuickCheck,
-#     quickcheck-instances,
-#     quickcheck-classes-base,
+library:
+  <<: *default_library
+  include-dirs: vendor/tree-sitter-haskell/src
+  # Might want to change this to normal includes?
+  # install-includes is intended for headers that will be exposed to other libraries
+  install-includes:
+    - tree_sitter/parser.h
+    - tree_sitter/alloc.h
+    - tree_sitter/array.h
+    - unicode.h
+  c-sources:
+    - vendor/tree-sitter-haskell/src/parser.c
+    - vendor/tree-sitter-haskell/src/scanner.c
+
+tests:
+  tree-sitter-haskell-test:
+    <<: *default_test
+    dependencies:
+      - base
+      - text
+      - tree-sitter-haskell
+      - tree-sitter-simple
+      - containers
+      - tasty
+      - tasty-hunit
+      - tasty-quickcheck
+      - QuickCheck
+      - quickcheck-instances
+      - quickcheck-classes-base
