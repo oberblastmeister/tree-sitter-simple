@@ -17,6 +17,19 @@ dependencies:
   
 library:
   <<: *default_library
+  dependencies:
+    - base >= 4.17
+    - text
+    - bytestring
+    - containers
+    - unordered-containers
+    - aeson
+    - tree-sitter-simple
+    - transformers
+    - mtl
+    - split
+    - deepseq
+    
   
 executables:
   gen-ast:

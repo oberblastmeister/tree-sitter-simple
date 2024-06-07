@@ -62,8 +62,7 @@ library
       PatternSynonyms
       ExistentialQuantification
       TypeOperators
-      TypeFamilies
-      FunctionalDependencies
+      DeepSubsumption
   ghc-options: -Wall
   build-depends:
       aeson
@@ -118,8 +117,7 @@ executable gen-ast
       PatternSynonyms
       ExistentialQuantification
       TypeOperators
-      TypeFamilies
-      FunctionalDependencies
+      DeepSubsumption
   ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
@@ -181,8 +179,7 @@ test-suite tree-sitter-ast-test
       PatternSynonyms
       ExistentialQuantification
       TypeOperators
-      TypeFamilies
-      FunctionalDependencies
+      DeepSubsumption
   ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
