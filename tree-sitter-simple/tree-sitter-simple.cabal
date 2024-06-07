@@ -16,6 +16,9 @@ copyright:      2019 GitHub
 license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
+tested-with:
+    GHC == 9.4.4
+  , GHC == 9.6.3
 extra-source-files:
     vendor/tree-sitter/lib/src/alloc.c
     vendor/tree-sitter/lib/src/get_changed_ranges.c
