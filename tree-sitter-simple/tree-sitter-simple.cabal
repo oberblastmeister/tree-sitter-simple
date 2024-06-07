@@ -132,7 +132,6 @@ test-suite test
   type: exitcode-stdio-1.0
   main-is: Main.hs
   other-modules:
-      Test
       TreeSitter.Example
       TreeSitter.Strings.Example
       Paths_tree_sitter_simple
