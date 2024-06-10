@@ -28,7 +28,7 @@ type List a = [a]
 -- so that's why we filter them out into a separate field
 getChildDescription :: Node -> ([Node], [Node], Map Text [Node])
 getChildDescription node =
-  (reverse extraRes, reverse positionalRes, namedRes)
+  (reverse extraRes, reverse positionalRes, fmap reverse namedRes)
   where
     (!extraRes, !positionalRes, !namedRes) =
       foldl'
