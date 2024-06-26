@@ -131,7 +131,6 @@ escapeOperatorPunctuation = concatMap $ \case
   '#' -> "Hash"
   '$' -> "Dollar"
   '"' -> "DQuote"
-  '\'' -> "SQuote"
   '\t' -> "Tab"
   '\n' -> "LF"
   '\r' -> "CR"

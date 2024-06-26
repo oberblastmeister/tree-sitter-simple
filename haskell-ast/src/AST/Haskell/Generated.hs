@@ -1522,7 +1522,7 @@ instance AST.Cast.Cast ExplicitType where
   cast = cast_ExplicitType
 
 data Export = Export
-  { childrenSQuote :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Children))),
+  { children' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Children))),
     namespace :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Namespace))),
     operator :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (PrefixId))),
     type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Name Sum.:+ Qualified Sum.:+ Sum.Nil)))),
@@ -1536,8 +1536,8 @@ cast_Export dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "export")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  childrenSQuote <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children'" namedMap))
-  childrenSQuote <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr childrenSQuote))
+  children' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children'" namedMap))
+  children' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children'))
   namespace <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "namespace" namedMap))
   namespace <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr namespace))
   operator <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "operator" namedMap))
@@ -1548,7 +1548,7 @@ cast_Export dynNode = do
   variable <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr variable))
   Prelude.pure
     Export
-      { childrenSQuote,
+      { children',
         namespace,
         operator,
         type',
@@ -2401,7 +2401,7 @@ instance AST.Cast.Cast ImportList where
   cast = cast_ImportList
 
 data ImportName = ImportName
-  { childrenSQuote :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Children))),
+  { children' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Children))),
     namespace :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Namespace))),
     operator :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (PrefixId))),
     type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Name Sum.:+ Qualified Sum.:+ Sum.Nil)))),
@@ -2415,8 +2415,8 @@ cast_ImportName dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "import_name")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
   namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  childrenSQuote <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children'" namedMap))
-  childrenSQuote <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr childrenSQuote))
+  children' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children'" namedMap))
+  children' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children'))
   namespace <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "namespace" namedMap))
   namespace <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr namespace))
   operator <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "operator" namedMap))
@@ -2427,7 +2427,7 @@ cast_ImportName dynNode = do
   variable <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr variable))
   Prelude.pure
     ImportName
-      { childrenSQuote,
+      { children',
         namespace,
         operator,
         type',
