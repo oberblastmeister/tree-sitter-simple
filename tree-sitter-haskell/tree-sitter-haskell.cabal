@@ -64,7 +64,7 @@ library
       ExistentialQuantification
       TypeOperators
       DeepSubsumption
-  ghc-options: -Wall
+  ghc-options: -Wall -Wno-name-shadowing
   include-dirs:
       vendor/tree-sitter-haskell/src
   install-includes:
@@ -123,7 +123,7 @@ test-suite tree-sitter-haskell-test
       ExistentialQuantification
       TypeOperators
       DeepSubsumption
-  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -Wno-name-shadowing -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       QuickCheck
     , base

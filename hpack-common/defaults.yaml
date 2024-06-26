@@ -4,6 +4,7 @@ maintainer: littlebubu.shu@gmail.com
 language: GHC2021
 ghc-options:
   - -Wall
+  - -Wno-name-shadowing
 default-extensions:
   - FlexibleInstances
   - FlexibleContexts

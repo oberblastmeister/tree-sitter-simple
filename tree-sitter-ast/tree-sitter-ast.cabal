@@ -66,7 +66,7 @@ library
       ExistentialQuantification
       TypeOperators
       DeepSubsumption
-  ghc-options: -Wall
+  ghc-options: -Wall -Wno-name-shadowing
   build-depends:
       aeson
     , base >=4.17
@@ -121,7 +121,7 @@ executable gen-ast
       ExistentialQuantification
       TypeOperators
       DeepSubsumption
-  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -Wno-name-shadowing -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
     , base >=4.17
@@ -183,7 +183,7 @@ test-suite tree-sitter-ast-test
       ExistentialQuantification
       TypeOperators
       DeepSubsumption
-  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -Wno-name-shadowing -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
     , base >=4.17
