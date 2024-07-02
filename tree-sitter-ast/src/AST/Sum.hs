@@ -3,7 +3,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE TypeFamilies #-}
 
-module Data.Sum
+module AST.Sum
   ( Nil,
     (:+) (..),
     Element (..),

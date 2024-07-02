@@ -201,19 +201,19 @@ import AST.Cast qualified
 import AST.Err qualified
 import AST.Node qualified
 import AST.Runtime qualified
+import AST.Sum qualified as Sum
 import AST.Token qualified
 import Control.DeepSeq qualified
 import Control.Monad qualified
 import Data.List.NonEmpty qualified
 import Data.Map.Strict qualified
-import Data.Sum qualified as Sum
 import Data.Text qualified
 import GHC.Generics qualified
 import TreeSitter.Api qualified as Api
 import Prelude qualified
 
 data ClassDecl = ClassDecl {dynNode :: AST.Node.WrappedDynNode, getClassDecl :: (DataFamily Sum.:+ Decl Sum.:+ DefaultSignature Sum.:+ Fixity Sum.:+ TypeFamily Sum.:+ TypeInstance Sum.:+ Sum.Nil)}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Cast.Cast ClassDecl where
   cast dynNode = do
@@ -224,7 +224,7 @@ instance AST.Node.HasDynNode ClassDecl where
   getDynNode (ClassDecl {dynNode}) = AST.Node.unDynNode dynNode
 
 data Constraint = Constraint {dynNode :: AST.Node.WrappedDynNode, getConstraint :: (Apply Sum.:+ Infix Sum.:+ Literal Sum.:+ Name Sum.:+ Parens Sum.:+ PrefixId Sum.:+ PrefixTuple Sum.:+ PrefixUnboxedSum Sum.:+ PrefixUnboxedTuple Sum.:+ Promoted Sum.:+ Qualified Sum.:+ Quasiquote Sum.:+ Splice Sum.:+ Tuple Sum.:+ UnboxedUnit Sum.:+ Unit Sum.:+ Variable Sum.:+ Wildcard Sum.:+ Sum.Nil)}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Cast.Cast Constraint where
   cast dynNode = do
@@ -235,7 +235,7 @@ instance AST.Node.HasDynNode Constraint where
   getDynNode (Constraint {dynNode}) = AST.Node.unDynNode dynNode
 
 data Constraints = Constraints {dynNode :: AST.Node.WrappedDynNode, getConstraints :: (Constraint Sum.:+ Context Sum.:+ Forall Sum.:+ ImplicitParameter Sum.:+ Signature Sum.:+ Sum.Nil)}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Cast.Cast Constraints where
   cast dynNode = do
@@ -246,7 +246,7 @@ instance AST.Node.HasDynNode Constraints where
   getDynNode (Constraints {dynNode}) = AST.Node.unDynNode dynNode
 
 data Decl = Decl {dynNode :: AST.Node.WrappedDynNode, getDecl :: (Bind Sum.:+ Function Sum.:+ Signature Sum.:+ Sum.Nil)}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Cast.Cast Decl where
   cast dynNode = do
@@ -257,7 +257,7 @@ instance AST.Node.HasDynNode Decl where
   getDynNode (Decl {dynNode}) = AST.Node.unDynNode dynNode
 
 data Declaration = Declaration {dynNode :: AST.Node.WrappedDynNode, getDeclaration :: (Class Sum.:+ DataFamily Sum.:+ DataInstance Sum.:+ DataType Sum.:+ Decl Sum.:+ DefaultTypes Sum.:+ DerivingInstance Sum.:+ Fixity Sum.:+ ForeignExport Sum.:+ ForeignImport Sum.:+ Instance Sum.:+ KindSignature Sum.:+ Newtype Sum.:+ PatternSynonym Sum.:+ RoleAnnotation Sum.:+ TopSplice Sum.:+ TypeFamily Sum.:+ TypeInstance Sum.:+ TypeSynomym Sum.:+ Sum.Nil)}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Cast.Cast Declaration where
   cast dynNode = do
@@ -268,7 +268,7 @@ instance AST.Node.HasDynNode Declaration where
   getDynNode (Declaration {dynNode}) = AST.Node.unDynNode dynNode
 
 data Expression = Expression {dynNode :: AST.Node.WrappedDynNode, getExpression :: (Apply Sum.:+ ArithmeticSequence Sum.:+ Case Sum.:+ Conditional Sum.:+ Constructor Sum.:+ Do Sum.:+ ImplicitVariable Sum.:+ Infix Sum.:+ Label Sum.:+ Lambda Sum.:+ LambdaCase Sum.:+ LambdaCases Sum.:+ LeftSection Sum.:+ LetIn Sum.:+ List Sum.:+ ListComprehension Sum.:+ Literal Sum.:+ MultiWayIf Sum.:+ Negation Sum.:+ Parens Sum.:+ PrefixId Sum.:+ PrefixTuple Sum.:+ PrefixUnboxedSum Sum.:+ PrefixUnboxedTuple Sum.:+ Projection Sum.:+ ProjectionSelector Sum.:+ Qualified Sum.:+ Quasiquote Sum.:+ Quote Sum.:+ Record Sum.:+ RightSection Sum.:+ Splice Sum.:+ ThQuotedName Sum.:+ Tuple Sum.:+ TypedQuote Sum.:+ UnboxedSum Sum.:+ UnboxedTuple Sum.:+ UnboxedUnit Sum.:+ Unit Sum.:+ Variable Sum.:+ Sum.Nil)}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Cast.Cast Expression where
   cast dynNode = do
@@ -279,7 +279,7 @@ instance AST.Node.HasDynNode Expression where
   getDynNode (Expression {dynNode}) = AST.Node.unDynNode dynNode
 
 data Guard = Guard {dynNode :: AST.Node.WrappedDynNode, getGuard :: (Boolean Sum.:+ Let Sum.:+ PatternGuard Sum.:+ Sum.Nil)}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Cast.Cast Guard where
   cast dynNode = do
@@ -290,7 +290,7 @@ instance AST.Node.HasDynNode Guard where
   getDynNode (Guard {dynNode}) = AST.Node.unDynNode dynNode
 
 data InstanceDecl = InstanceDecl {dynNode :: AST.Node.WrappedDynNode, getInstanceDecl :: (DataInstance Sum.:+ Decl Sum.:+ TypeInstance Sum.:+ Sum.Nil)}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Cast.Cast InstanceDecl where
   cast dynNode = do
@@ -301,7 +301,7 @@ instance AST.Node.HasDynNode InstanceDecl where
   getDynNode (InstanceDecl {dynNode}) = AST.Node.unDynNode dynNode
 
 data Pattern = Pattern {dynNode :: AST.Node.WrappedDynNode, getPattern :: (Apply Sum.:+ As Sum.:+ Constructor Sum.:+ Infix Sum.:+ Irrefutable Sum.:+ List Sum.:+ Literal Sum.:+ Negation Sum.:+ Parens Sum.:+ PrefixId Sum.:+ PrefixTuple Sum.:+ PrefixUnboxedSum Sum.:+ PrefixUnboxedTuple Sum.:+ Qualified Sum.:+ Quasiquote Sum.:+ Record Sum.:+ Splice Sum.:+ Strict Sum.:+ Tuple Sum.:+ UnboxedSum Sum.:+ UnboxedTuple Sum.:+ UnboxedUnit Sum.:+ Unit Sum.:+ Variable Sum.:+ Wildcard Sum.:+ Sum.Nil)}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Cast.Cast Pattern where
   cast dynNode = do
@@ -312,7 +312,7 @@ instance AST.Node.HasDynNode Pattern where
   getDynNode (Pattern {dynNode}) = AST.Node.unDynNode dynNode
 
 data Qualifier = Qualifier {dynNode :: AST.Node.WrappedDynNode, getQualifier :: (Boolean Sum.:+ Generator Sum.:+ Group Sum.:+ Let Sum.:+ Transform Sum.:+ Sum.Nil)}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Cast.Cast Qualifier where
   cast dynNode = do
@@ -323,7 +323,7 @@ instance AST.Node.HasDynNode Qualifier where
   getDynNode (Qualifier {dynNode}) = AST.Node.unDynNode dynNode
 
 data QuantifiedType = QuantifiedType {dynNode :: AST.Node.WrappedDynNode, getQuantifiedType :: (Context Sum.:+ Forall Sum.:+ ForallRequired Sum.:+ Function Sum.:+ ImplicitParameter Sum.:+ LinearFunction Sum.:+ Type Sum.:+ Sum.Nil)}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Cast.Cast QuantifiedType where
   cast dynNode = do
@@ -334,7 +334,7 @@ instance AST.Node.HasDynNode QuantifiedType where
   getDynNode (QuantifiedType {dynNode}) = AST.Node.unDynNode dynNode
 
 data Statement = Statement {dynNode :: AST.Node.WrappedDynNode, getStatement :: (Bind Sum.:+ Exp Sum.:+ Let Sum.:+ Rec Sum.:+ Sum.Nil)}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Cast.Cast Statement where
   cast dynNode = do
@@ -345,7 +345,7 @@ instance AST.Node.HasDynNode Statement where
   getDynNode (Statement {dynNode}) = AST.Node.unDynNode dynNode
 
 data Type = Type {dynNode :: AST.Node.WrappedDynNode, getType :: (Apply Sum.:+ Infix Sum.:+ List Sum.:+ Literal Sum.:+ Name Sum.:+ Parens Sum.:+ PrefixId Sum.:+ PrefixList Sum.:+ PrefixTuple Sum.:+ PrefixUnboxedSum Sum.:+ PrefixUnboxedTuple Sum.:+ Promoted Sum.:+ Qualified Sum.:+ Quasiquote Sum.:+ Splice Sum.:+ Star Sum.:+ Tuple Sum.:+ UnboxedSum Sum.:+ UnboxedTuple Sum.:+ UnboxedUnit Sum.:+ Unit Sum.:+ Variable Sum.:+ Wildcard Sum.:+ Sum.Nil)}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Cast.Cast Type where
   cast dynNode = do
@@ -356,7 +356,7 @@ instance AST.Node.HasDynNode Type where
   getDynNode (Type {dynNode}) = AST.Node.unDynNode dynNode
 
 data TypeParam = TypeParam {dynNode :: AST.Node.WrappedDynNode, getTypeParam :: (Invisible Sum.:+ Parens Sum.:+ Variable Sum.:+ Wildcard Sum.:+ Sum.Nil)}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Cast.Cast TypeParam where
   cast dynNode = do
@@ -367,7 +367,7 @@ instance AST.Node.HasDynNode TypeParam where
   getDynNode (TypeParam {dynNode}) = AST.Node.unDynNode dynNode
 
 data AbstractFamily = AbstractFamily {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode AbstractFamily where
   getDynNode (AbstractFamily {dynNode}) = AST.Node.unDynNode dynNode
@@ -384,7 +384,7 @@ data Alternative = Alternative
     patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Patterns))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Alternative :: Api.Node -> Prelude.Maybe Alternative
 cast_Alternative dynNode = do
@@ -418,7 +418,7 @@ data Alternatives = Alternatives
   { alternative :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Alternative))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Alternatives :: Api.Node -> Prelude.Maybe Alternatives
 cast_Alternatives dynNode = do
@@ -444,7 +444,7 @@ data Annotated = Annotated
     kind :: ((AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Annotated :: Api.Node -> Prelude.Maybe Annotated
 cast_Annotated dynNode = do
@@ -474,7 +474,7 @@ data Apply = Apply
     function :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Expression Sum.:+ Pattern Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Apply :: Api.Node -> Prelude.Maybe Apply
 cast_Apply dynNode = do
@@ -507,7 +507,7 @@ data ArithmeticSequence = ArithmeticSequence
     to :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_ArithmeticSequence :: Api.Node -> Prelude.Maybe ArithmeticSequence
 cast_ArithmeticSequence dynNode = do
@@ -539,7 +539,7 @@ data As = As
     pattern' :: ((AST.Err.Err (Pattern))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_As :: Api.Node -> Prelude.Maybe As
 cast_As dynNode = do
@@ -568,7 +568,7 @@ data AssociatedType = AssociatedType
     type' :: ((AST.Err.Err ((Name Sum.:+ Qualified Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_AssociatedType :: Api.Node -> Prelude.Maybe AssociatedType
 cast_AssociatedType dynNode = do
@@ -602,7 +602,7 @@ data Bind = Bind
     pattern' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Bind :: Api.Node -> Prelude.Maybe Bind
 cast_Bind dynNode = do
@@ -645,7 +645,7 @@ data BindingList = BindingList
   { name :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((Constructor Sum.:+ PrefixId Sum.:+ Variable Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_BindingList :: Api.Node -> Prelude.Maybe BindingList
 cast_BindingList dynNode = do
@@ -670,7 +670,7 @@ data Boolean = Boolean
   { children :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Boolean :: Api.Node -> Prelude.Maybe Boolean
 cast_Boolean dynNode = do
@@ -696,7 +696,7 @@ data Case = Case
     alternatives :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Alternatives))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Case :: Api.Node -> Prelude.Maybe Case
 cast_Case dynNode = do
@@ -724,7 +724,7 @@ data Children = Children
   { element :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((AllNames Sum.:+ AssociatedType Sum.:+ Constructor Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Children :: Api.Node -> Prelude.Maybe Children
 cast_Children dynNode = do
@@ -754,7 +754,7 @@ data Class = Class
     patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (TypeParams))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Class :: Api.Node -> Prelude.Maybe Class
 cast_Class dynNode = do
@@ -794,7 +794,7 @@ data ClassDeclarations = ClassDeclarations
   { declaration :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (ClassDecl))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_ClassDeclarations :: Api.Node -> Prelude.Maybe ClassDeclarations
 cast_ClassDeclarations dynNode = do
@@ -821,7 +821,7 @@ data Conditional = Conditional
     then' :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Conditional :: Api.Node -> Prelude.Maybe Conditional
 cast_Conditional dynNode = do
@@ -849,7 +849,7 @@ instance AST.Cast.Cast Conditional where
   cast = cast_Conditional
 
 data ConstructorOperator = ConstructorOperator {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode ConstructorOperator where
   getDynNode (ConstructorOperator {dynNode}) = AST.Node.unDynNode dynNode
@@ -867,7 +867,7 @@ data ConstructorSynonym = ConstructorSynonym
     pattern' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_ConstructorSynonym :: Api.Node -> Prelude.Maybe ConstructorSynonym
 cast_ConstructorSynonym dynNode = do
@@ -904,7 +904,7 @@ data ConstructorSynonyms = ConstructorSynonyms
   { children :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (ConstructorSynonym))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_ConstructorSynonyms :: Api.Node -> Prelude.Maybe ConstructorSynonyms
 cast_ConstructorSynonyms dynNode = do
@@ -932,7 +932,7 @@ data Context = Context
     type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Context :: Api.Node -> Prelude.Maybe Context
 cast_Context dynNode = do
@@ -968,7 +968,7 @@ data DataConstructor = DataConstructor
     forall' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Forall Sum.:+ ForallRequired Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_DataConstructor :: Api.Node -> Prelude.Maybe DataConstructor
 cast_DataConstructor dynNode = do
@@ -999,7 +999,7 @@ data DataConstructors = DataConstructors
   { constructor :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (DataConstructor))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_DataConstructors :: Api.Node -> Prelude.Maybe DataConstructors
 cast_DataConstructors dynNode = do
@@ -1027,7 +1027,7 @@ data DataFamily = DataFamily
     patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (TypeParams))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_DataFamily :: Api.Node -> Prelude.Maybe DataFamily
 cast_DataFamily dynNode = do
@@ -1061,7 +1061,7 @@ data DataInstance = DataInstance
   { children :: ((AST.Err.Err ((DataType Sum.:+ Newtype Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_DataInstance :: Api.Node -> Prelude.Maybe DataInstance
 cast_DataInstance dynNode = do
@@ -1093,7 +1093,7 @@ data DataType = DataType
     patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((TypeParams Sum.:+ TypePatterns Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_DataType :: Api.Node -> Prelude.Maybe DataType
 cast_DataType dynNode = do
@@ -1139,7 +1139,7 @@ data Declarations = Declarations
   { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((Declaration Sum.:+ Import Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Declarations :: Api.Node -> Prelude.Maybe Declarations
 cast_Declarations dynNode = do
@@ -1164,7 +1164,7 @@ data DefaultSignature = DefaultSignature
   { signature :: ((AST.Err.Err (Signature))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_DefaultSignature :: Api.Node -> Prelude.Maybe DefaultSignature
 cast_DefaultSignature dynNode = do
@@ -1189,7 +1189,7 @@ data DefaultTypes = DefaultTypes
   { type' :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((QuantifiedType Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_DefaultTypes :: Api.Node -> Prelude.Maybe DefaultTypes
 cast_DefaultTypes dynNode = do
@@ -1216,7 +1216,7 @@ data Deriving = Deriving
     via :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Via))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Deriving :: Api.Node -> Prelude.Maybe Deriving
 cast_Deriving dynNode = do
@@ -1253,7 +1253,7 @@ data DerivingInstance = DerivingInstance
     via :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Via))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_DerivingInstance :: Api.Node -> Prelude.Maybe DerivingInstance
 cast_DerivingInstance dynNode = do
@@ -1293,7 +1293,7 @@ instance AST.Cast.Cast DerivingInstance where
   cast = cast_DerivingInstance
 
 data DerivingStrategy = DerivingStrategy {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode DerivingStrategy where
   getDynNode (DerivingStrategy {dynNode}) = AST.Node.unDynNode dynNode
@@ -1308,7 +1308,7 @@ data Do = Do
     statement :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Statement))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Do :: Api.Node -> Prelude.Maybe Do
 cast_Do dynNode = do
@@ -1337,7 +1337,7 @@ data DoModule = DoModule
     module' :: ((AST.Err.Err (Module))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_DoModule :: Api.Node -> Prelude.Maybe DoModule
 cast_DoModule dynNode = do
@@ -1362,7 +1362,7 @@ instance AST.Cast.Cast DoModule where
   cast = cast_DoModule
 
 data EmptyList = EmptyList {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode EmptyList where
   getDynNode (EmptyList {dynNode}) = AST.Node.unDynNode dynNode
@@ -1376,7 +1376,7 @@ data Entity = Entity
   { children :: ((AST.Err.Err (String))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Entity :: Api.Node -> Prelude.Maybe Entity
 cast_Entity dynNode = do
@@ -1407,7 +1407,7 @@ data Equation = Equation
     synonym :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Pattern))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Equation :: Api.Node -> Prelude.Maybe Equation
 cast_Equation dynNode = do
@@ -1450,7 +1450,7 @@ data Equations = Equations
   { equation :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Equation))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Equations :: Api.Node -> Prelude.Maybe Equations
 cast_Equations dynNode = do
@@ -1475,7 +1475,7 @@ data Exp = Exp
   { children :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Exp :: Api.Node -> Prelude.Maybe Exp
 cast_Exp dynNode = do
@@ -1500,7 +1500,7 @@ data ExplicitType = ExplicitType
   { type' :: ((AST.Err.Err (Type))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_ExplicitType :: Api.Node -> Prelude.Maybe ExplicitType
 cast_ExplicitType dynNode = do
@@ -1529,7 +1529,7 @@ data Export = Export
     variable :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Export :: Api.Node -> Prelude.Maybe Export
 cast_Export dynNode = do
@@ -1567,7 +1567,7 @@ data Exports = Exports
     export :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Export))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Exports :: Api.Node -> Prelude.Maybe Exports
 cast_Exports dynNode = do
@@ -1598,7 +1598,7 @@ data Field = Field
     type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((LazyField Sum.:+ QuantifiedType Sum.:+ StrictField Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Field :: Api.Node -> Prelude.Maybe Field
 cast_Field dynNode = do
@@ -1632,7 +1632,7 @@ data FieldName = FieldName
   { children :: ((AST.Err.Err (Variable))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_FieldName :: Api.Node -> Prelude.Maybe FieldName
 cast_FieldName dynNode = do
@@ -1658,7 +1658,7 @@ data FieldPath = FieldPath
     subfield :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (FieldName))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_FieldPath :: Api.Node -> Prelude.Maybe FieldPath
 cast_FieldPath dynNode = do
@@ -1688,7 +1688,7 @@ data FieldPattern = FieldPattern
     pattern' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_FieldPattern :: Api.Node -> Prelude.Maybe FieldPattern
 cast_FieldPattern dynNode = do
@@ -1721,7 +1721,7 @@ data FieldUpdate = FieldUpdate
     field :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((FieldName Sum.:+ FieldPath Sum.:+ Qualified Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_FieldUpdate :: Api.Node -> Prelude.Maybe FieldUpdate
 cast_FieldUpdate dynNode = do
@@ -1752,7 +1752,7 @@ data Fields = Fields
   { field :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Field))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Fields :: Api.Node -> Prelude.Maybe Fields
 cast_Fields dynNode = do
@@ -1779,7 +1779,7 @@ data Fixity = Fixity
     precedence :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Integer))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Fixity :: Api.Node -> Prelude.Maybe Fixity
 cast_Fixity dynNode = do
@@ -1813,7 +1813,7 @@ data Forall = Forall
     variables :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedVariables))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Forall :: Api.Node -> Prelude.Maybe Forall
 cast_Forall dynNode = do
@@ -1849,7 +1849,7 @@ data ForallRequired = ForallRequired
     variables :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedVariables))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_ForallRequired :: Api.Node -> Prelude.Maybe ForallRequired
 cast_ForallRequired dynNode = do
@@ -1882,7 +1882,7 @@ data ForeignExport = ForeignExport
     signature :: ((AST.Err.Err (Signature))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_ForeignExport :: Api.Node -> Prelude.Maybe ForeignExport
 cast_ForeignExport dynNode = do
@@ -1916,7 +1916,7 @@ data ForeignImport = ForeignImport
     signature :: ((AST.Err.Err (Signature))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_ForeignImport :: Api.Node -> Prelude.Maybe ForeignImport
 cast_ForeignImport dynNode = do
@@ -1958,7 +1958,7 @@ data Function = Function
     result :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Function :: Api.Node -> Prelude.Maybe Function
 cast_Function dynNode = do
@@ -2010,7 +2010,7 @@ data FunctionHeadParens = FunctionHeadParens
     patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Patterns))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_FunctionHeadParens :: Api.Node -> Prelude.Maybe FunctionHeadParens
 cast_FunctionHeadParens dynNode = do
@@ -2045,7 +2045,7 @@ data Fundep = Fundep
     matched :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Variable))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Fundep :: Api.Node -> Prelude.Maybe Fundep
 cast_Fundep dynNode = do
@@ -2073,7 +2073,7 @@ data Fundeps = Fundeps
   { fundep :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Fundep))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Fundeps :: Api.Node -> Prelude.Maybe Fundeps
 cast_Fundeps dynNode = do
@@ -2102,7 +2102,7 @@ data GadtConstructor = GadtConstructor
     type' :: ((AST.Err.Err ((Prefix Sum.:+ Record Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_GadtConstructor :: Api.Node -> Prelude.Maybe GadtConstructor
 cast_GadtConstructor dynNode = do
@@ -2139,7 +2139,7 @@ data GadtConstructors = GadtConstructors
   { constructor :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (GadtConstructor))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_GadtConstructors :: Api.Node -> Prelude.Maybe GadtConstructors
 cast_GadtConstructors dynNode = do
@@ -2166,7 +2166,7 @@ data Generator = Generator
     pattern' :: ((AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Generator :: Api.Node -> Prelude.Maybe Generator
 cast_Generator dynNode = do
@@ -2198,7 +2198,7 @@ data Group = Group
     key :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Group :: Api.Node -> Prelude.Maybe Group
 cast_Group dynNode = do
@@ -2226,7 +2226,7 @@ data Guards = Guards
   { guard :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Guard))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Guards :: Api.Node -> Prelude.Maybe Guards
 cast_Guards dynNode = do
@@ -2253,7 +2253,7 @@ data Haskell = Haskell
     imports :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Imports))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Haskell :: Api.Node -> Prelude.Maybe Haskell
 cast_Haskell dynNode = do
@@ -2285,7 +2285,7 @@ data Header = Header
     module' :: ((AST.Err.Err (Module))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Header :: Api.Node -> Prelude.Maybe Header
 cast_Header dynNode = do
@@ -2314,7 +2314,7 @@ data ImplicitParameter = ImplicitParameter
     type' :: ((AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_ImplicitParameter :: Api.Node -> Prelude.Maybe ImplicitParameter
 cast_ImplicitParameter dynNode = do
@@ -2345,7 +2345,7 @@ data Import = Import
     package :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (ImportPackage))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Import :: Api.Node -> Prelude.Maybe Import
 cast_Import dynNode = do
@@ -2379,7 +2379,7 @@ data ImportList = ImportList
   { name :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (ImportName))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_ImportList :: Api.Node -> Prelude.Maybe ImportList
 cast_ImportList dynNode = do
@@ -2408,7 +2408,7 @@ data ImportName = ImportName
     variable :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_ImportName :: Api.Node -> Prelude.Maybe ImportName
 cast_ImportName dynNode = do
@@ -2445,7 +2445,7 @@ data Imports = Imports
   { import' :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Import))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Imports :: Api.Node -> Prelude.Maybe Imports
 cast_Imports dynNode = do
@@ -2470,7 +2470,7 @@ data Inferred = Inferred
   { children :: ((AST.Err.Err ((Annotated Sum.:+ TypeParam Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Inferred :: Api.Node -> Prelude.Maybe Inferred
 cast_Inferred dynNode = do
@@ -2497,7 +2497,7 @@ data Infix = Infix
     rightOperand :: ((AST.Err.Err ((Expression Sum.:+ LazyField Sum.:+ Pattern Sum.:+ StrictField Sum.:+ Type Sum.:+ TypeParam Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Infix :: Api.Node -> Prelude.Maybe Infix
 cast_Infix dynNode = do
@@ -2528,7 +2528,7 @@ data InfixId = InfixId
   { children :: ((AST.Err.Err ((Constructor Sum.:+ Name Sum.:+ Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_InfixId :: Api.Node -> Prelude.Maybe InfixId
 cast_InfixId dynNode = do
@@ -2558,7 +2558,7 @@ data Instance = Instance
     patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (TypePatterns))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Instance :: Api.Node -> Prelude.Maybe Instance
 cast_Instance dynNode = do
@@ -2598,7 +2598,7 @@ data InstanceDeclarations = InstanceDeclarations
   { declaration :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (InstanceDecl))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_InstanceDeclarations :: Api.Node -> Prelude.Maybe InstanceDeclarations
 cast_InstanceDeclarations dynNode = do
@@ -2620,7 +2620,7 @@ instance AST.Cast.Cast InstanceDeclarations where
   cast = cast_InstanceDeclarations
 
 data Integer = Integer {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode Integer where
   getDynNode (Integer {dynNode}) = AST.Node.unDynNode dynNode
@@ -2634,7 +2634,7 @@ data Invisible = Invisible
   { bind :: ((AST.Err.Err (TypeParam))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Invisible :: Api.Node -> Prelude.Maybe Invisible
 cast_Invisible dynNode = do
@@ -2659,7 +2659,7 @@ data Irrefutable = Irrefutable
   { pattern' :: ((AST.Err.Err (Pattern))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Irrefutable :: Api.Node -> Prelude.Maybe Irrefutable
 cast_Irrefutable dynNode = do
@@ -2684,7 +2684,7 @@ data KindApplication = KindApplication
   { type' :: ((AST.Err.Err (Type))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_KindApplication :: Api.Node -> Prelude.Maybe KindApplication
 cast_KindApplication dynNode = do
@@ -2712,7 +2712,7 @@ data KindSignature = KindSignature
     patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (TypeParams))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_KindSignature :: Api.Node -> Prelude.Maybe KindSignature
 cast_KindSignature dynNode = do
@@ -2747,7 +2747,7 @@ data Lambda = Lambda
     patterns :: ((AST.Err.Err (Patterns))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Lambda :: Api.Node -> Prelude.Maybe Lambda
 cast_Lambda dynNode = do
@@ -2775,7 +2775,7 @@ data LambdaCase = LambdaCase
   { alternatives :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Alternatives))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_LambdaCase :: Api.Node -> Prelude.Maybe LambdaCase
 cast_LambdaCase dynNode = do
@@ -2800,7 +2800,7 @@ data LambdaCases = LambdaCases
   { alternatives :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Alternatives))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_LambdaCases :: Api.Node -> Prelude.Maybe LambdaCases
 cast_LambdaCases dynNode = do
@@ -2825,7 +2825,7 @@ data LazyField = LazyField
   { type' :: ((AST.Err.Err (Type))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_LazyField :: Api.Node -> Prelude.Maybe LazyField
 cast_LazyField dynNode = do
@@ -2851,7 +2851,7 @@ data LeftSection = LeftSection
     operator :: ((AST.Err.Err ((ConstructorOperator Sum.:+ InfixId Sum.:+ Operator Sum.:+ Qualified Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_LeftSection :: Api.Node -> Prelude.Maybe LeftSection
 cast_LeftSection dynNode = do
@@ -2879,7 +2879,7 @@ data Let = Let
   { binds :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (LocalBinds))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Let :: Api.Node -> Prelude.Maybe Let
 cast_Let dynNode = do
@@ -2905,7 +2905,7 @@ data LetIn = LetIn
     expression :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_LetIn :: Api.Node -> Prelude.Maybe LetIn
 cast_LetIn dynNode = do
@@ -2936,7 +2936,7 @@ data LinearFunction = LinearFunction
     result :: ((AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_LinearFunction :: Api.Node -> Prelude.Maybe LinearFunction
 cast_LinearFunction dynNode = do
@@ -2970,7 +2970,7 @@ data List = List
   { element :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((Expression Sum.:+ Pattern Sum.:+ QuantifiedType Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_List :: Api.Node -> Prelude.Maybe List
 cast_List dynNode = do
@@ -2996,7 +2996,7 @@ data ListComprehension = ListComprehension
     qualifiers :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Qualifiers))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_ListComprehension :: Api.Node -> Prelude.Maybe ListComprehension
 cast_ListComprehension dynNode = do
@@ -3024,7 +3024,7 @@ data Literal = Literal
   { children :: ((AST.Err.Err ((Char Sum.:+ Float Sum.:+ Integer Sum.:+ String Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Literal :: Api.Node -> Prelude.Maybe Literal
 cast_Literal dynNode = do
@@ -3049,7 +3049,7 @@ data LocalBinds = LocalBinds
   { decl :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((Decl Sum.:+ Fixity Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_LocalBinds :: Api.Node -> Prelude.Maybe LocalBinds
 cast_LocalBinds dynNode = do
@@ -3075,7 +3075,7 @@ data Match = Match
     guards :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Guards))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Match :: Api.Node -> Prelude.Maybe Match
 cast_Match dynNode = do
@@ -3103,7 +3103,7 @@ data Modifier = Modifier
   { children :: ((AST.Err.Err (Type))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Modifier :: Api.Node -> Prelude.Maybe Modifier
 cast_Modifier dynNode = do
@@ -3128,7 +3128,7 @@ data Module = Module
   { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (ModuleId))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Module :: Api.Node -> Prelude.Maybe Module
 cast_Module dynNode = do
@@ -3153,7 +3153,7 @@ data ModuleExport = ModuleExport
   { module' :: ((AST.Err.Err (Module))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_ModuleExport :: Api.Node -> Prelude.Maybe ModuleExport
 cast_ModuleExport dynNode = do
@@ -3178,7 +3178,7 @@ data MultiWayIf = MultiWayIf
   { match :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Match))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_MultiWayIf :: Api.Node -> Prelude.Maybe MultiWayIf
 cast_MultiWayIf dynNode = do
@@ -3200,7 +3200,7 @@ instance AST.Cast.Cast MultiWayIf where
   cast = cast_MultiWayIf
 
 data Namespace = Namespace {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode Namespace where
   getDynNode (Namespace {dynNode}) = AST.Node.unDynNode dynNode
@@ -3216,7 +3216,7 @@ data Negation = Negation
     number :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Float Sum.:+ Integer Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Negation :: Api.Node -> Prelude.Maybe Negation
 cast_Negation dynNode = do
@@ -3255,7 +3255,7 @@ data Newtype = Newtype
     patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((TypeParams Sum.:+ TypePatterns Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Newtype :: Api.Node -> Prelude.Maybe Newtype
 cast_Newtype dynNode = do
@@ -3305,7 +3305,7 @@ data NewtypeConstructor = NewtypeConstructor
     name :: ((AST.Err.Err ((Constructor Sum.:+ PrefixId Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_NewtypeConstructor :: Api.Node -> Prelude.Maybe NewtypeConstructor
 cast_NewtypeConstructor dynNode = do
@@ -3330,7 +3330,7 @@ instance AST.Cast.Cast NewtypeConstructor where
   cast = cast_NewtypeConstructor
 
 data Operator = Operator {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode Operator where
   getDynNode (Operator {dynNode}) = AST.Node.unDynNode dynNode
@@ -3350,7 +3350,7 @@ data Parens = Parens
     type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((QuantifiedType Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Parens :: Api.Node -> Prelude.Maybe Parens
 cast_Parens dynNode = do
@@ -3395,7 +3395,7 @@ data PatternGuard = PatternGuard
     pattern' :: ((AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_PatternGuard :: Api.Node -> Prelude.Maybe PatternGuard
 cast_PatternGuard dynNode = do
@@ -3426,7 +3426,7 @@ data PatternSynonym = PatternSynonym
   { children :: ((AST.Err.Err ((Equation Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_PatternSynonym :: Api.Node -> Prelude.Maybe PatternSynonym
 cast_PatternSynonym dynNode = do
@@ -3451,7 +3451,7 @@ data Patterns = Patterns
   { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((ExplicitType Sum.:+ Pattern Sum.:+ TypeBinder Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Patterns :: Api.Node -> Prelude.Maybe Patterns
 cast_Patterns dynNode = do
@@ -3478,7 +3478,7 @@ data Prefix = Prefix
     type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Prefix :: Api.Node -> Prelude.Maybe Prefix
 cast_Prefix dynNode = do
@@ -3509,7 +3509,7 @@ data PrefixId = PrefixId
   { children :: ((AST.Err.Err ((ConstructorOperator Sum.:+ Operator Sum.:+ Qualified Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_PrefixId :: Api.Node -> Prelude.Maybe PrefixId
 cast_PrefixId dynNode = do
@@ -3531,7 +3531,7 @@ instance AST.Cast.Cast PrefixId where
   cast = cast_PrefixId
 
 data PrefixList = PrefixList {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode PrefixList where
   getDynNode (PrefixList {dynNode}) = AST.Node.unDynNode dynNode
@@ -3542,7 +3542,7 @@ instance AST.Cast.Cast PrefixList where
     Prelude.pure (PrefixList {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data PrefixTuple = PrefixTuple {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode PrefixTuple where
   getDynNode (PrefixTuple {dynNode}) = AST.Node.unDynNode dynNode
@@ -3553,7 +3553,7 @@ instance AST.Cast.Cast PrefixTuple where
     Prelude.pure (PrefixTuple {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data PrefixUnboxedSum = PrefixUnboxedSum {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode PrefixUnboxedSum where
   getDynNode (PrefixUnboxedSum {dynNode}) = AST.Node.unDynNode dynNode
@@ -3564,7 +3564,7 @@ instance AST.Cast.Cast PrefixUnboxedSum where
     Prelude.pure (PrefixUnboxedSum {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data PrefixUnboxedTuple = PrefixUnboxedTuple {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode PrefixUnboxedTuple where
   getDynNode (PrefixUnboxedTuple {dynNode}) = AST.Node.unDynNode dynNode
@@ -3579,7 +3579,7 @@ data Projection = Projection
     field :: ((AST.Err.Err (FieldName))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Projection :: Api.Node -> Prelude.Maybe Projection
 cast_Projection dynNode = do
@@ -3607,7 +3607,7 @@ data ProjectionSelector = ProjectionSelector
   { field :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Variable))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_ProjectionSelector :: Api.Node -> Prelude.Maybe ProjectionSelector
 cast_ProjectionSelector dynNode = do
@@ -3632,7 +3632,7 @@ data Promoted = Promoted
   { children :: ((AST.Err.Err ((Constructor Sum.:+ ConstructorOperator Sum.:+ EmptyList Sum.:+ InfixId Sum.:+ List Sum.:+ Operator Sum.:+ PrefixId Sum.:+ PrefixTuple Sum.:+ Qualified Sum.:+ Tuple Sum.:+ Unit Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Promoted :: Api.Node -> Prelude.Maybe Promoted
 cast_Promoted dynNode = do
@@ -3658,7 +3658,7 @@ data Qualified = Qualified
     module' :: ((AST.Err.Err (Module))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Qualified :: Api.Node -> Prelude.Maybe Qualified
 cast_Qualified dynNode = do
@@ -3686,7 +3686,7 @@ data Qualifiers = Qualifiers
   { qualifier :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Qualifier))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Qualifiers :: Api.Node -> Prelude.Maybe Qualifiers
 cast_Qualifiers dynNode = do
@@ -3711,7 +3711,7 @@ data QuantifiedVariables = QuantifiedVariables
   { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((Inferred Sum.:+ TypeParam Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_QuantifiedVariables :: Api.Node -> Prelude.Maybe QuantifiedVariables
 cast_QuantifiedVariables dynNode = do
@@ -3737,7 +3737,7 @@ data Quasiquote = Quasiquote
     quoter :: ((AST.Err.Err (Quoter))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Quasiquote :: Api.Node -> Prelude.Maybe Quasiquote
 cast_Quasiquote dynNode = do
@@ -3766,7 +3766,7 @@ data Quote = Quote
     quoter :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (((AST.Token.Token "d") Sum.:+ (AST.Token.Token "e") Sum.:+ (AST.Token.Token "p") Sum.:+ (AST.Token.Token "t") Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Quote :: Api.Node -> Prelude.Maybe Quote
 cast_Quote dynNode = do
@@ -3794,7 +3794,7 @@ data QuotedDecls = QuotedDecls
   { declaration :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Declaration))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_QuotedDecls :: Api.Node -> Prelude.Maybe QuotedDecls
 cast_QuotedDecls dynNode = do
@@ -3819,7 +3819,7 @@ data QuotedExpression = QuotedExpression
   { children :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_QuotedExpression :: Api.Node -> Prelude.Maybe QuotedExpression
 cast_QuotedExpression dynNode = do
@@ -3844,7 +3844,7 @@ data QuotedPattern = QuotedPattern
   { children :: ((AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_QuotedPattern :: Api.Node -> Prelude.Maybe QuotedPattern
 cast_QuotedPattern dynNode = do
@@ -3869,7 +3869,7 @@ data QuotedType = QuotedType
   { children :: ((AST.Err.Err ((QuantifiedType Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_QuotedType :: Api.Node -> Prelude.Maybe QuotedType
 cast_QuotedType dynNode = do
@@ -3894,7 +3894,7 @@ data Quoter = Quoter
   { children :: ((AST.Err.Err ((Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Quoter :: Api.Node -> Prelude.Maybe Quoter
 cast_Quoter dynNode = do
@@ -3919,7 +3919,7 @@ data Rec = Rec
   { statement :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Statement))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Rec :: Api.Node -> Prelude.Maybe Rec
 cast_Rec dynNode = do
@@ -3950,7 +3950,7 @@ data Record = Record
     type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Record :: Api.Node -> Prelude.Maybe Record
 cast_Record dynNode = do
@@ -3994,7 +3994,7 @@ data RightSection = RightSection
     rightOperand :: ((AST.Err.Err (Expression))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_RightSection :: Api.Node -> Prelude.Maybe RightSection
 cast_RightSection dynNode = do
@@ -4023,7 +4023,7 @@ data RoleAnnotation = RoleAnnotation
     type' :: ((AST.Err.Err ((Name Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_RoleAnnotation :: Api.Node -> Prelude.Maybe RoleAnnotation
 cast_RoleAnnotation dynNode = do
@@ -4058,7 +4058,7 @@ data Signature = Signature
     type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Signature :: Api.Node -> Prelude.Maybe Signature
 cast_Signature dynNode = do
@@ -4104,7 +4104,7 @@ data Special = Special
   { children :: ((AST.Err.Err ((EmptyList Sum.:+ Tuple Sum.:+ UnboxedSum Sum.:+ UnboxedTuple Sum.:+ UnboxedUnit Sum.:+ Unit Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Special :: Api.Node -> Prelude.Maybe Special
 cast_Special dynNode = do
@@ -4129,7 +4129,7 @@ data Splice = Splice
   { expression :: ((AST.Err.Err ((Constructor Sum.:+ ImplicitVariable Sum.:+ Label Sum.:+ Literal Sum.:+ Parens Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Splice :: Api.Node -> Prelude.Maybe Splice
 cast_Splice dynNode = do
@@ -4151,7 +4151,7 @@ instance AST.Cast.Cast Splice where
   cast = cast_Splice
 
 data Star = Star {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode Star where
   getDynNode (Star {dynNode}) = AST.Node.unDynNode dynNode
@@ -4165,7 +4165,7 @@ data Strict = Strict
   { pattern' :: ((AST.Err.Err (Pattern))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Strict :: Api.Node -> Prelude.Maybe Strict
 cast_Strict dynNode = do
@@ -4190,7 +4190,7 @@ data StrictField = StrictField
   { type' :: ((AST.Err.Err (Type))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_StrictField :: Api.Node -> Prelude.Maybe StrictField
 cast_StrictField dynNode = do
@@ -4216,7 +4216,7 @@ data ThQuotedName = ThQuotedName
     type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Type))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_ThQuotedName :: Api.Node -> Prelude.Maybe ThQuotedName
 cast_ThQuotedName dynNode = do
@@ -4244,7 +4244,7 @@ data TopSplice = TopSplice
   { children :: ((AST.Err.Err (Expression))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_TopSplice :: Api.Node -> Prelude.Maybe TopSplice
 cast_TopSplice dynNode = do
@@ -4270,7 +4270,7 @@ data Transform = Transform
     transformation :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Transform :: Api.Node -> Prelude.Maybe Transform
 cast_Transform dynNode = do
@@ -4299,7 +4299,7 @@ data Tuple = Tuple
     element :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((Expression Sum.:+ Pattern Sum.:+ QuantifiedType Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Tuple :: Api.Node -> Prelude.Maybe Tuple
 cast_Tuple dynNode = do
@@ -4327,7 +4327,7 @@ data TypeApplication = TypeApplication
   { type' :: ((AST.Err.Err (Type))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_TypeApplication :: Api.Node -> Prelude.Maybe TypeApplication
 cast_TypeApplication dynNode = do
@@ -4352,7 +4352,7 @@ data TypeBinder = TypeBinder
   { type' :: ((AST.Err.Err (Type))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_TypeBinder :: Api.Node -> Prelude.Maybe TypeBinder
 cast_TypeBinder dynNode = do
@@ -4381,7 +4381,7 @@ data TypeFamily = TypeFamily
     patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (TypeParams))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_TypeFamily :: Api.Node -> Prelude.Maybe TypeFamily
 cast_TypeFamily dynNode = do
@@ -4419,7 +4419,7 @@ data TypeFamilyInjectivity = TypeFamilyInjectivity
     result :: ((AST.Err.Err (Variable))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_TypeFamilyInjectivity :: Api.Node -> Prelude.Maybe TypeFamilyInjectivity
 cast_TypeFamilyInjectivity dynNode = do
@@ -4447,7 +4447,7 @@ data TypeFamilyResult = TypeFamilyResult
   { result :: ((AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_TypeFamilyResult :: Api.Node -> Prelude.Maybe TypeFamilyResult
 cast_TypeFamilyResult dynNode = do
@@ -4475,7 +4475,7 @@ data TypeInstance = TypeInstance
     patterns :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (TypePatterns))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_TypeInstance :: Api.Node -> Prelude.Maybe TypeInstance
 cast_TypeInstance dynNode = do
@@ -4509,7 +4509,7 @@ data TypeParams = TypeParams
   { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (TypeParam))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_TypeParams :: Api.Node -> Prelude.Maybe TypeParams
 cast_TypeParams dynNode = do
@@ -4534,7 +4534,7 @@ data TypePatterns = TypePatterns
   { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((KindApplication Sum.:+ Type Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_TypePatterns :: Api.Node -> Prelude.Maybe TypePatterns
 cast_TypePatterns dynNode = do
@@ -4556,7 +4556,7 @@ instance AST.Cast.Cast TypePatterns where
   cast = cast_TypePatterns
 
 data TypeRole = TypeRole {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode TypeRole where
   getDynNode (TypeRole {dynNode}) = AST.Node.unDynNode dynNode
@@ -4573,7 +4573,7 @@ data TypeSynomym = TypeSynomym
     type' :: ((AST.Err.Err ((QuantifiedType Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_TypeSynomym :: Api.Node -> Prelude.Maybe TypeSynomym
 cast_TypeSynomym dynNode = do
@@ -4607,7 +4607,7 @@ data TypedQuote = TypedQuote
   { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuotedExpression))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_TypedQuote :: Api.Node -> Prelude.Maybe TypedQuote
 cast_TypedQuote dynNode = do
@@ -4632,7 +4632,7 @@ data UnboxedSum = UnboxedSum
   { element :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((Expression Sum.:+ Pattern Sum.:+ QuantifiedType Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_UnboxedSum :: Api.Node -> Prelude.Maybe UnboxedSum
 cast_UnboxedSum dynNode = do
@@ -4657,7 +4657,7 @@ data UnboxedTuple = UnboxedTuple
   { element :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((Expression Sum.:+ Pattern Sum.:+ QuantifiedType Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_UnboxedTuple :: Api.Node -> Prelude.Maybe UnboxedTuple
 cast_UnboxedTuple dynNode = do
@@ -4679,7 +4679,7 @@ instance AST.Cast.Cast UnboxedTuple where
   cast = cast_UnboxedTuple
 
 data UnboxedUnit = UnboxedUnit {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode UnboxedUnit where
   getDynNode (UnboxedUnit {dynNode}) = AST.Node.unDynNode dynNode
@@ -4690,7 +4690,7 @@ instance AST.Cast.Cast UnboxedUnit where
     Prelude.pure (UnboxedUnit {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Unit = Unit {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode Unit where
   getDynNode (Unit {dynNode}) = AST.Node.unDynNode dynNode
@@ -4704,7 +4704,7 @@ data Via = Via
   { type' :: ((AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_Via :: Api.Node -> Prelude.Maybe Via
 cast_Via dynNode = do
@@ -4730,7 +4730,7 @@ data ViewPattern = ViewPattern
     pattern' :: ((AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.WrappedDynNode
   }
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 cast_ViewPattern :: Api.Node -> Prelude.Maybe ViewPattern
 cast_ViewPattern dynNode = do
@@ -4755,7 +4755,7 @@ instance AST.Cast.Cast ViewPattern where
   cast = cast_ViewPattern
 
 data Wildcard = Wildcard {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode Wildcard where
   getDynNode (Wildcard {dynNode}) = AST.Node.unDynNode dynNode
@@ -4766,7 +4766,7 @@ instance AST.Cast.Cast Wildcard where
     Prelude.pure (Wildcard {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data AllNames = AllNames {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode AllNames where
   getDynNode (AllNames {dynNode}) = AST.Node.unDynNode dynNode
@@ -4777,7 +4777,7 @@ instance AST.Cast.Cast AllNames where
     Prelude.pure (AllNames {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data CallingConvention = CallingConvention {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode CallingConvention where
   getDynNode (CallingConvention {dynNode}) = AST.Node.unDynNode dynNode
@@ -4788,7 +4788,7 @@ instance AST.Cast.Cast CallingConvention where
     Prelude.pure (CallingConvention {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Char = Char {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode Char where
   getDynNode (Char {dynNode}) = AST.Node.unDynNode dynNode
@@ -4799,7 +4799,7 @@ instance AST.Cast.Cast Char where
     Prelude.pure (Char {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Comment = Comment {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode Comment where
   getDynNode (Comment {dynNode}) = AST.Node.unDynNode dynNode
@@ -4810,7 +4810,7 @@ instance AST.Cast.Cast Comment where
     Prelude.pure (Comment {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Constructor = Constructor {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode Constructor where
   getDynNode (Constructor {dynNode}) = AST.Node.unDynNode dynNode
@@ -4821,7 +4821,7 @@ instance AST.Cast.Cast Constructor where
     Prelude.pure (Constructor {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Cpp = Cpp {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode Cpp where
   getDynNode (Cpp {dynNode}) = AST.Node.unDynNode dynNode
@@ -4832,7 +4832,7 @@ instance AST.Cast.Cast Cpp where
     Prelude.pure (Cpp {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Float = Float {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode Float where
   getDynNode (Float {dynNode}) = AST.Node.unDynNode dynNode
@@ -4843,7 +4843,7 @@ instance AST.Cast.Cast Float where
     Prelude.pure (Float {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Haddock = Haddock {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode Haddock where
   getDynNode (Haddock {dynNode}) = AST.Node.unDynNode dynNode
@@ -4854,7 +4854,7 @@ instance AST.Cast.Cast Haddock where
     Prelude.pure (Haddock {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data ImplicitVariable = ImplicitVariable {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode ImplicitVariable where
   getDynNode (ImplicitVariable {dynNode}) = AST.Node.unDynNode dynNode
@@ -4865,7 +4865,7 @@ instance AST.Cast.Cast ImplicitVariable where
     Prelude.pure (ImplicitVariable {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data ImportPackage = ImportPackage {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode ImportPackage where
   getDynNode (ImportPackage {dynNode}) = AST.Node.unDynNode dynNode
@@ -4876,7 +4876,7 @@ instance AST.Cast.Cast ImportPackage where
     Prelude.pure (ImportPackage {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Label = Label {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode Label where
   getDynNode (Label {dynNode}) = AST.Node.unDynNode dynNode
@@ -4887,7 +4887,7 @@ instance AST.Cast.Cast Label where
     Prelude.pure (Label {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data ModuleId = ModuleId {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode ModuleId where
   getDynNode (ModuleId {dynNode}) = AST.Node.unDynNode dynNode
@@ -4898,7 +4898,7 @@ instance AST.Cast.Cast ModuleId where
     Prelude.pure (ModuleId {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Name = Name {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode Name where
   getDynNode (Name {dynNode}) = AST.Node.unDynNode dynNode
@@ -4909,7 +4909,7 @@ instance AST.Cast.Cast Name where
     Prelude.pure (Name {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Pragma = Pragma {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode Pragma where
   getDynNode (Pragma {dynNode}) = AST.Node.unDynNode dynNode
@@ -4920,7 +4920,7 @@ instance AST.Cast.Cast Pragma where
     Prelude.pure (Pragma {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data QuasiquoteBody = QuasiquoteBody {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode QuasiquoteBody where
   getDynNode (QuasiquoteBody {dynNode}) = AST.Node.unDynNode dynNode
@@ -4931,7 +4931,7 @@ instance AST.Cast.Cast QuasiquoteBody where
     Prelude.pure (QuasiquoteBody {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Safety = Safety {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode Safety where
   getDynNode (Safety {dynNode}) = AST.Node.unDynNode dynNode
@@ -4942,7 +4942,7 @@ instance AST.Cast.Cast Safety where
     Prelude.pure (Safety {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data String = String {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode String where
   getDynNode (String {dynNode}) = AST.Node.unDynNode dynNode
@@ -4953,7 +4953,7 @@ instance AST.Cast.Cast String where
     Prelude.pure (String {dynNode = AST.Node.WrappedDynNode dynNode})
 
 data Variable = Variable {dynNode :: AST.Node.WrappedDynNode}
-  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)
+  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)
 
 instance AST.Node.HasDynNode Variable where
   getDynNode (Variable {dynNode}) = AST.Node.unDynNode dynNode

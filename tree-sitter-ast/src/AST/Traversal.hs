@@ -11,21 +11,23 @@ import Control.Applicative ((<|>))
 import Control.Monad (guard)
 import Data.Foldable (asum)
 import TreeSitter.Api qualified as TS
+import Data.Range qualified as Range
+import Data.Range (Range(..))
 
-getDeepestDynNodeContaining :: TS.Point -> DynNode -> Maybe DynNode
-getDeepestDynNodeContaining point node =
+getDeepestDynNodeContaining :: Range -> DynNode -> Maybe DynNode
+getDeepestDynNodeContaining range node =
   getDeepestSatisfying
     ( \n -> do
-        guard (TS.startPoint (TS.nodeRange n) <= point && point <= TS.endPoint (TS.nodeRange n))
+        guard (n.nodeRange `Range.containsRange` range)
         pure n
     )
     node
 
-getDeepestContaining :: (Cast n) => TS.Point -> DynNode -> Maybe n
-getDeepestContaining point node =
+getDeepestContaining :: (Cast n) => Range -> DynNode -> Maybe n
+getDeepestContaining range node =
   getDeepestSatisfying
     ( \n -> do
-        guard (TS.startPoint (TS.nodeRange n) <= point && point <= TS.endPoint (TS.nodeRange n))
+        guard (n.nodeRange `Range.containsRange` range)
         cast n
     )
     node

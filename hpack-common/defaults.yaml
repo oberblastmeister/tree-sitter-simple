@@ -39,6 +39,7 @@ default-extensions:
   - ExistentialQuantification
   - TypeOperators
   - DeepSubsumption
+  - OverloadedRecordDot
 tested-with: 
   - GHC == 9.4.4
   - GHC == 9.6.3

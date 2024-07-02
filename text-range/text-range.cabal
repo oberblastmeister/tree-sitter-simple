@@ -1,0 +1,66 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.36.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           text-range
+version:        0.0.0
+author:         Brian Shu
+maintainer:     littlebubu.shu@gmail.com
+license:        MIT
+build-type:     Simple
+tested-with:
+    GHC == 9.4.4
+  , GHC == 9.6.3
+
+library
+  exposed-modules:
+      Data.LineCol
+      Data.LineColRange
+      Data.Pos
+      Data.Range
+  other-modules:
+      Paths_text_range
+  hs-source-dirs:
+      src
+  default-extensions:
+      FlexibleInstances
+      FlexibleContexts
+      InstanceSigs
+      MultiParamTypeClasses
+      ConstraintKinds
+      LambdaCase
+      EmptyCase
+      TupleSections
+      BangPatterns
+      TypeApplications
+      StandaloneDeriving
+      OverloadedStrings
+      RankNTypes
+      ScopedTypeVariables
+      NamedFieldPuns
+      DuplicateRecordFields
+      DataKinds
+      ConstraintKinds
+      TypeApplications
+      KindSignatures
+      DeriveFoldable
+      DeriveFunctor
+      DeriveGeneric
+      DeriveDataTypeable
+      DeriveLift
+      DeriveTraversable
+      GeneralizedNewtypeDeriving
+      PolyKinds
+      ViewPatterns
+      PatternSynonyms
+      ExistentialQuantification
+      TypeOperators
+      DeepSubsumption
+      OverloadedRecordDot
+  ghc-options: -Wall -Wno-name-shadowing
+  build-depends:
+      base >=4.17
+    , text
+  default-language: GHC2021

@@ -112,6 +112,7 @@ library
       ExistentialQuantification
       TypeOperators
       DeepSubsumption
+      OverloadedRecordDot
   ghc-options: -Wall -Wno-name-shadowing
   cc-options: -std=c99
   include-dirs:
@@ -128,6 +129,7 @@ library
     , containers >=0.6.0.1 && <0.7
     , deepseq
     , text >=2.0 && <2.2
+    , text-range
     , unordered-containers >=0.2.9 && <0.3
   default-language: GHC2021
 
@@ -176,6 +178,7 @@ test-suite test
       ExistentialQuantification
       TypeOperators
       DeepSubsumption
+      OverloadedRecordDot
   ghc-options: -Wall -Wno-name-shadowing -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base

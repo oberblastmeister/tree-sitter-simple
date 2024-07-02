@@ -22,12 +22,11 @@ library
       AST.Err
       AST.Node
       AST.NodeTypes
-      AST.Range
       AST.Runtime
+      AST.Sum
       AST.Symbol
       AST.Token
       AST.Traversal
-      Data.Sum
   other-modules:
       Paths_tree_sitter_ast
   hs-source-dirs:
@@ -66,6 +65,7 @@ library
       ExistentialQuantification
       TypeOperators
       DeepSubsumption
+      OverloadedRecordDot
   ghc-options: -Wall -Wno-name-shadowing
   build-depends:
       aeson
@@ -76,6 +76,7 @@ library
     , mtl
     , split
     , text
+    , text-range
     , transformers
     , tree-sitter-simple
     , unordered-containers
@@ -121,6 +122,7 @@ executable gen-ast
       ExistentialQuantification
       TypeOperators
       DeepSubsumption
+      OverloadedRecordDot
   ghc-options: -Wall -Wno-name-shadowing -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
@@ -134,6 +136,7 @@ executable gen-ast
     , process
     , split
     , text
+    , text-range
     , transformers
     , tree-sitter-ast
     , tree-sitter-simple
@@ -183,6 +186,7 @@ test-suite tree-sitter-ast-test
       ExistentialQuantification
       TypeOperators
       DeepSubsumption
+      OverloadedRecordDot
   ghc-options: -Wall -Wno-name-shadowing -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
@@ -197,6 +201,7 @@ test-suite tree-sitter-ast-test
     , tasty-hunit
     , tasty-quickcheck
     , text
+    , text-range
     , transformers
     , tree-sitter-ast
     , tree-sitter-simple

@@ -1,4 +1,4 @@
-packages: tree-sitter-simple tree-sitter-haskell tree-sitter-ast haskell-ast
+packages: tree-sitter-simple tree-sitter-haskell tree-sitter-ast haskell-ast text-range
 
 test-show-details: direct
 

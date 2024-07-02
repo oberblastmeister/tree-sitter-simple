@@ -26,6 +26,7 @@ library:
     - containers           ^>= 0.6.0.1
     - unordered-containers ^>= 0.2.9
     - deepseq
+    - text-range
   include-dirs:      
     - vendor/tree-sitter/lib/include
     - vendor/tree-sitter/lib/src

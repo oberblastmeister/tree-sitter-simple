@@ -68,7 +68,7 @@ generateAllM moduleName nodeTypes = do
   import qualified AST.Cast
   import qualified AST.Token
   import qualified AST.Node
-  import qualified Data.Sum as Sum
+  import qualified AST.Sum as Sum
   import qualified Data.List.NonEmpty
   import qualified TreeSitter.Api as Api
   import qualified AST.Runtime
@@ -299,4 +299,4 @@ generateLeafType name NT.Named = do
 generateLeafType _name NT.Anonymous = pure ()
 
 commonDerive :: Text
-commonDerive = "  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic, Control.DeepSeq.NFData)"
+commonDerive = "  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)"

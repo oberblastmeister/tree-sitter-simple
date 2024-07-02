@@ -11,8 +11,11 @@ module AST.Node
 where
 
 import AST.Cast (DynNode)
-import Control.DeepSeq (NFData (rnf))
-import Data.Sum
+import AST.Sum
+import Data.LineCol (LineCol (..))
+import Data.LineColRange qualified as LineColRange
+import Data.Pos (Pos (..))
+import Data.Range qualified as Range
 import Data.Text (Text)
 import Data.Text qualified as T
 import TreeSitter.Api (Node (..))
@@ -30,9 +33,6 @@ instance Eq WrappedDynNode where
 instance Ord WrappedDynNode where
   compare _ _ = EQ
 
-instance NFData WrappedDynNode where
-  rnf (WrappedDynNode node) = rnf node
-
 class HasDynNode a where
   getDynNode :: a -> DynNode
 
@@ -49,13 +49,8 @@ defaultNode =
             symbolName = T.pack "",
             symbolId = 0
           },
-      nodeRange =
-        TS.Range
-          { startByte = 0,
-            startPoint = TS.Point {row = 0, col = 0},
-            endByte = 0,
-            endPoint = TS.Point {row = 0, col = 0}
-          },
+      nodeRange = Range.empty (Pos 0),
+      nodeLineColRange = LineColRange.empty (LineCol (Pos 0) (Pos 0)),
       nodeFieldName = Nothing,
       nodeIsNamed = False,
       nodeIsExtra = False,

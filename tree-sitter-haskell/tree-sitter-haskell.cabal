@@ -64,6 +64,7 @@ library
       ExistentialQuantification
       TypeOperators
       DeepSubsumption
+      OverloadedRecordDot
   ghc-options: -Wall -Wno-name-shadowing
   include-dirs:
       vendor/tree-sitter-haskell/src
@@ -123,6 +124,7 @@ test-suite tree-sitter-haskell-test
       ExistentialQuantification
       TypeOperators
       DeepSubsumption
+      OverloadedRecordDot
   ghc-options: -Wall -Wno-name-shadowing -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       QuickCheck

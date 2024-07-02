@@ -6,10 +6,10 @@ module AST.Cast
 where
 
 import AST.Err
+import AST.Sum
 import AST.Token (Token (..))
 import Control.Applicative ((<|>))
 import Control.Monad qualified as Monad
-import Data.Sum
 import Data.Text qualified as T
 import GHC.TypeLits (KnownSymbol, symbolVal)
 import TreeSitter.Api qualified as TS
@@ -20,6 +20,7 @@ type DynNode = TS.Node
 class Cast a where
   -- when you want to use alternatives
   cast :: DynNode -> Maybe a
+
   -- when you want to commit
   castErr :: DynNode -> Err a
   castErr = maybeToErr "Failed to cast node" . cast

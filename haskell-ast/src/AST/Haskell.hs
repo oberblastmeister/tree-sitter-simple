@@ -8,10 +8,10 @@ import Data.Text (Text)
 import TreeSitter.Api qualified as TS
 import TreeSitter.Haskell qualified as TS
 
-parse :: Text -> Haskell
-parse source =
+parse :: TS.ConvertPos -> Text -> Haskell
+parse convert source =
   fromMaybe defaultHaskellNode $
-    cast @Haskell (TS.parse TS.tree_sitter_haskell source)
+    cast @Haskell (TS.parse convert TS.tree_sitter_haskell source)
 
 defaultHaskellNode :: Haskell
 defaultHaskellNode =

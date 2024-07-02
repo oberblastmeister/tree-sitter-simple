@@ -11,10 +11,10 @@
 module TreeSitter.Api
   ( parse,
     Node (..),
-    Point (..),
     Range (..),
     Symbol (..),
     SymbolType (..),
+    ConvertPos,
   )
 where
 
@@ -22,44 +22,17 @@ import Control.DeepSeq (NFData (..))
 import Control.Monad ((<$!>))
 import Data.ByteString (ByteString)
 import Data.ByteString qualified as B
+import Data.LineCol (LineCol (..))
+import Data.LineColRange (LineColRange (..))
+import Data.Pos (Pos (..))
+import Data.Range (Range (..))
 import Data.Text (Text)
-import Data.Text qualified as T
 import Data.Text.Encoding qualified as T.Encoding
 import Foreign
 import Foreign.C
 import GHC.Generics (Generic)
 import System.IO.Unsafe (unsafePerformIO)
 import TreeSitter.Raw qualified as Raw
-
--- row is in terms of 0-indexed lines
--- col is in terms of 0-indexed bytes in the line
-data Point = Point
-  { row :: !Int,
-    col :: !Int
-  }
-  deriving (Eq, Ord, Generic)
-
-instance Show Point where
-  show Point {row, col} = show row ++ ":" ++ show col
-
-instance NFData Point where
-  rnf !p = ()
-
--- the ends are not inclusive
-data Range = Range
-  { startByte :: !Int,
-    startPoint :: !Point,
-    endByte :: !Int,
-    endPoint :: !Point
-  }
-  deriving (Eq, Ord, Generic)
-
-instance Show Range where
-  show Range {startPoint, endPoint} =
-    "[" ++ show startPoint ++ " - " ++ show endPoint ++ "]"
-
-instance NFData Range where
-  rnf !r = ()
 
 data SymbolType = Regular | Anonymous | Auxiliary
   deriving (Enum, Eq, Ord, Show, Generic)
@@ -77,8 +50,8 @@ data Symbol = Symbol
 instance NFData Symbol where
   rnf !s = ()
 
-convertPoint :: Raw.TSPoint -> Point
-convertPoint Raw.TSPoint {pointRow, pointColumn} = Point {row = fromIntegral pointRow, col = fromIntegral pointColumn}
+convertPoint :: Raw.TSPoint -> LineCol
+convertPoint Raw.TSPoint {pointRow, pointColumn} = LineCol (Pos (fromIntegral pointRow)) (Pos (fromIntegral pointColumn))
 
 convertSymbol :: Ptr Raw.Language -> Raw.TSSymbol -> IO Symbol
 convertSymbol language sym = do
@@ -90,7 +63,8 @@ convertSymbol language sym = do
 data Node = Node
   { nodeType :: !Text,
     nodeSymbol :: !Symbol,
-    nodeRange :: !Range,
+    nodeRange :: Range,
+    nodeLineColRange :: LineColRange,
     nodeFieldName :: !(Maybe Text),
     -- whether the node is named in the grammar or anonymous (like a token "->")
     nodeIsNamed :: !Bool,
@@ -106,26 +80,7 @@ data Node = Node
   deriving (Generic)
 
 instance Show Node where
-  showsPrec d Node {nodeType, nodeRange, nodeChildren} =
-    showParen (d > appPrec) $
-      showString "\""
-        . showString (T.unpack nodeType)
-        . showString "@"
-        . showsPrec (appPrec + 1) nodeRange
-        . showString "\""
-        . showString " "
-        . showsPrec (appPrec + 1) nodeChildren
-    where
-      appPrec = 10
-
-instance NFData Node where
-  rnf Node {..} =
-    rnf nodeType `seq`
-      rnf nodeSymbol `seq`
-        rnf nodeRange `seq`
-          rnf nodeFieldName `seq`
-            rnf nodeText `seq`
-              rnf nodeChildren
+  showsPrec d Node {nodeType} = showString "Node " . showsPrec d nodeType
 
 convertCBool :: CBool -> Bool
 convertCBool (CBool b) = b /= 0
@@ -133,8 +88,9 @@ convertCBool (CBool b) = b /= 0
 cStringToText :: CString -> IO Text
 cStringToText cstr = T.Encoding.decodeUtf8Lenient <$!> B.packCString cstr
 
-convertNode :: Ptr Raw.Language -> Raw.Node -> ByteString -> IO Node
+convertNode :: ConvertPos -> Ptr Raw.Language -> Raw.Node -> ByteString -> IO Node
 convertNode
+  (convertPos, convertLineCol)
   language
   node@Raw.Node
     { nodeType,
@@ -154,7 +110,8 @@ convertNode
     nodeStartByte <- pure $ fromIntegral @_ @Int $ Raw.nodeStartByte node
     nodeEndPoint <- pure $ convertPoint nodeEndPoint
     nodeEndByte <- pure $ fromIntegral @_ @Int nodeEndByte
-    let nodeRange = Range {startByte = nodeStartByte, startPoint = nodeStartPoint, endByte = nodeEndByte, endPoint = nodeEndPoint}
+    let nodeRange = Range (convertPos (Pos nodeStartByte)) (convertPos (Pos nodeEndByte))
+    let nodeLineColRange = LineColRange (convertLineCol nodeStartPoint) (convertLineCol nodeEndPoint)
     -- crucial that decodeUtf8Lenient will copy from the source ByteString into Text
     -- If the original source is very large, we won't retain the entire string in memory,
     -- we will only retain the sliced part
@@ -164,6 +121,7 @@ convertNode
         { nodeType,
           nodeSymbol,
           nodeRange,
+          nodeLineColRange,
           nodeFieldName,
           nodeIsNamed = convertCBool nodeIsNamed,
           nodeIsExtra = convertCBool nodeIsExtra,
@@ -172,20 +130,22 @@ convertNode
           nodeParent = Nothing
         }
 
-parse :: Ptr Raw.Language -> Text -> Node
-parse language source = unsafePerformIO $ parseIO language source
+parse :: ConvertPos -> Ptr Raw.Language -> Text -> Node
+parse convert language source = unsafePerformIO $ parseIO convert language source
 
-parseIO :: Ptr Raw.Language -> Text -> IO Node
-parseIO language source = do
+parseIO :: ConvertPos -> Ptr Raw.Language -> Text -> IO Node
+parseIO convert language source = do
   Raw.withParser language \parser -> do
     let !bs = T.Encoding.encodeUtf8 source
-    Raw.withParseTree parser bs \tree -> convertTree language tree bs
+    Raw.withParseTree parser bs \tree -> convertTree convert language tree bs
 
-convertTree :: Ptr Raw.Language -> Ptr Raw.Tree -> ByteString -> IO Node
-convertTree language tree source = do
+type ConvertPos = (Pos -> Pos, LineCol -> LineCol)
+
+convertTree :: ConvertPos -> Ptr Raw.Language -> Ptr Raw.Tree -> ByteString -> IO Node
+convertTree convertPos language tree source = do
   rootNode <- treeRootNode tree
   let go node = do
-        parent <- convertNode language node source
+        parent <- convertNode convertPos language node source
         children <- getChildNodes node
         children <- mapM go children
         pure $
