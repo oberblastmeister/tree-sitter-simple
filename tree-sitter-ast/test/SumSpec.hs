@@ -1,6 +1,6 @@
 module SumSpec where
 
-import Data.Sum
+import AST.Sum
 import Test.Tasty
 import Test.Tasty.HUnit
 

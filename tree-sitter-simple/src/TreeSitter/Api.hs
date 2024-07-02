@@ -15,6 +15,7 @@ module TreeSitter.Api
     Symbol (..),
     SymbolType (..),
     ConvertPos,
+    FullDynNode (..),
   )
 where
 
@@ -27,6 +28,7 @@ import Data.LineColRange (LineColRange (..))
 import Data.Pos (Pos (..))
 import Data.Range (Range (..))
 import Data.Text (Text)
+import Data.Text qualified as T
 import Data.Text.Encoding qualified as T.Encoding
 import Foreign
 import Foreign.C
@@ -78,6 +80,21 @@ data Node = Node
     nodeParent :: Maybe Node
   }
   deriving (Generic)
+
+newtype FullDynNode = FullDynNode {node :: Node}
+
+instance Show FullDynNode where
+  showsPrec d (FullDynNode Node {nodeType, nodeRange, nodeChildren}) =
+    showParen (d > appPrec) $
+      showString "\""
+        . showString (T.unpack nodeType)
+        . showString "@"
+        . showsPrec (appPrec + 1) nodeRange
+        . showString "\""
+        . showString " "
+        . showsPrec (appPrec + 1) nodeChildren
+    where
+      appPrec = 10
 
 instance Show Node where
   showsPrec d Node {nodeType} = showString "Node " . showsPrec d nodeType

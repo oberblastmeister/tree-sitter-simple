@@ -64,6 +64,7 @@ library
     , containers
     , deepseq
     , text >=2.0 && <2.2
+    , text-range
     , tree-sitter-ast
     , tree-sitter-haskell
     , tree-sitter-simple
@@ -121,6 +122,7 @@ executable parse
     , neat-interpolation
     , pretty-simple
     , text >=2.0 && <2.2
+    , text-range
     , tree-sitter-ast
     , tree-sitter-haskell
     , tree-sitter-simple
@@ -184,6 +186,7 @@ test-suite haskell-ast-test
     , tasty-hunit
     , tasty-quickcheck
     , text >=2.0 && <2.2
+    , text-range
     , tree-sitter-ast
     , tree-sitter-haskell
     , tree-sitter-simple

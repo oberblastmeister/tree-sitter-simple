@@ -2,6 +2,7 @@ module Data.LineColRange
   ( LineColRange (.., LineColRange),
     empty,
     mkLineColRange,
+    containsRange,
   )
 where
 
@@ -28,3 +29,6 @@ mkLineColRange s e
 
 empty :: LineCol -> LineColRange
 empty p = LineColRange p p
+
+containsRange :: LineColRange -> LineColRange -> Bool
+containsRange (LineColRange s1 e1) (LineColRange s2 e2) = s1 <= s2 && e2 <= e1

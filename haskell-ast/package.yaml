@@ -12,6 +12,7 @@ dependencies:
   - tree-sitter-simple
   - tree-sitter-ast
   - deepseq
+  - text-range
   
 library:
   source-dirs: src

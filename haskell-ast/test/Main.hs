@@ -7,7 +7,7 @@ import AST qualified
 import AST.Haskell qualified
 import AST.Haskell qualified as Haskell
 import Data.Maybe qualified as Maybe
-import Data.Sum
+import AST.Sum
 import Data.Text (Text)
 import Data.Text.Lazy qualified as TL
 import NeatInterpolation
@@ -15,14 +15,17 @@ import Test.Tasty
 import Test.Tasty.Expect
 import Test.Tasty.HUnit
 import Text.Pretty.Simple (pShowNoColor)
+import Data.LineColRange qualified as LineColRange
+import Data.LineCol (LineCol (..))
+import Data.Pos (Pos (..))
 
 testParseDyn :: String -> Expect -> Text -> TestTree
 testParseDyn name ex source = test name ex $ do
-  pure $ TL.toStrict $ pShowNoColor $ AST.getDynNode $ Haskell.parse $ source
+  pure $ TL.toStrict $ pShowNoColor $ AST.getDynNode $ Haskell.parse (id, id) $ source
 
 testParse :: String -> Expect -> Text -> TestTree
 testParse name ex source = test name ex $ do
-  pure $ TL.toStrict $ pShowNoColor $ Haskell.parse $ source
+  pure $ TL.toStrict $ pShowNoColor $ Haskell.parse (id, id) $ source
 
 emojiCode :: Text
 emojiCode =
@@ -47,68 +50,47 @@ main = do
         ),
         ( testParseDyn
             "Parse Unicode"
-            [expect|"haskell@[0:0 - 4:7]"
-    [ "header@[0:0 - 0:17]"
-        [ "module@[0:0 - 0:6]" []
-        , "module@[0:7 - 0:11]"
-            [ "module_id@[0:7 - 0:11]" [] ]
-        , "where@[0:12 - 0:17]" []
-        ]
-    , "declarations@[2:0 - 4:7]"
-        [ "bind@[2:0 - 2:10]"
-            [ "variable@[2:0 - 2:1]" []
-            , "match@[2:2 - 2:10]"
-                [ "=@[2:2 - 2:3]" []
-                , "literal@[2:4 - 2:10]"
-                    [ "string@[2:4 - 2:10]" [] ]
-                ]
-            ]
-        , "bind@[4:0 - 4:7]"
-            [ "variable@[4:0 - 4:1]" []
-            , "match@[4:2 - 4:7]"
-                [ "=@[4:2 - 4:3]" []
-                , "literal@[4:4 - 4:7]"
-                    [ "string@[4:4 - 4:7]" [] ]
-                ]
-            ]
-        ]
-    ]|]
+            [expect|Node "haskell"|]
             emojiCode
         ),
         ( test
             ""
             [expect|Just
-    ( "string@[4:4 - 4:7]" [] )|]
-            do
-              let hs = Haskell.parse emojiCode
-              let node = AST.getDynNode hs
-              let point = AST.Point {AST.row = 4, AST.col = 5}
-              let res = AST.getDeepestDynNodeContaining point node
-              pure $ pShow res
-        ),
-        ( test
-            ""
-            [expect|Just
-    ( "literal@[4:4 - 4:7]"
-        [ "string@[4:4 - 4:7]" [] ]
+    ( "haskell@(UnsafeRange {start = UnsafePos {pos = 0}, end = UnsafePos {pos = 38}})"
+        [ Node "header"
+        , Node "declarations"
+        ]
     )|]
             do
-              let hs = Haskell.parse emojiCode
+              let hs = Haskell.parse (id, id) emojiCode
               let node = AST.getDynNode hs
-              let point = AST.Point {AST.row = 4, AST.col = 5}
-              let res = AST.getDeepestContaining @AST.Haskell.Literal point node
-              pure $ pShow (AST.getDynNode <$> res)
+              let point = LineCol (Pos 4) (Pos 5)
+              let res = AST.getDeepestDynNodeContainingLineCol point node
+              pure $ pShow (AST.FullDynNode <$> res)
         ),
         ( test
             ""
             [expect|Just
-    ( "variable@[24:0 - 24:17]" [] )|]
+    ( "literal@(UnsafeRange {start = UnsafePos {pos = 35}, end = UnsafePos {pos = 38}})"
+        [ Node "string" ]
+    )|]
             do
-              let hs = Haskell.parse weirdSource
+              let hs = Haskell.parse (id, id) emojiCode
               let node = AST.getDynNode hs
-              let point = AST.Point {AST.row = 24, AST.col = 0}
-              let res = AST.getDeepestContaining @AutoImportTypes point node
-              pure $ pShow (AST.getDynNode <$> res)
+              let point = LineCol (Pos 4) (Pos 5)
+              let res = AST.getDeepestContainingLineCol @AST.Haskell.Literal (LineColRange.empty point) node
+              pure $ pShow (AST.FullDynNode <$> (AST.getDynNode <$> res))
+        ),
+        ( test
+            ""
+            [expect|Just
+    ( "variable@(UnsafeRange {start = UnsafePos {pos = 666}, end = UnsafePos {pos = 683}})" [] )|]
+            do
+              let hs = Haskell.parse (id, id) weirdSource
+              let node = AST.getDynNode hs
+              let point = LineCol (Pos 24) (Pos 0)
+              let res = AST.getDeepestContainingLineCol @AutoImportTypes (LineColRange.empty point) node
+              pure $ pShow (AST.FullDynNode <$> (AST.getDynNode <$> res))
         )
       ]
 

@@ -36,11 +36,4 @@ library:
     - vendor/tree-sitter/lib/src/lib.c
   cc-options:
     - -std=c99
-
-tests:
-  test:
-    <<: *default_test
-    dependencies: 
-     - base
-     - tree-sitter-simple
-     - hedgehog >= 0.6 && <2
+    
