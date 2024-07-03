@@ -2,7 +2,7 @@ module AST.Haskell (module X, parse) where
 
 import AST.Cast
 import AST.Haskell.Generated as X
-import AST.Node (WrappedDynNode (..), defaultNode)
+import AST.Node (defaultNode)
 import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import TreeSitter.Api qualified as TS
@@ -19,5 +19,5 @@ defaultHaskellNode =
     { children = Left "default",
       declarations = Left "default",
       imports = Left "default",
-      dynNode = WrappedDynNode defaultNode
+      dynNode = defaultNode
     }

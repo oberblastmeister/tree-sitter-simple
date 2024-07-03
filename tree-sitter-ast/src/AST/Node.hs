@@ -1,8 +1,7 @@
 {-# LANGUAGE DeriveAnyClass #-}
 
 module AST.Node
-  ( WrappedDynNode (..),
-    HasDynNode (..),
+  ( HasDynNode (..),
     DynNode,
     defaultNode,
     nodeToText,
@@ -21,18 +20,9 @@ import Data.Text qualified as T
 import TreeSitter.Api (Node (..))
 import TreeSitter.Api qualified as TS
 
+-- import Data.Range (Data.Range.Range)
+
 -- so we don't show these and compare for equality
-newtype WrappedDynNode = WrappedDynNode {unDynNode :: TS.Node}
-
-instance Show WrappedDynNode where
-  show (WrappedDynNode _node) = "DynNode"
-
-instance Eq WrappedDynNode where
-  (==) _ _ = True
-
-instance Ord WrappedDynNode where
-  compare _ _ = EQ
-
 class HasDynNode a where
   getDynNode :: a -> DynNode
 

@@ -25,7 +25,7 @@ main :: IO ()
 main = do
   nodeTypes <- Aeson.decodeFileStrict @NodeTypes "tree-sitter-haskell/vendor/tree-sitter-haskell/src/node-types.json"
   nodeTypes <- case nodeTypes of
-    Nothing -> undefined
+    Nothing -> error "no node types found"
     Just nodeTypes -> pure nodeTypes
   PS.pPrintForceColor nodeTypes
   let res = generateAll "AST.Haskell.Generated" nodeTypes
@@ -125,16 +125,16 @@ generateSumType name subtypes = do
   let innerTy = nodeTypesToTy subtypes
   emit
     [trimming|
-  data $hsName = $hsName { dynNode :: AST.Node.WrappedDynNode, $hsFieldGetter :: $innerTy }
+  data $hsName = $hsName { dynNode :: AST.Node.DynNode, $hsFieldGetter :: $innerTy }
     $commonDerive
 
   instance AST.Cast.Cast $hsName where
     cast dynNode = do
       $hsFieldGetter <- AST.Cast.cast dynNode
-      Prelude.pure ($hsName { dynNode = AST.Node.WrappedDynNode dynNode, $hsFieldGetter })
+      Prelude.pure ($hsName { dynNode = dynNode, $hsFieldGetter })
 
   instance AST.Node.HasDynNode $hsName where
-    getDynNode ($hsName { dynNode }) = AST.Node.unDynNode dynNode
+    getDynNode ($hsName { dynNode }) = dynNode
   |]
   pure ()
 
@@ -176,7 +176,7 @@ generateProductDecl nodeName fields = do
     let innerTy = nodeTypesToTy (NT.fieldTypes field)
     let outsideErr = if tyPrefix == "" then "" else "AST.Err.Err"
     emit [trimming|$hsFieldName :: $outsideErr ($tyPrefix (AST.Err.Err ($innerTy)))|]
-  emit ", dynNode :: AST.Node.WrappedDynNode"
+  emit ", dynNode :: AST.Node.DynNode"
   emit "  }"
   emit [trimming| $commonDerive|]
 
@@ -212,7 +212,7 @@ genProductTypeCast nodeName fields = do
   commaList fields \(fieldName, _field) -> do
     let hsFieldName = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack fieldName))
     emit [trimming|$hsFieldName|]
-  emit ", dynNode = AST.Node.WrappedDynNode dynNode" -- add in the dynNode field
+  emit ", dynNode = dynNode" -- add in the dynNode field
   emit [trimming|} ;|]
 
   emit "}"
@@ -224,7 +224,7 @@ genProductTypeCast nodeName fields = do
   emit
     [trimming|
     instance AST.Node.HasDynNode $name where
-      getDynNode ($name { dynNode }) = AST.Node.unDynNode dynNode
+      getDynNode ($name { dynNode }) = dynNode
 
     instance AST.Cast.Cast $name where
       cast = cast_$name
@@ -285,18 +285,18 @@ generateLeafType name NT.Named = do
   let ident = T.pack (Symbol.toHaskellPascalCaseIdentifier (T.unpack name))
   emit
     [trimming|
-    data $ident = $ident { dynNode :: AST.Node.WrappedDynNode }
+    data $ident = $ident { dynNode :: AST.Node.DynNode }
       $commonDerive
 
     instance AST.Node.HasDynNode $ident where
-      getDynNode ($ident { dynNode }) = AST.Node.unDynNode dynNode
+      getDynNode ($ident { dynNode }) = dynNode
 
     instance AST.Cast.Cast $ident where
       cast dynNode = do
         Control.Monad.guard (Api.nodeType dynNode Prelude.== "$name")
-        Prelude.pure ($ident { dynNode = AST.Node.WrappedDynNode dynNode })
+        Prelude.pure ($ident { dynNode = dynNode })
       |]
 generateLeafType _name NT.Anonymous = pure ()
 
 commonDerive :: Text
-commonDerive = "  deriving (Prelude.Show, Prelude.Eq, Prelude.Ord, GHC.Generics.Generic)"
+commonDerive = "  deriving (Prelude.Show, Prelude.Eq, GHC.Generics.Generic)"

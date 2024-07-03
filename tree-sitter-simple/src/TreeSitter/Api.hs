@@ -81,6 +81,12 @@ data Node = Node
   }
   deriving (Generic)
 
+instance Show Node where
+  showsPrec d Node {nodeType} = showString "Node " . showsPrec d nodeType
+
+instance Eq Node where
+  n == n' = n.nodeType == n'.nodeType && n.nodeRange == n'.nodeRange
+
 newtype FullDynNode = FullDynNode {node :: Node}
 
 instance Show FullDynNode where
@@ -95,9 +101,6 @@ instance Show FullDynNode where
         . showsPrec (appPrec + 1) nodeChildren
     where
       appPrec = 10
-
-instance Show Node where
-  showsPrec d Node {nodeType} = showString "Node " . showsPrec d nodeType
 
 convertCBool :: CBool -> Bool
 convertCBool (CBool b) = b /= 0
