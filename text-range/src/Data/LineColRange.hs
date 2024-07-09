@@ -8,12 +8,16 @@ where
 
 import Data.LineCol (LineCol)
 import GHC.Stack (HasCallStack)
+import GHC.Generics (Generic)
+import Data.Hashable (Hashable)
 
 data LineColRange = UnsafeLineColRange
   { start :: !LineCol,
     end :: !LineCol
   }
-  deriving (Eq, Show)
+  deriving (Show, Eq, Ord, Generic)
+
+instance Hashable LineColRange
 
 pattern LineColRange :: (HasCallStack) => LineCol -> LineCol -> LineColRange
 pattern LineColRange s e <- UnsafeLineColRange s e

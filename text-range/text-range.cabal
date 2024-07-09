@@ -62,5 +62,6 @@ library
   ghc-options: -Wall -Wno-name-shadowing
   build-depends:
       base >=4.17
+    , hashable
     , text
   default-language: GHC2021

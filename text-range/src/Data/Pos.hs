@@ -1,4 +1,5 @@
 {-# LANGUAGE NoFieldSelectors #-}
+{-# LANGUAGE DerivingStrategies #-}
 
 module Data.Pos (
   Pos (.., Pos),
@@ -7,11 +8,13 @@ module Data.Pos (
 where
 
 import GHC.Stack (HasCallStack)
+import Data.Hashable (Hashable)
 
 
 -- 0 based char position
 newtype Pos = UnsafePos {pos :: Int}
   deriving (Show, Eq, Ord)
+  deriving newtype (Hashable)
 
 pattern Pos :: (HasCallStack) => Int -> Pos
 pattern Pos p <- UnsafePos p

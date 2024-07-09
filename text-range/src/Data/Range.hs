@@ -9,12 +9,16 @@ where
 
 import Data.Pos
 import GHC.Stack (HasCallStack)
+import GHC.Generics (Generic)
+import Data.Hashable (Hashable)
 
 data Range = UnsafeRange
   { start :: !Pos,
     end :: !Pos
   }
-  deriving (Eq, Show, Ord)
+  deriving (Eq, Show, Ord, Generic)
+
+instance Hashable Range
 
 pattern Range :: (HasCallStack) => Pos -> Pos -> Range
 pattern Range s e <- UnsafeRange s e
