@@ -7,16 +7,19 @@ module Data.Range
   )
 where
 
-import Data.Pos
-import GHC.Stack (HasCallStack)
-import GHC.Generics (Generic)
 import Data.Hashable (Hashable)
+import Data.Pos
+import GHC.Generics (Generic)
+import GHC.Stack (HasCallStack)
 
 data Range = UnsafeRange
   { start :: !Pos,
     end :: !Pos
   }
-  deriving (Eq, Show, Ord, Generic)
+  deriving (Eq, Ord, Generic)
+
+instance Show Range where
+  show (UnsafeRange s e) = "(" ++ show s <> " - " <> show e ++ ")"
 
 instance Hashable Range
 

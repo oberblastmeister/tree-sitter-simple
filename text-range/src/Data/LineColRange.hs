@@ -6,16 +6,19 @@ module Data.LineColRange
   )
 where
 
-import Data.LineCol (LineCol)
-import GHC.Stack (HasCallStack)
-import GHC.Generics (Generic)
 import Data.Hashable (Hashable)
+import Data.LineCol (LineCol)
+import GHC.Generics (Generic)
+import GHC.Stack (HasCallStack)
 
 data LineColRange = UnsafeLineColRange
   { start :: !LineCol,
     end :: !LineCol
   }
-  deriving (Show, Eq, Ord, Generic)
+  deriving (Eq, Ord, Generic)
+
+instance Show LineColRange where
+  show (UnsafeLineColRange s e) = "(" ++ show s <> " - " <> show e ++ ")"
 
 instance Hashable LineColRange
 

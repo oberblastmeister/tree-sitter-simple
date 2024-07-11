@@ -1,20 +1,22 @@
-{-# LANGUAGE NoFieldSelectors #-}
 {-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE NoFieldSelectors #-}
 
-module Data.Pos (
-  Pos (.., Pos),
-  mkPos,
-)
+module Data.Pos
+  ( Pos (.., Pos),
+    mkPos,
+  )
 where
 
-import GHC.Stack (HasCallStack)
 import Data.Hashable (Hashable)
-
+import GHC.Stack (HasCallStack)
 
 -- 0 based char position
 newtype Pos = UnsafePos {pos :: Int}
-  deriving (Show, Eq, Ord)
+  deriving (Eq, Ord)
   deriving newtype (Hashable)
+
+instance Show Pos where
+  show (Pos p) = show p
 
 pattern Pos :: (HasCallStack) => Int -> Pos
 pattern Pos p <- UnsafePos p

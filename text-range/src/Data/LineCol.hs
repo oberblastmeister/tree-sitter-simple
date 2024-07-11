@@ -3,9 +3,9 @@ module Data.LineCol
   )
 where
 
+import Data.Hashable (Hashable)
 import Data.Pos
 import GHC.Generics (Generic)
-import Data.Hashable (Hashable)
 
 -- 0 based line and columns
 -- When are LineCol valid indices?
@@ -18,6 +18,9 @@ data LineCol = LineCol
   { line :: !Pos,
     col :: !Pos
   }
-  deriving (Eq, Show, Ord, Generic)
+  deriving (Eq, Ord, Generic)
+
+instance Show LineCol where
+  show (LineCol line col) = "(" ++ show line ++ ", " ++ show col ++ ")"
 
 instance Hashable LineCol
