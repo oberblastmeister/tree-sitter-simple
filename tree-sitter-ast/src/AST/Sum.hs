@@ -1,7 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module AST.Sum
   ( Nil,
@@ -13,6 +13,7 @@ module AST.Sum
     Apply (..),
     Produce (..),
     Populate (..),
+    Subset (..),
   )
 where
 
@@ -160,3 +161,13 @@ instance (Produce m x, MonadPlus m) => Populate m (x :+ Nil) where
 
 instance {-# OVERLAPPABLE #-} (Produce m x, Populate m xs, MonadPlus m) => Populate m (x :+ xs) where
   populate = fmap X produce <|> fmap Rest populate
+
+class Subset xs ys where
+  subset :: xs -> ys
+
+instance (Inject x ys, Subset xs ys) => Subset (x :+ xs) ys where
+  subset (X x) = inj @x @ys x
+  subset (Rest xs) = subset @xs @ys xs
+
+instance Subset Nil ys where
+  subset = \case {}

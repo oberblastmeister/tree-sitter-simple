@@ -10,6 +10,10 @@ type Second = String :+ [Char] :+ Nil
 
 type Nested = First :+ Second :+ Nil
 
+type Sub = Int :+ Bool :+ Char :+ String :+ Nil
+
+type Sup = Char :+ [Maybe Char] :+ String :+ [Char] :+ Bool :+ Int :+ (Maybe Int) :+ Nil
+
 tests =
   testGroup
     "SumSpec"
@@ -53,6 +57,12 @@ tests =
         let x = populate @Maybe @S
         let str = apply @Show show <$> x
         str @?= Just "A"
+        pure (),
+      testCase "subset" $ do
+        let x :: Sub = X 1
+        let y :: Sup = Rest (Rest (Rest (Rest (Rest (X (1 :: Int))))))
+        let res :: Sup = subset @Sub @Sup x
+        res @?= y
         pure ()
     ]
 
