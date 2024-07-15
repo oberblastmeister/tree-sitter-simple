@@ -86,7 +86,15 @@ data Node = Node
   deriving (Generic)
 
 instance Show Node where
-  showsPrec d Node {nodeType} = showString "Node " . showsPrec d nodeType
+  showsPrec d Node {nodeType, nodeRange} =
+    showParen (d > appPrec) $
+      showString "\""
+        . showString (T.unpack nodeType)
+        . showString "@"
+        . showsPrec (appPrec + 1) nodeRange
+        . showString "\""
+    where
+      appPrec = 10
 
 instance Eq Node where
   n == n' = n.nodeType == n'.nodeType && n.nodeRange == n'.nodeRange

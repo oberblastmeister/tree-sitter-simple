@@ -49,7 +49,7 @@ main = do
         ),
         ( testParseDyn
             "Parse Unicode"
-            [expect|Node "haskell"|]
+            [expect|"haskell@(0 - 38)"|]
             emojiCode
         ),
         ( test
