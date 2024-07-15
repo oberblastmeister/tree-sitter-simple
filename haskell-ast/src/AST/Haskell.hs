@@ -1,4 +1,9 @@
-module AST.Haskell (module X, parse) where
+module AST.Haskell
+  ( module X,
+    parse,
+    parseWith,
+  )
+where
 
 import AST.Cast
 import AST.Haskell.Generated as X
@@ -8,10 +13,13 @@ import Data.Text (Text)
 import TreeSitter.Api qualified as TS
 import TreeSitter.Haskell qualified as TS
 
-parse :: TS.ConvertPos -> Text -> Haskell
-parse convert source =
+parse :: Text -> Haskell
+parse = parseWith TS.idConvertPos
+
+parseWith :: TS.ConvertPos -> Text -> Haskell
+parseWith convert source =
   fromMaybe defaultHaskellNode $
-    cast @Haskell (TS.parse convert TS.tree_sitter_haskell source)
+    cast @Haskell (TS.parseWith convert TS.tree_sitter_haskell source)
 
 defaultHaskellNode :: Haskell
 defaultHaskellNode =

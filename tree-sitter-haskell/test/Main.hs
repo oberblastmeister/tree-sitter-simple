@@ -15,6 +15,6 @@ main =
           (1 :: Int) @?= 1,
         testCase "Parse haskell" $ do
           contents <- readFile "test_data/First.hs"
-          let tree = TreeSitter.Api.parse (id, id) tree_sitter_haskell (T.pack contents)
+          let tree = TreeSitter.Api.parse tree_sitter_haskell (T.pack contents)
           pure ()
       ]

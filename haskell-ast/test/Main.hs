@@ -6,8 +6,10 @@ module Main (main) where
 import AST qualified
 import AST.Haskell qualified
 import AST.Haskell qualified as Haskell
-import Data.Maybe qualified as Maybe
 import AST.Sum
+import Data.LineCol (LineCol (..))
+import Data.LineColRange qualified as LineColRange
+import Data.Pos (Pos (..))
 import Data.Text (Text)
 import Data.Text.Lazy qualified as TL
 import NeatInterpolation
@@ -15,17 +17,14 @@ import Test.Tasty
 import Test.Tasty.Expect
 import Test.Tasty.HUnit
 import Text.Pretty.Simple (pShowNoColor)
-import Data.LineColRange qualified as LineColRange
-import Data.LineCol (LineCol (..))
-import Data.Pos (Pos (..))
 
 testParseDyn :: String -> Expect -> Text -> TestTree
 testParseDyn name ex source = test name ex $ do
-  pure $ TL.toStrict $ pShowNoColor $ AST.getDynNode $ Haskell.parse (id, id) $ source
+  pure $ TL.toStrict $ pShowNoColor $ AST.getDynNode $ Haskell.parse $ source
 
 testParse :: String -> Expect -> Text -> TestTree
 testParse name ex source = test name ex $ do
-  pure $ TL.toStrict $ pShowNoColor $ Haskell.parse (id, id) $ source
+  pure $ TL.toStrict $ pShowNoColor $ Haskell.parse $ source
 
 emojiCode :: Text
 emojiCode =
@@ -56,13 +55,35 @@ main = do
         ( test
             ""
             [expect|Just
-    ( "haskell@(UnsafeRange {start = UnsafePos {pos = 0}, end = UnsafePos {pos = 38}})"
-        [ Node "header"
-        , Node "declarations"
+    ( "haskell@(0 - 38)"
+        [ "header@(0 - 17)"
+            [ "module@(0 - 6)" []
+            , "module@(7 - 11)"
+                [ "module_id@(7 - 11)" [] ]
+            , "where@(12 - 17)" []
+            ]
+        , "declarations@(19 - 38)"
+            [ "bind@(19 - 29)"
+                [ "variable@(19 - 20)" []
+                , "match@(21 - 29)"
+                    [ "=@(21 - 22)" []
+                    , "literal@(23 - 29)"
+                        [ "string@(23 - 29)" [] ]
+                    ]
+                ]
+            , "bind@(31 - 38)"
+                [ "variable@(31 - 32)" []
+                , "match@(33 - 38)"
+                    [ "=@(33 - 34)" []
+                    , "literal@(35 - 38)"
+                        [ "string@(35 - 38)" [] ]
+                    ]
+                ]
+            ]
         ]
     )|]
             do
-              let hs = Haskell.parse (id, id) emojiCode
+              let hs = Haskell.parse emojiCode
               let node = AST.getDynNode hs
               let point = LineCol (Pos 4) (Pos 5)
               let res = AST.getDeepestDynNodeContainingLineCol point node
@@ -71,11 +92,11 @@ main = do
         ( test
             ""
             [expect|Just
-    ( "literal@(UnsafeRange {start = UnsafePos {pos = 35}, end = UnsafePos {pos = 38}})"
-        [ Node "string" ]
+    ( "literal@(35 - 38)"
+        [ "string@(35 - 38)" [] ]
     )|]
             do
-              let hs = Haskell.parse (id, id) emojiCode
+              let hs = Haskell.parse emojiCode
               let node = AST.getDynNode hs
               let point = LineCol (Pos 4) (Pos 5)
               let res = AST.getDeepestContainingLineCol @AST.Haskell.Literal (LineColRange.empty point) node
@@ -84,9 +105,9 @@ main = do
         ( test
             ""
             [expect|Just
-    ( "variable@(UnsafeRange {start = UnsafePos {pos = 666}, end = UnsafePos {pos = 683}})" [] )|]
+    ( "variable@(666 - 683)" [] )|]
             do
-              let hs = Haskell.parse (id, id) weirdSource
+              let hs = Haskell.parse weirdSource
               let node = AST.getDynNode hs
               let point = LineCol (Pos 24) (Pos 0)
               let res = AST.getDeepestContainingLineCol @AutoImportTypes (LineColRange.empty point) node

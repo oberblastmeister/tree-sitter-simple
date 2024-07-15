@@ -10,12 +10,16 @@
 
 module TreeSitter.Api
   ( parse,
+    parseWith,
+    parseWithIO,
+    idConvertPos,
     Node (..),
     Range (..),
     Symbol (..),
     SymbolType (..),
     ConvertPos,
     FullDynNode (..),
+    tupleToConvertPos,
   )
 where
 
@@ -98,7 +102,7 @@ instance Show FullDynNode where
         . showsPrec (appPrec + 1) nodeRange
         . showString "\""
         . showString " "
-        . showsPrec (appPrec + 1) nodeChildren
+        . showsPrec (appPrec + 1) (FullDynNode <$> nodeChildren)
     where
       appPrec = 10
 
@@ -108,9 +112,12 @@ convertCBool (CBool b) = b /= 0
 cStringToText :: CString -> IO Text
 cStringToText cstr = T.Encoding.decodeUtf8Lenient <$!> B.packCString cstr
 
+idConvertPos :: ConvertPos
+idConvertPos = ConvertPos (id, id)
+
 convertNode :: ConvertPos -> Ptr Raw.Language -> Raw.Node -> ByteString -> IO Node
 convertNode
-  (convertPos, convertLineCol)
+  (ConvertPos (convertPos, convertLineCol))
   language
   node@Raw.Node
     { nodeType,
@@ -150,16 +157,22 @@ convertNode
           nodeParent = Nothing
         }
 
-parse :: ConvertPos -> Ptr Raw.Language -> Text -> Node
-parse convert language source = unsafePerformIO $ parseIO convert language source
+parse :: Ptr Raw.Language -> Text -> Node
+parse = parseWith idConvertPos
 
-parseIO :: ConvertPos -> Ptr Raw.Language -> Text -> IO Node
-parseIO convert language source = do
+parseWith :: ConvertPos -> Ptr Raw.Language -> Text -> Node
+parseWith convert language source = unsafePerformIO $ parseWithIO convert language source
+
+parseWithIO :: ConvertPos -> Ptr Raw.Language -> Text -> IO Node
+parseWithIO convert language source = do
   Raw.withParser language \parser -> do
     let !bs = T.Encoding.encodeUtf8 source
     Raw.withParseTree parser bs \tree -> convertTree convert language tree bs
 
-type ConvertPos = (Pos -> Pos, LineCol -> LineCol)
+newtype ConvertPos = ConvertPos (Pos -> Pos, LineCol -> LineCol)
+
+tupleToConvertPos :: (Pos -> Pos, LineCol -> LineCol) -> ConvertPos
+tupleToConvertPos = ConvertPos
 
 convertTree :: ConvertPos -> Ptr Raw.Language -> Ptr Raw.Tree -> ByteString -> IO Node
 convertTree convertPos language tree source = do
