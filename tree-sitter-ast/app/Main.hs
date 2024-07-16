@@ -154,26 +154,29 @@ generateProductType nodeName children fields = do
         )
         fields
   -- add the children field in
-  fields <-
-    pure
-      ( Maybe.maybeToList
-          ( fmap
-              ( \children ->
-                  ("children", "children", NT.getChildren children)
-              )
-              children
-          )
-          ++ fields
-      )
-  generateProductDecl nodeName fields
-  genProductTypeCast nodeName fields
+  -- fields <-
+  --   pure
+  --     ( Maybe.maybeToList
+  --         ( fmap
+  --             ( \children ->
+  --                 ("children", "children", NT.getChildren children)
+  --             )
+  --             children
+  --         )
+  --         ++ fields
+  --     )
+  let hsFields =
+        (Maybe.maybeToList (fmap (\children -> ("children", NT.getChildren children)) children))
+          ++ (fmap (\(hsField, _tsField, field) -> (hsField, field)) fields)
+  generateProductDecl nodeName hsFields
+  genProductTypeCast nodeName fields children
   pure ()
 
-generateProductDecl :: Text -> [FieldInfo] -> M ()
+generateProductDecl :: Text -> [(Text, NT.Field)] -> M ()
 generateProductDecl nodeName fields = do
   let name = convertName nodeName
   emit [trimming|data $name = $name {|]
-  commaList fields \(hsFieldNameRenamed, _tsFieldName, field) -> do
+  commaList fields \(hsFieldNameRenamed, field) -> do
     let hsFieldName = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack hsFieldNameRenamed))
     let tyPrefix = fieldToTyPrefix field
     let innerTy = nodeTypesToTy (NT.fieldTypes field)
@@ -186,8 +189,8 @@ generateProductDecl nodeName fields = do
 emitStmts :: M a -> M a
 emitStmts m = censor (\ls -> fmap (\l -> "; " <> l <> " ;") ls) m
 
-genProductTypeCast :: Text -> [FieldInfo] -> M ()
-genProductTypeCast nodeName fields = do
+genProductTypeCast :: Text -> [FieldInfo] -> Maybe NT.Children -> M ()
+genProductTypeCast nodeName fields children = do
   let name = convertName nodeName
 
   -- function start
@@ -201,7 +204,7 @@ genProductTypeCast nodeName fields = do
 
   emit "; let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode ;"
   -- insert the positionals as a field children
-  emit [trimming|; namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap) ;|]
+  -- emit [trimming|; namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap) ;|]
 
   emitStmts do
     for_ fields \(hsFieldNameRenamed, tsFieldName, field) -> do
@@ -210,9 +213,14 @@ genProductTypeCast nodeName fields = do
       emit [trimming|$hsFieldName <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "$tsFieldName" namedMap))|]
       emit [trimming|$hsFieldName <- Prelude.pure ($manyCastFun (Prelude.fmap AST.Cast.castErr $hsFieldName))|]
 
+    for_ children \children -> do
+      let childrenField = NT.getChildren children
+      let manyCastFun = fieldToManyCastFun childrenField
+      emit [trimming|children <- Prelude.pure ($manyCastFun (Prelude.fmap AST.Cast.castErr positional))|]
+
   -- start creating the record
   emit [trimming|; Prelude.pure $name {|]
-  commaList fields \(hsFieldNameRenamed, _tsFieldName, _field) -> do
+  commaList (Maybe.maybeToList ("children" <$ children) ++ (fmap (\(f, _, _) -> f)) fields) \hsFieldNameRenamed -> do
     let hsFieldName = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack hsFieldNameRenamed))
     emit [trimming|$hsFieldName|]
   emit ", dynNode = dynNode" -- add in the dynNode field

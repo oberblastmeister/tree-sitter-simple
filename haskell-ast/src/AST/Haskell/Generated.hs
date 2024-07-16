@@ -390,7 +390,6 @@ cast_Alternative :: Api.Node -> Prelude.Maybe Alternative
 cast_Alternative dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "alternative")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   binds <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "binds" namedMap))
   binds <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr binds))
   match <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "match" namedMap))
@@ -424,7 +423,6 @@ cast_Alternatives :: Api.Node -> Prelude.Maybe Alternatives
 cast_Alternatives dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "alternatives")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   alternative <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "alternative" namedMap))
   alternative <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr alternative))
   Prelude.pure
@@ -450,11 +448,9 @@ cast_Annotated :: Api.Node -> Prelude.Maybe Annotated
 cast_Annotated dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "annotated")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   kind <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "kind" namedMap))
   kind <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr kind))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Annotated
       { children,
@@ -480,7 +476,6 @@ cast_Apply :: Api.Node -> Prelude.Maybe Apply
 cast_Apply dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "apply")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   argument <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "argument" namedMap))
   argument <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr argument))
   constructor <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructor" namedMap))
@@ -513,7 +508,6 @@ cast_ArithmeticSequence :: Api.Node -> Prelude.Maybe ArithmeticSequence
 cast_ArithmeticSequence dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "arithmetic_sequence")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   from <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "from" namedMap))
   from <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr from))
   step <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "step" namedMap))
@@ -545,7 +539,6 @@ cast_As :: Api.Node -> Prelude.Maybe As
 cast_As dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "as")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   bind <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "bind" namedMap))
   bind <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr bind))
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
@@ -574,7 +567,6 @@ cast_AssociatedType :: Api.Node -> Prelude.Maybe AssociatedType
 cast_AssociatedType dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "associated_type")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   namespace <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "namespace" namedMap))
   namespace <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr namespace))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
@@ -608,7 +600,6 @@ cast_Bind :: Api.Node -> Prelude.Maybe Bind
 cast_Bind dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "bind")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   arrow <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "arrow" namedMap))
   arrow <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr arrow))
   binds <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "binds" namedMap))
@@ -651,7 +642,6 @@ cast_BindingList :: Api.Node -> Prelude.Maybe BindingList
 cast_BindingList dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "binding_list")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
   name <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr name))
   Prelude.pure
@@ -676,9 +666,7 @@ cast_Boolean :: Api.Node -> Prelude.Maybe Boolean
 cast_Boolean dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "boolean")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Boolean
       { children,
@@ -702,11 +690,9 @@ cast_Case :: Api.Node -> Prelude.Maybe Case
 cast_Case dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "case")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   alternatives <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "alternatives" namedMap))
   alternatives <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr alternatives))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Case
       { children,
@@ -730,7 +716,6 @@ cast_Children :: Api.Node -> Prelude.Maybe Children
 cast_Children dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "children")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   element <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "element" namedMap))
   element <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr element))
   Prelude.pure
@@ -760,9 +745,6 @@ cast_Class :: Api.Node -> Prelude.Maybe Class
 cast_Class dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "class")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   context <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "context" namedMap))
   context <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr context))
   declarations <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "declarations" namedMap))
@@ -773,6 +755,7 @@ cast_Class dynNode = do
   name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
   patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Class
       { children,
@@ -800,7 +783,6 @@ cast_ClassDeclarations :: Api.Node -> Prelude.Maybe ClassDeclarations
 cast_ClassDeclarations dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "class_declarations")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   declaration <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "declaration" namedMap))
   declaration <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr declaration))
   Prelude.pure
@@ -827,7 +809,6 @@ cast_Conditional :: Api.Node -> Prelude.Maybe Conditional
 cast_Conditional dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "conditional")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   else' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "else" namedMap))
   else' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr else'))
   if' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "if" namedMap))
@@ -873,7 +854,6 @@ cast_ConstructorSynonym :: Api.Node -> Prelude.Maybe ConstructorSynonym
 cast_ConstructorSynonym dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "constructor_synonym")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   binds <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "binds" namedMap))
   binds <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr binds))
   implicit <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "implicit" namedMap))
@@ -910,9 +890,7 @@ cast_ConstructorSynonyms :: Api.Node -> Prelude.Maybe ConstructorSynonyms
 cast_ConstructorSynonyms dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "constructor_synonyms")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     ConstructorSynonyms
       { children,
@@ -938,7 +916,6 @@ cast_Context :: Api.Node -> Prelude.Maybe Context
 cast_Context dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "context")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   arrow <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "arrow" namedMap))
   arrow <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr arrow))
   constraint <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constraint" namedMap))
@@ -974,7 +951,6 @@ cast_DataConstructor :: Api.Node -> Prelude.Maybe DataConstructor
 cast_DataConstructor dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "data_constructor")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   constructor <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructor" namedMap))
   constructor <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr constructor))
   context <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "context" namedMap))
@@ -1005,7 +981,6 @@ cast_DataConstructors :: Api.Node -> Prelude.Maybe DataConstructors
 cast_DataConstructors dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "data_constructors")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   constructor <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructor" namedMap))
   constructor <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr constructor))
   Prelude.pure
@@ -1033,15 +1008,13 @@ cast_DataFamily :: Api.Node -> Prelude.Maybe DataFamily
 cast_DataFamily dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "data_family")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   kind <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "kind" namedMap))
   kind <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr kind))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
   name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
   patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     DataFamily
       { children,
@@ -1067,9 +1040,7 @@ cast_DataInstance :: Api.Node -> Prelude.Maybe DataInstance
 cast_DataInstance dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "data_instance")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     DataInstance
       { children,
@@ -1099,9 +1070,6 @@ cast_DataType :: Api.Node -> Prelude.Maybe DataType
 cast_DataType dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "data_type")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   constructors <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructors" namedMap))
   constructors <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr constructors))
   context <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "context" namedMap))
@@ -1116,6 +1084,7 @@ cast_DataType dynNode = do
   name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
   patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     DataType
       { children,
@@ -1145,9 +1114,7 @@ cast_Declarations :: Api.Node -> Prelude.Maybe Declarations
 cast_Declarations dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "declarations")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Declarations
       { children,
@@ -1170,7 +1137,6 @@ cast_DefaultSignature :: Api.Node -> Prelude.Maybe DefaultSignature
 cast_DefaultSignature dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "default_signature")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   signature <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "signature" namedMap))
   signature <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr signature))
   Prelude.pure
@@ -1195,7 +1161,6 @@ cast_DefaultTypes :: Api.Node -> Prelude.Maybe DefaultTypes
 cast_DefaultTypes dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "default_types")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
   type' <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
@@ -1222,7 +1187,6 @@ cast_Deriving :: Api.Node -> Prelude.Maybe Deriving
 cast_Deriving dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "deriving")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   classes <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "classes" namedMap))
   classes <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr classes))
   strategy <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "strategy" namedMap))
@@ -1259,9 +1223,6 @@ cast_DerivingInstance :: Api.Node -> Prelude.Maybe DerivingInstance
 cast_DerivingInstance dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "deriving_instance")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   context <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "context" namedMap))
   context <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr context))
   forall' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "forall" namedMap))
@@ -1274,6 +1235,7 @@ cast_DerivingInstance dynNode = do
   strategy <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr strategy))
   via <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "via" namedMap))
   via <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr via))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     DerivingInstance
       { children,
@@ -1314,11 +1276,9 @@ cast_Do :: Api.Node -> Prelude.Maybe Do
 cast_Do dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "do")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   statement <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "statement" namedMap))
   statement <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr statement))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Do
       { children,
@@ -1343,7 +1303,6 @@ cast_DoModule :: Api.Node -> Prelude.Maybe DoModule
 cast_DoModule dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "do_module")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   id <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "id" namedMap))
   id <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr id))
   module' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "module" namedMap))
@@ -1382,9 +1341,7 @@ cast_Entity :: Api.Node -> Prelude.Maybe Entity
 cast_Entity dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "entity")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Entity
       { children,
@@ -1413,9 +1370,6 @@ cast_Equation :: Api.Node -> Prelude.Maybe Equation
 cast_Equation dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "equation")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr children))
   constructors <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructors" namedMap))
   constructors <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr constructors))
   forall' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "forall" namedMap))
@@ -1428,6 +1382,7 @@ cast_Equation dynNode = do
   patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   synonym <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "synonym" namedMap))
   synonym <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr synonym))
+  children <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Equation
       { children,
@@ -1456,7 +1411,6 @@ cast_Equations :: Api.Node -> Prelude.Maybe Equations
 cast_Equations dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "equations")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   equation <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "equation" namedMap))
   equation <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr equation))
   Prelude.pure
@@ -1481,9 +1435,7 @@ cast_Exp :: Api.Node -> Prelude.Maybe Exp
 cast_Exp dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "exp")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Exp
       { children,
@@ -1506,7 +1458,6 @@ cast_ExplicitType :: Api.Node -> Prelude.Maybe ExplicitType
 cast_ExplicitType dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "explicit_type")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
   type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
@@ -1535,7 +1486,6 @@ cast_Export :: Api.Node -> Prelude.Maybe Export
 cast_Export dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "export")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
   children' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children'))
   namespace <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "namespace" namedMap))
@@ -1573,11 +1523,9 @@ cast_Exports :: Api.Node -> Prelude.Maybe Exports
 cast_Exports dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "exports")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr children))
   export <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "export" namedMap))
   export <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr export))
+  children <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Exports
       { children,
@@ -1604,15 +1552,13 @@ cast_Field :: Api.Node -> Prelude.Maybe Field
 cast_Field dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "field")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
   name <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr name))
   parameter <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "parameter" namedMap))
   parameter <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr parameter))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
   type' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr type'))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Field
       { children,
@@ -1638,9 +1584,7 @@ cast_FieldName :: Api.Node -> Prelude.Maybe FieldName
 cast_FieldName dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "field_name")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     FieldName
       { children,
@@ -1664,7 +1608,6 @@ cast_FieldPath :: Api.Node -> Prelude.Maybe FieldPath
 cast_FieldPath dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "field_path")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   field <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "field" namedMap))
   field <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr field))
   subfield <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "subfield" namedMap))
@@ -1694,13 +1637,11 @@ cast_FieldPattern :: Api.Node -> Prelude.Maybe FieldPattern
 cast_FieldPattern dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "field_pattern")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   field <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "field" namedMap))
   field <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr field))
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
   pattern' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr pattern'))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     FieldPattern
       { children,
@@ -1727,13 +1668,11 @@ cast_FieldUpdate :: Api.Node -> Prelude.Maybe FieldUpdate
 cast_FieldUpdate dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "field_update")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
   expression <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr expression))
   field <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "field" namedMap))
   field <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr field))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     FieldUpdate
       { children,
@@ -1758,7 +1697,6 @@ cast_Fields :: Api.Node -> Prelude.Maybe Fields
 cast_Fields dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "fields")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   field <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "field" namedMap))
   field <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr field))
   Prelude.pure
@@ -1785,7 +1723,6 @@ cast_Fixity :: Api.Node -> Prelude.Maybe Fixity
 cast_Fixity dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "fixity")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   associativity <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "associativity" namedMap))
   associativity <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr associativity))
   operator <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "operator" namedMap))
@@ -1819,7 +1756,6 @@ cast_Forall :: Api.Node -> Prelude.Maybe Forall
 cast_Forall dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "forall")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   constraint <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constraint" namedMap))
   constraint <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr constraint))
   quantifier <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "quantifier" namedMap))
@@ -1855,7 +1791,6 @@ cast_ForallRequired :: Api.Node -> Prelude.Maybe ForallRequired
 cast_ForallRequired dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "forall_required")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   quantifier <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "quantifier" namedMap))
   quantifier <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr quantifier))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
@@ -1888,7 +1823,6 @@ cast_ForeignExport :: Api.Node -> Prelude.Maybe ForeignExport
 cast_ForeignExport dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "foreign_export")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   callingConvention <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "calling_convention" namedMap))
   callingConvention <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr callingConvention))
   entity <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "entity" namedMap))
@@ -1922,7 +1856,6 @@ cast_ForeignImport :: Api.Node -> Prelude.Maybe ForeignImport
 cast_ForeignImport dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "foreign_import")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   callingConvention <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "calling_convention" namedMap))
   callingConvention <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr callingConvention))
   entity <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "entity" namedMap))
@@ -1964,9 +1897,6 @@ cast_Function :: Api.Node -> Prelude.Maybe Function
 cast_Function dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "function")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   arrow <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "arrow" namedMap))
   arrow <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr arrow))
   binds <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "binds" namedMap))
@@ -1983,6 +1913,7 @@ cast_Function dynNode = do
   patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   result <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "result" namedMap))
   result <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr result))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Function
       { children,
@@ -2016,15 +1947,13 @@ cast_FunctionHeadParens :: Api.Node -> Prelude.Maybe FunctionHeadParens
 cast_FunctionHeadParens dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "function_head_parens")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
   name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   parens <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "parens" namedMap))
   parens <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr parens))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
   patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     FunctionHeadParens
       { children,
@@ -2051,7 +1980,6 @@ cast_Fundep :: Api.Node -> Prelude.Maybe Fundep
 cast_Fundep dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "fundep")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   determined <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "determined" namedMap))
   determined <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr determined))
   matched <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "matched" namedMap))
@@ -2079,7 +2007,6 @@ cast_Fundeps :: Api.Node -> Prelude.Maybe Fundeps
 cast_Fundeps dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "fundeps")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   fundep <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "fundep" namedMap))
   fundep <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr fundep))
   Prelude.pure
@@ -2108,7 +2035,6 @@ cast_GadtConstructor :: Api.Node -> Prelude.Maybe GadtConstructor
 cast_GadtConstructor dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "gadt_constructor")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   context <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "context" namedMap))
   context <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr context))
   forall' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "forall" namedMap))
@@ -2145,7 +2071,6 @@ cast_GadtConstructors :: Api.Node -> Prelude.Maybe GadtConstructors
 cast_GadtConstructors dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "gadt_constructors")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   constructor <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructor" namedMap))
   constructor <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr constructor))
   Prelude.pure
@@ -2172,7 +2097,6 @@ cast_Generator :: Api.Node -> Prelude.Maybe Generator
 cast_Generator dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "generator")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   arrow <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "arrow" namedMap))
   arrow <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr arrow))
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
@@ -2204,7 +2128,6 @@ cast_Group :: Api.Node -> Prelude.Maybe Group
 cast_Group dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "group")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   classifier <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "classifier" namedMap))
   classifier <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr classifier))
   key <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "key" namedMap))
@@ -2232,7 +2155,6 @@ cast_Guards :: Api.Node -> Prelude.Maybe Guards
 cast_Guards dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "guards")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   guard <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "guard" namedMap))
   guard <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr guard))
   Prelude.pure
@@ -2259,13 +2181,11 @@ cast_Haskell :: Api.Node -> Prelude.Maybe Haskell
 cast_Haskell dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "haskell")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   declarations <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "declarations" namedMap))
   declarations <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr declarations))
   imports <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "imports" namedMap))
   imports <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr imports))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Haskell
       { children,
@@ -2291,7 +2211,6 @@ cast_Header :: Api.Node -> Prelude.Maybe Header
 cast_Header dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "header")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   exports <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "exports" namedMap))
   exports <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr exports))
   module' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "module" namedMap))
@@ -2320,7 +2239,6 @@ cast_ImplicitParameter :: Api.Node -> Prelude.Maybe ImplicitParameter
 cast_ImplicitParameter dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "implicit_parameter")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
   name <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr name))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
@@ -2351,7 +2269,6 @@ cast_Import :: Api.Node -> Prelude.Maybe Import
 cast_Import dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "import")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   alias <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "alias" namedMap))
   alias <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr alias))
   module' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "module" namedMap))
@@ -2385,7 +2302,6 @@ cast_ImportList :: Api.Node -> Prelude.Maybe ImportList
 cast_ImportList dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "import_list")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
   name <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr name))
   Prelude.pure
@@ -2414,7 +2330,6 @@ cast_ImportName :: Api.Node -> Prelude.Maybe ImportName
 cast_ImportName dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "import_name")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   children' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
   children' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children'))
   namespace <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "namespace" namedMap))
@@ -2451,7 +2366,6 @@ cast_Imports :: Api.Node -> Prelude.Maybe Imports
 cast_Imports dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "imports")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   import' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "import" namedMap))
   import' <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr import'))
   Prelude.pure
@@ -2476,9 +2390,7 @@ cast_Inferred :: Api.Node -> Prelude.Maybe Inferred
 cast_Inferred dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "inferred")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Inferred
       { children,
@@ -2503,7 +2415,6 @@ cast_Infix :: Api.Node -> Prelude.Maybe Infix
 cast_Infix dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "infix")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   leftOperand <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "left_operand" namedMap))
   leftOperand <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr leftOperand))
   operator <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "operator" namedMap))
@@ -2534,9 +2445,7 @@ cast_InfixId :: Api.Node -> Prelude.Maybe InfixId
 cast_InfixId dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "infix_id")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     InfixId
       { children,
@@ -2564,9 +2473,6 @@ cast_Instance :: Api.Node -> Prelude.Maybe Instance
 cast_Instance dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "instance")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   context <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "context" namedMap))
   context <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr context))
   declarations <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "declarations" namedMap))
@@ -2577,6 +2483,7 @@ cast_Instance dynNode = do
   name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
   patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Instance
       { children,
@@ -2604,7 +2511,6 @@ cast_InstanceDeclarations :: Api.Node -> Prelude.Maybe InstanceDeclarations
 cast_InstanceDeclarations dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "instance_declarations")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   declaration <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "declaration" namedMap))
   declaration <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr declaration))
   Prelude.pure
@@ -2640,7 +2546,6 @@ cast_Invisible :: Api.Node -> Prelude.Maybe Invisible
 cast_Invisible dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "invisible")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   bind <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "bind" namedMap))
   bind <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr bind))
   Prelude.pure
@@ -2665,7 +2570,6 @@ cast_Irrefutable :: Api.Node -> Prelude.Maybe Irrefutable
 cast_Irrefutable dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "irrefutable")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
   pattern' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr pattern'))
   Prelude.pure
@@ -2690,7 +2594,6 @@ cast_KindApplication :: Api.Node -> Prelude.Maybe KindApplication
 cast_KindApplication dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "kind_application")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
   type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
@@ -2718,15 +2621,13 @@ cast_KindSignature :: Api.Node -> Prelude.Maybe KindSignature
 cast_KindSignature dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "kind_signature")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   kind <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "kind" namedMap))
   kind <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr kind))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
   name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
   patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     KindSignature
       { children,
@@ -2753,7 +2654,6 @@ cast_Lambda :: Api.Node -> Prelude.Maybe Lambda
 cast_Lambda dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "lambda")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
   expression <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr expression))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
@@ -2781,7 +2681,6 @@ cast_LambdaCase :: Api.Node -> Prelude.Maybe LambdaCase
 cast_LambdaCase dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "lambda_case")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   alternatives <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "alternatives" namedMap))
   alternatives <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr alternatives))
   Prelude.pure
@@ -2806,7 +2705,6 @@ cast_LambdaCases :: Api.Node -> Prelude.Maybe LambdaCases
 cast_LambdaCases dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "lambda_cases")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   alternatives <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "alternatives" namedMap))
   alternatives <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr alternatives))
   Prelude.pure
@@ -2831,7 +2729,6 @@ cast_LazyField :: Api.Node -> Prelude.Maybe LazyField
 cast_LazyField dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "lazy_field")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
   type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
@@ -2857,7 +2754,6 @@ cast_LeftSection :: Api.Node -> Prelude.Maybe LeftSection
 cast_LeftSection dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "left_section")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   leftOperand <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "left_operand" namedMap))
   leftOperand <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr leftOperand))
   operator <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "operator" namedMap))
@@ -2885,7 +2781,6 @@ cast_Let :: Api.Node -> Prelude.Maybe Let
 cast_Let dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "let")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   binds <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "binds" namedMap))
   binds <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr binds))
   Prelude.pure
@@ -2911,7 +2806,6 @@ cast_LetIn :: Api.Node -> Prelude.Maybe LetIn
 cast_LetIn dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "let_in")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   binds <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "binds" namedMap))
   binds <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr binds))
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
@@ -2942,7 +2836,6 @@ cast_LinearFunction :: Api.Node -> Prelude.Maybe LinearFunction
 cast_LinearFunction dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "linear_function")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   arrow <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "arrow" namedMap))
   arrow <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr arrow))
   multiplicity <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "multiplicity" namedMap))
@@ -2976,7 +2869,6 @@ cast_List :: Api.Node -> Prelude.Maybe List
 cast_List dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "list")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   element <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "element" namedMap))
   element <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr element))
   Prelude.pure
@@ -3002,7 +2894,6 @@ cast_ListComprehension :: Api.Node -> Prelude.Maybe ListComprehension
 cast_ListComprehension dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "list_comprehension")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
   expression <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr expression))
   qualifiers <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "qualifiers" namedMap))
@@ -3030,9 +2921,7 @@ cast_Literal :: Api.Node -> Prelude.Maybe Literal
 cast_Literal dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "literal")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Literal
       { children,
@@ -3055,7 +2944,6 @@ cast_LocalBinds :: Api.Node -> Prelude.Maybe LocalBinds
 cast_LocalBinds dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "local_binds")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   decl <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "decl" namedMap))
   decl <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr decl))
   Prelude.pure
@@ -3081,7 +2969,6 @@ cast_Match :: Api.Node -> Prelude.Maybe Match
 cast_Match dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "match")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
   expression <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr expression))
   guards <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "guards" namedMap))
@@ -3109,9 +2996,7 @@ cast_Modifier :: Api.Node -> Prelude.Maybe Modifier
 cast_Modifier dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "modifier")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Modifier
       { children,
@@ -3134,9 +3019,7 @@ cast_Module :: Api.Node -> Prelude.Maybe Module
 cast_Module dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "module")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Module
       { children,
@@ -3159,7 +3042,6 @@ cast_ModuleExport :: Api.Node -> Prelude.Maybe ModuleExport
 cast_ModuleExport dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "module_export")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   module' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "module" namedMap))
   module' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr module'))
   Prelude.pure
@@ -3184,7 +3066,6 @@ cast_MultiWayIf :: Api.Node -> Prelude.Maybe MultiWayIf
 cast_MultiWayIf dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "multi_way_if")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   match <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "match" namedMap))
   match <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr match))
   Prelude.pure
@@ -3222,7 +3103,6 @@ cast_Negation :: Api.Node -> Prelude.Maybe Negation
 cast_Negation dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "negation")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
   expression <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr expression))
   minus <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "minus" namedMap))
@@ -3261,9 +3141,6 @@ cast_Newtype :: Api.Node -> Prelude.Maybe Newtype
 cast_Newtype dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "newtype")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   constructor <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructor" namedMap))
   constructor <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr constructor))
   constructors <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructors" namedMap))
@@ -3280,6 +3157,7 @@ cast_Newtype dynNode = do
   name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
   patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Newtype
       { children,
@@ -3311,7 +3189,6 @@ cast_NewtypeConstructor :: Api.Node -> Prelude.Maybe NewtypeConstructor
 cast_NewtypeConstructor dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "newtype_constructor")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   field <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "field" namedMap))
   field <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr field))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
@@ -3356,9 +3233,6 @@ cast_Parens :: Api.Node -> Prelude.Maybe Parens
 cast_Parens dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "parens")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
   expression <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr expression))
   kind <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "kind" namedMap))
@@ -3371,6 +3245,7 @@ cast_Parens dynNode = do
   patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
   type' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr type'))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Parens
       { children,
@@ -3401,7 +3276,6 @@ cast_PatternGuard :: Api.Node -> Prelude.Maybe PatternGuard
 cast_PatternGuard dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "pattern_guard")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   arrow <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "arrow" namedMap))
   arrow <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr arrow))
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
@@ -3432,9 +3306,7 @@ cast_PatternSynonym :: Api.Node -> Prelude.Maybe PatternSynonym
 cast_PatternSynonym dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "pattern_synonym")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     PatternSynonym
       { children,
@@ -3457,9 +3329,7 @@ cast_Patterns :: Api.Node -> Prelude.Maybe Patterns
 cast_Patterns dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "patterns")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Patterns
       { children,
@@ -3484,7 +3354,6 @@ cast_Prefix :: Api.Node -> Prelude.Maybe Prefix
 cast_Prefix dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "prefix")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   field <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "field" namedMap))
   field <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr field))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
@@ -3515,9 +3384,7 @@ cast_PrefixId :: Api.Node -> Prelude.Maybe PrefixId
 cast_PrefixId dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "prefix_id")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     PrefixId
       { children,
@@ -3585,7 +3452,6 @@ cast_Projection :: Api.Node -> Prelude.Maybe Projection
 cast_Projection dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "projection")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
   expression <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr expression))
   field <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "field" namedMap))
@@ -3613,7 +3479,6 @@ cast_ProjectionSelector :: Api.Node -> Prelude.Maybe ProjectionSelector
 cast_ProjectionSelector dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "projection_selector")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   field <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "field" namedMap))
   field <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr field))
   Prelude.pure
@@ -3638,9 +3503,7 @@ cast_Promoted :: Api.Node -> Prelude.Maybe Promoted
 cast_Promoted dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "promoted")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Promoted
       { children,
@@ -3664,7 +3527,6 @@ cast_Qualified :: Api.Node -> Prelude.Maybe Qualified
 cast_Qualified dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "qualified")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   id <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "id" namedMap))
   id <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr id))
   module' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "module" namedMap))
@@ -3692,7 +3554,6 @@ cast_Qualifiers :: Api.Node -> Prelude.Maybe Qualifiers
 cast_Qualifiers dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "qualifiers")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   qualifier <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "qualifier" namedMap))
   qualifier <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr qualifier))
   Prelude.pure
@@ -3717,9 +3578,7 @@ cast_QuantifiedVariables :: Api.Node -> Prelude.Maybe QuantifiedVariables
 cast_QuantifiedVariables dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "quantified_variables")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     QuantifiedVariables
       { children,
@@ -3743,7 +3602,6 @@ cast_Quasiquote :: Api.Node -> Prelude.Maybe Quasiquote
 cast_Quasiquote dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "quasiquote")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   body <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "body" namedMap))
   body <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr body))
   quoter <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "quoter" namedMap))
@@ -3772,11 +3630,9 @@ cast_Quote :: Api.Node -> Prelude.Maybe Quote
 cast_Quote dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "quote")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   quoter <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "quoter" namedMap))
   quoter <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr quoter))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Quote
       { children,
@@ -3800,7 +3656,6 @@ cast_QuotedDecls :: Api.Node -> Prelude.Maybe QuotedDecls
 cast_QuotedDecls dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "quoted_decls")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   declaration <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "declaration" namedMap))
   declaration <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr declaration))
   Prelude.pure
@@ -3825,9 +3680,7 @@ cast_QuotedExpression :: Api.Node -> Prelude.Maybe QuotedExpression
 cast_QuotedExpression dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "quoted_expression")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     QuotedExpression
       { children,
@@ -3850,9 +3703,7 @@ cast_QuotedPattern :: Api.Node -> Prelude.Maybe QuotedPattern
 cast_QuotedPattern dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "quoted_pattern")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     QuotedPattern
       { children,
@@ -3875,9 +3726,7 @@ cast_QuotedType :: Api.Node -> Prelude.Maybe QuotedType
 cast_QuotedType dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "quoted_type")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     QuotedType
       { children,
@@ -3900,9 +3749,7 @@ cast_Quoter :: Api.Node -> Prelude.Maybe Quoter
 cast_Quoter dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "quoter")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Quoter
       { children,
@@ -3925,7 +3772,6 @@ cast_Rec :: Api.Node -> Prelude.Maybe Rec
 cast_Rec dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "rec")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   statement <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "statement" namedMap))
   statement <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr statement))
   Prelude.pure
@@ -3956,7 +3802,6 @@ cast_Record :: Api.Node -> Prelude.Maybe Record
 cast_Record dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "record")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   arrow <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "arrow" namedMap))
   arrow <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr arrow))
   constructor <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constructor" namedMap))
@@ -4000,11 +3845,9 @@ cast_RightSection :: Api.Node -> Prelude.Maybe RightSection
 cast_RightSection dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "right_section")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
   rightOperand <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "right_operand" namedMap))
   rightOperand <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr rightOperand))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     RightSection
       { children,
@@ -4029,7 +3872,6 @@ cast_RoleAnnotation :: Api.Node -> Prelude.Maybe RoleAnnotation
 cast_RoleAnnotation dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "role_annotation")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   role <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "role" namedMap))
   role <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr role))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
@@ -4064,7 +3906,6 @@ cast_Signature :: Api.Node -> Prelude.Maybe Signature
 cast_Signature dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "signature")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   constraint <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "constraint" namedMap))
   constraint <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr constraint))
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
@@ -4110,9 +3951,7 @@ cast_Special :: Api.Node -> Prelude.Maybe Special
 cast_Special dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "special")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Special
       { children,
@@ -4135,7 +3974,6 @@ cast_Splice :: Api.Node -> Prelude.Maybe Splice
 cast_Splice dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "splice")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
   expression <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr expression))
   Prelude.pure
@@ -4171,7 +4009,6 @@ cast_Strict :: Api.Node -> Prelude.Maybe Strict
 cast_Strict dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "strict")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
   pattern' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr pattern'))
   Prelude.pure
@@ -4196,7 +4033,6 @@ cast_StrictField :: Api.Node -> Prelude.Maybe StrictField
 cast_StrictField dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "strict_field")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
   type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
@@ -4222,7 +4058,6 @@ cast_ThQuotedName :: Api.Node -> Prelude.Maybe ThQuotedName
 cast_ThQuotedName dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "th_quoted_name")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
   name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
@@ -4250,9 +4085,7 @@ cast_TopSplice :: Api.Node -> Prelude.Maybe TopSplice
 cast_TopSplice dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "top_splice")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     TopSplice
       { children,
@@ -4276,7 +4109,6 @@ cast_Transform :: Api.Node -> Prelude.Maybe Transform
 cast_Transform dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "transform")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   key <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "key" namedMap))
   key <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr key))
   transformation <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "transformation" namedMap))
@@ -4305,11 +4137,9 @@ cast_Tuple :: Api.Node -> Prelude.Maybe Tuple
 cast_Tuple dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "tuple")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr children))
   element <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "element" namedMap))
   element <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr element))
+  children <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     Tuple
       { children,
@@ -4333,7 +4163,6 @@ cast_TypeApplication :: Api.Node -> Prelude.Maybe TypeApplication
 cast_TypeApplication dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "type_application")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
   type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
@@ -4358,7 +4187,6 @@ cast_TypeBinder :: Api.Node -> Prelude.Maybe TypeBinder
 cast_TypeBinder dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "type_binder")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
   type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
@@ -4387,9 +4215,6 @@ cast_TypeFamily :: Api.Node -> Prelude.Maybe TypeFamily
 cast_TypeFamily dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "type_family")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr children))
   closedFamily <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "closed_family" namedMap))
   closedFamily <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr closedFamily))
   kind <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "kind" namedMap))
@@ -4398,6 +4223,7 @@ cast_TypeFamily dynNode = do
   name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
   patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
+  children <- Prelude.pure (AST.Runtime.castManyToList (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     TypeFamily
       { children,
@@ -4425,7 +4251,6 @@ cast_TypeFamilyInjectivity :: Api.Node -> Prelude.Maybe TypeFamilyInjectivity
 cast_TypeFamilyInjectivity dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "type_family_injectivity")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   determined <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "determined" namedMap))
   determined <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr determined))
   result <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "result" namedMap))
@@ -4453,7 +4278,6 @@ cast_TypeFamilyResult :: Api.Node -> Prelude.Maybe TypeFamilyResult
 cast_TypeFamilyResult dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "type_family_result")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   result <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "result" namedMap))
   result <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr result))
   Prelude.pure
@@ -4481,15 +4305,13 @@ cast_TypeInstance :: Api.Node -> Prelude.Maybe TypeInstance
 cast_TypeInstance dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "type_instance")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr children))
   forall' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "forall" namedMap))
   forall' <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr forall'))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
   name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
   patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
+  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     TypeInstance
       { children,
@@ -4515,9 +4337,7 @@ cast_TypeParams :: Api.Node -> Prelude.Maybe TypeParams
 cast_TypeParams dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "type_params")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     TypeParams
       { children,
@@ -4540,9 +4360,7 @@ cast_TypePatterns :: Api.Node -> Prelude.Maybe TypePatterns
 cast_TypePatterns dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "type_patterns")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     TypePatterns
       { children,
@@ -4579,15 +4397,13 @@ cast_TypeSynomym :: Api.Node -> Prelude.Maybe TypeSynomym
 cast_TypeSynomym dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "type_synomym")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
   name <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "name" namedMap))
   name <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr name))
   patterns <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "patterns" namedMap))
   patterns <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr patterns))
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
   type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     TypeSynomym
       { children,
@@ -4613,9 +4429,7 @@ cast_TypedQuote :: Api.Node -> Prelude.Maybe TypedQuote
 cast_TypedQuote dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "typed_quote")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
-  children <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "children" namedMap))
-  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr children))
+  children <- Prelude.pure (AST.Runtime.castManyToMaybe (Prelude.fmap AST.Cast.castErr positional))
   Prelude.pure
     TypedQuote
       { children,
@@ -4638,7 +4452,6 @@ cast_UnboxedSum :: Api.Node -> Prelude.Maybe UnboxedSum
 cast_UnboxedSum dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "unboxed_sum")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   element <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "element" namedMap))
   element <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr element))
   Prelude.pure
@@ -4663,7 +4476,6 @@ cast_UnboxedTuple :: Api.Node -> Prelude.Maybe UnboxedTuple
 cast_UnboxedTuple dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "unboxed_tuple")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   element <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "element" namedMap))
   element <- Prelude.pure (AST.Runtime.castManyToNonEmpty (Prelude.fmap AST.Cast.castErr element))
   Prelude.pure
@@ -4710,7 +4522,6 @@ cast_Via :: Api.Node -> Prelude.Maybe Via
 cast_Via dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "via")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   type' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "type" namedMap))
   type' <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr type'))
   Prelude.pure
@@ -4736,7 +4547,6 @@ cast_ViewPattern :: Api.Node -> Prelude.Maybe ViewPattern
 cast_ViewPattern dynNode = do
   Control.Monad.guard (Api.nodeType dynNode Prelude.== "view_pattern")
   let (extraNodes, positional, namedMap) = AST.Runtime.getChildDescription dynNode
-  namedMap <- Prelude.pure (Data.Map.Strict.insert (Data.Text.pack "children") positional namedMap)
   expression <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "expression" namedMap))
   expression <- Prelude.pure (AST.Runtime.castManyToSingle (Prelude.fmap AST.Cast.castErr expression))
   pattern' <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "pattern" namedMap))
