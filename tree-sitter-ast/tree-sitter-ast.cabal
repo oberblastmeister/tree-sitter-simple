@@ -27,6 +27,7 @@ library
       AST.Symbol
       AST.Token
       AST.Traversal
+      AST.Unwrap
   other-modules:
       Paths_tree_sitter_ast
   hs-source-dirs:

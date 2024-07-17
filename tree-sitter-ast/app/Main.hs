@@ -91,7 +91,8 @@ generateExportList nodeTypes = do
   commaList (List.filter ((== NT.Named) . NT.datatypeNameStatus) nodeTypes) \dt -> do
     let name = NT.datatypeName dt
     let hsName = T.pack (Symbol.toHaskellPascalCaseIdentifier (T.unpack name))
-    emit [trimming|$hsName(..)|]
+    let hsNameU = if NT.isProductType dt then ", " <> hsName <> "U" <> "(..)" else ""
+    emit [trimming|$hsName(..) $hsNameU|]
   emit ")"
 
 generate :: Bool -> NT.Datatype -> M ()
@@ -169,7 +170,9 @@ generateProductType nodeName children fields = do
         (Maybe.maybeToList (fmap (\children -> ("children", NT.getChildren children)) children))
           ++ (fmap (\(hsField, _tsField, field) -> (hsField, field)) fields)
   generateProductDecl nodeName hsFields
+  generateUnwrappedProductDecl nodeName hsFields
   genProductTypeCast nodeName fields children
+  genUnwrap nodeName hsFields
   pure ()
 
 generateProductDecl :: Text -> [(Text, NT.Field)] -> M ()
@@ -182,6 +185,19 @@ generateProductDecl nodeName fields = do
     let innerTy = nodeTypesToTy (NT.fieldTypes field)
     let outsideErr = if tyPrefix == "" then "" else "AST.Err.Err"
     emit [trimming|$hsFieldName :: $outsideErr ($tyPrefix (AST.Err.Err ($innerTy)))|]
+  emit ", dynNode :: AST.Node.DynNode"
+  emit "  }"
+  emit [trimming| $commonDerive|]
+
+generateUnwrappedProductDecl :: Text -> [(Text, NT.Field)] -> M ()
+generateUnwrappedProductDecl nodeName fields = do
+  let name = convertName nodeName <> "U"
+  emit [trimming|data $name = $name {|]
+  commaList fields \(hsFieldNameRenamed, field) -> do
+    let hsFieldName = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack hsFieldNameRenamed))
+    let tyPrefix = fieldToTyPrefix field
+    let innerTy = nodeTypesToTy (NT.fieldTypes field)
+    emit [trimming|$hsFieldName :: $tyPrefix ($innerTy)|]
   emit ", dynNode :: AST.Node.DynNode"
   emit "  }"
   emit [trimming| $commonDerive|]
@@ -208,7 +224,7 @@ genProductTypeCast nodeName fields children = do
 
   emitStmts do
     for_ fields \(hsFieldNameRenamed, tsFieldName, field) -> do
-      let hsFieldName = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack hsFieldNameRenamed))
+      let hsFieldName = convertFieldName hsFieldNameRenamed
       let manyCastFun = fieldToManyCastFun field
       emit [trimming|$hsFieldName <- Prelude.pure (AST.Runtime.flattenMaybeList (Data.Map.Strict.lookup "$tsFieldName" namedMap))|]
       emit [trimming|$hsFieldName <- Prelude.pure ($manyCastFun (Prelude.fmap AST.Cast.castErr $hsFieldName))|]
@@ -223,6 +239,7 @@ genProductTypeCast nodeName fields children = do
   commaList (Maybe.maybeToList ("children" <$ children) ++ (fmap (\(f, _, _) -> f)) fields) \hsFieldNameRenamed -> do
     let hsFieldName = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack hsFieldNameRenamed))
     emit [trimming|$hsFieldName|]
+
   emit ", dynNode = dynNode" -- add in the dynNode field
   emit [trimming|} ;|]
 
@@ -243,6 +260,31 @@ genProductTypeCast nodeName fields children = do
   -- instance end
 
   pure ()
+
+genUnwrap :: Text -> [(Text, NT.Field)] -> M ()
+genUnwrap nodeName fields = do
+  let name = convertName nodeName
+  let nameU = name <> "U"
+
+  emit
+    [trimming|
+  unwrap_$name :: $name -> AST.Err.Err $nameU
+  unwrap_$name node = do {
+  |]
+
+  emitStmts do
+    for_ fields \(hsFieldNameRenamed, field) -> do
+      let hsFieldName = convertFieldName hsFieldNameRenamed
+      let unwrapFun = fieldToUnwrapFun field
+      emit [trimming|$hsFieldName <- $unwrapFun node.$hsFieldName|]
+
+  emit [trimming|; Prelude.pure $nameU {|]
+  commaList (fmap fst fields) \hsFieldNameRenamed -> do
+    let hsFieldName = convertFieldName hsFieldNameRenamed
+    emit [trimming|$hsFieldName|]
+  emit ", dynNode = node.dynNode" -- add in the dynNode field
+  emit [trimming|} ;|]
+  emit "}"
 
 commaList :: [a] -> (a -> M b) -> M ()
 commaList ts f = for_ (List.zip [0 ..] ts) \(i, t) -> do
@@ -268,6 +310,14 @@ fieldToManyCastFun field =
     (NT.Optional, NT.Multiple) -> "AST.Runtime.castManyToList"
     (NT.Optional, NT.Single) -> "AST.Runtime.castManyToMaybe"
 
+fieldToUnwrapFun :: NT.Field -> Text
+fieldToUnwrapFun field =
+  case (NT.fieldRequired field, NT.fieldMultiple field) of
+    (NT.Required, NT.Multiple) -> "AST.Runtime.unwrapNonEmpty"
+    (NT.Required, NT.Single) -> "AST.Runtime.unwrapSingle"
+    (NT.Optional, NT.Multiple) -> "AST.Runtime.unwrapList"
+    (NT.Optional, NT.Single) -> "AST.Runtime.unwrapMaybe"
+
 nodeTypesToTy :: NonEmpty NT.Type -> Text
 nodeTypesToTy (ty NE.:| []) = nodeTypeToTy ty
 nodeTypesToTy tys = "(" <> T.intercalate " Sum.:+ " (fmap nodeTypeToTy (NE.toList tys)) <> " Sum.:+ Sum.Nil)"
@@ -290,6 +340,9 @@ generateSkippedDatatype dt = do
 
 convertName :: Text -> Text
 convertName = T.pack . Symbol.toHaskellPascalCaseIdentifier . T.unpack
+
+convertFieldName :: Text -> Text
+convertFieldName = T.pack . Symbol.toHaskellCamelCaseIdentifier . T.unpack
 
 generateLeafType :: Text -> NT.Named -> M ()
 generateLeafType name NT.Named = do

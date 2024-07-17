@@ -16,6 +16,7 @@ module AST.NodeTypes
     Type (..),
     Named (..),
     Multiple (..),
+    isProductType,
   )
 where
 
@@ -48,6 +49,10 @@ data Datatype
         datatypeNameStatus :: Named
       }
   deriving (Eq, Ord, Show, Generic, ToJSON)
+
+isProductType :: Datatype -> Bool
+isProductType ProductType {} = True
+isProductType _ = False
 
 instance FromJSON Datatype where
   parseJSON = withObject "Datatype" $ \v -> do

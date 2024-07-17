@@ -10,10 +10,14 @@ module AST.Runtime
     castManyToMaybe,
     castManyToList,
     castManyToNonEmpty,
+    unwrapSingle,
+    unwrapMaybe,
+    unwrapList,
+    unwrapNonEmpty,
   )
 where
 
-import AST.Err (Err)
+import AST.Err (Err, collapseErr)
 import Data.Foldable (foldl')
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.Map.Strict (Map)
@@ -77,3 +81,15 @@ castManyToList = Right
 castManyToNonEmpty :: [a] -> Err (NonEmpty a)
 castManyToNonEmpty [] = Left "expected at least one node"
 castManyToNonEmpty (x : xs) = Right (x :| xs)
+
+unwrapNonEmpty :: Err (NonEmpty (Err a)) -> Err (NonEmpty a)
+unwrapNonEmpty = collapseErr
+
+unwrapList :: Err [Err a] -> Err [a]
+unwrapList = collapseErr
+
+unwrapMaybe :: Err (Maybe (Err a)) -> Err (Maybe a)
+unwrapMaybe = collapseErr
+
+unwrapSingle :: (Err a) -> Err a
+unwrapSingle = id
