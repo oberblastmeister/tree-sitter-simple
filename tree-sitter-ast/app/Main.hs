@@ -78,6 +78,7 @@ generateAllM moduleName nodeTypes = do
   import qualified Data.Text
   import qualified Control.Monad
   import qualified AST.Err
+  import qualified AST.Unwrap
   |]
 
   for_ nodeTypes \dt -> do
@@ -285,6 +286,12 @@ genUnwrap nodeName fields = do
   emit ", dynNode = node.dynNode" -- add in the dynNode field
   emit [trimming|} ;|]
   emit "}"
+  
+  emit
+    [trimming|
+    instance AST.Unwrap.Unwrap $name $nameU where
+      unwrap = unwrap_$name
+    |]
 
 commaList :: [a] -> (a -> M b) -> M ()
 commaList ts f = for_ (List.zip [0 ..] ts) \(i, t) -> do

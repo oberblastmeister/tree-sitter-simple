@@ -342,6 +342,7 @@ import AST.Node qualified
 import AST.Runtime qualified
 import AST.Sum qualified as Sum
 import AST.Token qualified
+import AST.Unwrap qualified
 import Control.DeepSeq qualified
 import Control.Monad qualified
 import Data.List.NonEmpty qualified
@@ -576,6 +577,9 @@ unwrap_Alternative node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Alternative AlternativeU where
+  unwrap = unwrap_Alternative
+
 data Alternatives = Alternatives
   { alternative :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Alternative))),
     dynNode :: AST.Node.DynNode
@@ -614,6 +618,9 @@ unwrap_Alternatives node = do
       { alternative,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Alternatives AlternativesU where
+  unwrap = unwrap_Alternatives
 
 data Annotated = Annotated
   { children :: ((AST.Err.Err (TypeParam))),
@@ -659,6 +666,9 @@ unwrap_Annotated node = do
         kind,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Annotated AnnotatedU where
+  unwrap = unwrap_Annotated
 
 data Apply = Apply
   { argument :: ((AST.Err.Err ((ExplicitType Sum.:+ Expression Sum.:+ KindApplication Sum.:+ Pattern Sum.:+ Type Sum.:+ TypeApplication Sum.:+ TypeBinder Sum.:+ Sum.Nil)))),
@@ -713,6 +723,9 @@ unwrap_Apply node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Apply ApplyU where
+  unwrap = unwrap_Apply
+
 data ArithmeticSequence = ArithmeticSequence
   { from :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     step :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
@@ -766,6 +779,9 @@ unwrap_ArithmeticSequence node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap ArithmeticSequence ArithmeticSequenceU where
+  unwrap = unwrap_ArithmeticSequence
+
 data As = As
   { bind :: ((AST.Err.Err (Variable))),
     pattern' :: ((AST.Err.Err (Pattern))),
@@ -812,6 +828,9 @@ unwrap_As node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap As AsU where
+  unwrap = unwrap_As
+
 data AssociatedType = AssociatedType
   { namespace :: ((AST.Err.Err ((AST.Token.Token "type")))),
     type' :: ((AST.Err.Err ((Name Sum.:+ Qualified Sum.:+ Sum.Nil)))),
@@ -857,6 +876,9 @@ unwrap_AssociatedType node = do
         type',
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap AssociatedType AssociatedTypeU where
+  unwrap = unwrap_AssociatedType
 
 data Bind = Bind
   { arrow :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (((AST.Token.Token "<-") Sum.:+ (AST.Token.Token "←") Sum.:+ Sum.Nil)))),
@@ -939,6 +961,9 @@ unwrap_Bind node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Bind BindU where
+  unwrap = unwrap_Bind
+
 data BindingList = BindingList
   { name :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((Constructor Sum.:+ PrefixId Sum.:+ Variable Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -978,6 +1003,9 @@ unwrap_BindingList node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap BindingList BindingListU where
+  unwrap = unwrap_BindingList
+
 data Boolean = Boolean
   { children :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -1015,6 +1043,9 @@ unwrap_Boolean node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Boolean BooleanU where
+  unwrap = unwrap_Boolean
 
 data Case = Case
   { children :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
@@ -1061,6 +1092,9 @@ unwrap_Case node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Case CaseU where
+  unwrap = unwrap_Case
+
 data Children = Children
   { element :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((AllNames Sum.:+ AssociatedType Sum.:+ Constructor Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -1099,6 +1133,9 @@ unwrap_Children node = do
       { element,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Children ChildrenU where
+  unwrap = unwrap_Children
 
 data Class = Class
   { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ Sum.Nil)))),
@@ -1173,6 +1210,9 @@ unwrap_Class node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Class ClassU where
+  unwrap = unwrap_Class
+
 data ClassDeclarations = ClassDeclarations
   { declaration :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (ClassDecl))),
     dynNode :: AST.Node.DynNode
@@ -1211,6 +1251,9 @@ unwrap_ClassDeclarations node = do
       { declaration,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap ClassDeclarations ClassDeclarationsU where
+  unwrap = unwrap_ClassDeclarations
 
 data Conditional = Conditional
   { else' :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
@@ -1264,6 +1307,9 @@ unwrap_Conditional node = do
         then',
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Conditional ConditionalU where
+  unwrap = unwrap_Conditional
 
 data ConstructorOperator = ConstructorOperator {dynNode :: AST.Node.DynNode}
   deriving (Prelude.Show, Prelude.Eq, GHC.Generics.Generic)
@@ -1343,6 +1389,9 @@ unwrap_ConstructorSynonym node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap ConstructorSynonym ConstructorSynonymU where
+  unwrap = unwrap_ConstructorSynonym
+
 data ConstructorSynonyms = ConstructorSynonyms
   { children :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (ConstructorSynonym))),
     dynNode :: AST.Node.DynNode
@@ -1380,6 +1429,9 @@ unwrap_ConstructorSynonyms node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap ConstructorSynonyms ConstructorSynonymsU where
+  unwrap = unwrap_ConstructorSynonyms
 
 data Context = Context
   { arrow :: ((AST.Err.Err (((AST.Token.Token "=>") Sum.:+ (AST.Token.Token "⇒") Sum.:+ Sum.Nil)))),
@@ -1441,6 +1493,9 @@ unwrap_Context node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Context ContextU where
+  unwrap = unwrap_Context
+
 data DataConstructor = DataConstructor
   { constructor :: ((AST.Err.Err ((Infix Sum.:+ Prefix Sum.:+ Record Sum.:+ Special Sum.:+ Sum.Nil)))),
     context :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Context))),
@@ -1494,6 +1549,9 @@ unwrap_DataConstructor node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap DataConstructor DataConstructorU where
+  unwrap = unwrap_DataConstructor
+
 data DataConstructors = DataConstructors
   { constructor :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (DataConstructor))),
     dynNode :: AST.Node.DynNode
@@ -1532,6 +1590,9 @@ unwrap_DataConstructors node = do
       { constructor,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap DataConstructors DataConstructorsU where
+  unwrap = unwrap_DataConstructors
 
 data DataFamily = DataFamily
   { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ Sum.Nil)))),
@@ -1592,6 +1653,9 @@ unwrap_DataFamily node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap DataFamily DataFamilyU where
+  unwrap = unwrap_DataFamily
+
 data DataInstance = DataInstance
   { children :: ((AST.Err.Err ((DataType Sum.:+ Newtype Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -1629,6 +1693,9 @@ unwrap_DataInstance node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap DataInstance DataInstanceU where
+  unwrap = unwrap_DataInstance
 
 data DataType = DataType
   { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ Sum.Nil)))),
@@ -1717,6 +1784,9 @@ unwrap_DataType node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap DataType DataTypeU where
+  unwrap = unwrap_DataType
+
 data Declarations = Declarations
   { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((Declaration Sum.:+ Import Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -1754,6 +1824,9 @@ unwrap_Declarations node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Declarations DeclarationsU where
+  unwrap = unwrap_Declarations
 
 data DefaultSignature = DefaultSignature
   { signature :: ((AST.Err.Err (Signature))),
@@ -1794,6 +1867,9 @@ unwrap_DefaultSignature node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap DefaultSignature DefaultSignatureU where
+  unwrap = unwrap_DefaultSignature
+
 data DefaultTypes = DefaultTypes
   { type' :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((QuantifiedType Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -1832,6 +1908,9 @@ unwrap_DefaultTypes node = do
       { type',
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap DefaultTypes DefaultTypesU where
+  unwrap = unwrap_DefaultTypes
 
 data Deriving = Deriving
   { classes :: ((AST.Err.Err (Constraint))),
@@ -1885,6 +1964,9 @@ unwrap_Deriving node = do
         via,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Deriving DerivingU where
+  unwrap = unwrap_Deriving
 
 data DerivingInstance = DerivingInstance
   { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ Sum.Nil)))),
@@ -1966,6 +2048,9 @@ unwrap_DerivingInstance node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap DerivingInstance DerivingInstanceU where
+  unwrap = unwrap_DerivingInstance
+
 data DerivingStrategy = DerivingStrategy {dynNode :: AST.Node.DynNode}
   deriving (Prelude.Show, Prelude.Eq, GHC.Generics.Generic)
 
@@ -2022,6 +2107,9 @@ unwrap_Do node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Do DoU where
+  unwrap = unwrap_Do
+
 data DoModule = DoModule
   { id :: ((AST.Err.Err (((AST.Token.Token "do") Sum.:+ (AST.Token.Token "mdo") Sum.:+ Sum.Nil)))),
     module' :: ((AST.Err.Err (Module))),
@@ -2067,6 +2155,9 @@ unwrap_DoModule node = do
         module',
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap DoModule DoModuleU where
+  unwrap = unwrap_DoModule
 
 data EmptyList = EmptyList {dynNode :: AST.Node.DynNode}
   deriving (Prelude.Show, Prelude.Eq, GHC.Generics.Generic)
@@ -2116,6 +2207,9 @@ unwrap_Entity node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Entity EntityU where
+  unwrap = unwrap_Entity
 
 data Equation = Equation
   { children :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ QuantifiedType Sum.:+ Sum.Nil)))),
@@ -2197,6 +2291,9 @@ unwrap_Equation node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Equation EquationU where
+  unwrap = unwrap_Equation
+
 data Equations = Equations
   { equation :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Equation))),
     dynNode :: AST.Node.DynNode
@@ -2236,6 +2333,9 @@ unwrap_Equations node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Equations EquationsU where
+  unwrap = unwrap_Equations
+
 data Exp = Exp
   { children :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -2273,6 +2373,9 @@ unwrap_Exp node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Exp ExpU where
+  unwrap = unwrap_Exp
 
 data ExplicitType = ExplicitType
   { type' :: ((AST.Err.Err (Type))),
@@ -2312,6 +2415,9 @@ unwrap_ExplicitType node = do
       { type',
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap ExplicitType ExplicitTypeU where
+  unwrap = unwrap_ExplicitType
 
 data Export = Export
   { children' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Children))),
@@ -2380,6 +2486,9 @@ unwrap_Export node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Export ExportU where
+  unwrap = unwrap_Export
+
 data Exports = Exports
   { children :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (ModuleExport))),
     export :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Export))),
@@ -2424,6 +2533,9 @@ unwrap_Exports node = do
         export,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Exports ExportsU where
+  unwrap = unwrap_Exports
 
 data Field = Field
   { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Type))),
@@ -2484,6 +2596,9 @@ unwrap_Field node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Field FieldU where
+  unwrap = unwrap_Field
+
 data FieldName = FieldName
   { children :: ((AST.Err.Err (Variable))),
     dynNode :: AST.Node.DynNode
@@ -2521,6 +2636,9 @@ unwrap_FieldName node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap FieldName FieldNameU where
+  unwrap = unwrap_FieldName
 
 data FieldPath = FieldPath
   { field :: ((AST.Err.Err ((FieldName Sum.:+ Qualified Sum.:+ Sum.Nil)))),
@@ -2567,6 +2685,9 @@ unwrap_FieldPath node = do
         subfield,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap FieldPath FieldPathU where
+  unwrap = unwrap_FieldPath
 
 data FieldPattern = FieldPattern
   { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Wildcard))),
@@ -2620,6 +2741,9 @@ unwrap_FieldPattern node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap FieldPattern FieldPatternU where
+  unwrap = unwrap_FieldPattern
+
 data FieldUpdate = FieldUpdate
   { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Wildcard))),
     expression :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
@@ -2672,6 +2796,9 @@ unwrap_FieldUpdate node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap FieldUpdate FieldUpdateU where
+  unwrap = unwrap_FieldUpdate
+
 data Fields = Fields
   { field :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Field))),
     dynNode :: AST.Node.DynNode
@@ -2710,6 +2837,9 @@ unwrap_Fields node = do
       { field,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Fields FieldsU where
+  unwrap = unwrap_Fields
 
 data Fixity = Fixity
   { associativity :: ((AST.Err.Err (((AST.Token.Token "infix") Sum.:+ (AST.Token.Token "infixl") Sum.:+ (AST.Token.Token "infixr") Sum.:+ Sum.Nil)))),
@@ -2763,6 +2893,9 @@ unwrap_Fixity node = do
         precedence,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Fixity FixityU where
+  unwrap = unwrap_Fixity
 
 data Forall = Forall
   { constraint :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Constraints))),
@@ -2824,6 +2957,9 @@ unwrap_Forall node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Forall ForallU where
+  unwrap = unwrap_Forall
+
 data ForallRequired = ForallRequired
   { quantifier :: ((AST.Err.Err (((AST.Token.Token "forall") Sum.:+ (AST.Token.Token "∀") Sum.:+ Sum.Nil)))),
     type' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuantifiedType))),
@@ -2877,6 +3013,9 @@ unwrap_ForallRequired node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap ForallRequired ForallRequiredU where
+  unwrap = unwrap_ForallRequired
+
 data ForeignExport = ForeignExport
   { callingConvention :: ((AST.Err.Err (CallingConvention))),
     entity :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Entity))),
@@ -2929,6 +3068,9 @@ unwrap_ForeignExport node = do
         signature,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap ForeignExport ForeignExportU where
+  unwrap = unwrap_ForeignExport
 
 data ForeignImport = ForeignImport
   { callingConvention :: ((AST.Err.Err (CallingConvention))),
@@ -2989,6 +3131,9 @@ unwrap_ForeignImport node = do
         signature,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap ForeignImport ForeignImportU where
+  unwrap = unwrap_ForeignImport
 
 data Function = Function
   { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Infix))),
@@ -3084,6 +3229,9 @@ unwrap_Function node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Function FunctionU where
+  unwrap = unwrap_Function
+
 data FunctionHeadParens = FunctionHeadParens
   { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Infix))),
     name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((PrefixId Sum.:+ Variable Sum.:+ Sum.Nil)))),
@@ -3143,6 +3291,9 @@ unwrap_FunctionHeadParens node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap FunctionHeadParens FunctionHeadParensU where
+  unwrap = unwrap_FunctionHeadParens
+
 data Fundep = Fundep
   { determined :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Variable))),
     matched :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Variable))),
@@ -3189,6 +3340,9 @@ unwrap_Fundep node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Fundep FundepU where
+  unwrap = unwrap_Fundep
+
 data Fundeps = Fundeps
   { fundep :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Fundep))),
     dynNode :: AST.Node.DynNode
@@ -3227,6 +3381,9 @@ unwrap_Fundeps node = do
       { fundep,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Fundeps FundepsU where
+  unwrap = unwrap_Fundeps
 
 data GadtConstructor = GadtConstructor
   { context :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Context))),
@@ -3295,6 +3452,9 @@ unwrap_GadtConstructor node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap GadtConstructor GadtConstructorU where
+  unwrap = unwrap_GadtConstructor
+
 data GadtConstructors = GadtConstructors
   { constructor :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (GadtConstructor))),
     dynNode :: AST.Node.DynNode
@@ -3333,6 +3493,9 @@ unwrap_GadtConstructors node = do
       { constructor,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap GadtConstructors GadtConstructorsU where
+  unwrap = unwrap_GadtConstructors
 
 data Generator = Generator
   { arrow :: ((AST.Err.Err (((AST.Token.Token "<-") Sum.:+ (AST.Token.Token "←") Sum.:+ Sum.Nil)))),
@@ -3387,6 +3550,9 @@ unwrap_Generator node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Generator GeneratorU where
+  unwrap = unwrap_Generator
+
 data Group = Group
   { classifier :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     key :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
@@ -3433,6 +3599,9 @@ unwrap_Group node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Group GroupU where
+  unwrap = unwrap_Group
+
 data Guards = Guards
   { guard :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Guard))),
     dynNode :: AST.Node.DynNode
@@ -3471,6 +3640,9 @@ unwrap_Guards node = do
       { guard,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Guards GuardsU where
+  unwrap = unwrap_Guards
 
 data Haskell = Haskell
   { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Header))),
@@ -3524,6 +3696,9 @@ unwrap_Haskell node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Haskell HaskellU where
+  unwrap = unwrap_Haskell
+
 data Header = Header
   { exports :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Exports))),
     module' :: ((AST.Err.Err (Module))),
@@ -3570,6 +3745,9 @@ unwrap_Header node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Header HeaderU where
+  unwrap = unwrap_Header
+
 data ImplicitParameter = ImplicitParameter
   { name :: ((AST.Err.Err (ImplicitVariable))),
     type' :: ((AST.Err.Err (QuantifiedType))),
@@ -3615,6 +3793,9 @@ unwrap_ImplicitParameter node = do
         type',
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap ImplicitParameter ImplicitParameterU where
+  unwrap = unwrap_ImplicitParameter
 
 data Import = Import
   { alias :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Module))),
@@ -3676,6 +3857,9 @@ unwrap_Import node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Import ImportU where
+  unwrap = unwrap_Import
+
 data ImportList = ImportList
   { name :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (ImportName))),
     dynNode :: AST.Node.DynNode
@@ -3714,6 +3898,9 @@ unwrap_ImportList node = do
       { name,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap ImportList ImportListU where
+  unwrap = unwrap_ImportList
 
 data ImportName = ImportName
   { children' :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Children))),
@@ -3782,6 +3969,9 @@ unwrap_ImportName node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap ImportName ImportNameU where
+  unwrap = unwrap_ImportName
+
 data Imports = Imports
   { import' :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Import))),
     dynNode :: AST.Node.DynNode
@@ -3821,6 +4011,9 @@ unwrap_Imports node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Imports ImportsU where
+  unwrap = unwrap_Imports
+
 data Inferred = Inferred
   { children :: ((AST.Err.Err ((Annotated Sum.:+ TypeParam Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -3858,6 +4051,9 @@ unwrap_Inferred node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Inferred InferredU where
+  unwrap = unwrap_Inferred
 
 data Infix = Infix
   { leftOperand :: ((AST.Err.Err ((Expression Sum.:+ LazyField Sum.:+ Pattern Sum.:+ StrictField Sum.:+ Type Sum.:+ TypeParam Sum.:+ Sum.Nil)))),
@@ -3912,6 +4108,9 @@ unwrap_Infix node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Infix InfixU where
+  unwrap = unwrap_Infix
+
 data InfixId = InfixId
   { children :: ((AST.Err.Err ((Constructor Sum.:+ Name Sum.:+ Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -3949,6 +4148,9 @@ unwrap_InfixId node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap InfixId InfixIdU where
+  unwrap = unwrap_InfixId
 
 data Instance = Instance
   { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ Sum.Nil)))),
@@ -4023,6 +4225,9 @@ unwrap_Instance node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Instance InstanceU where
+  unwrap = unwrap_Instance
+
 data InstanceDeclarations = InstanceDeclarations
   { declaration :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (InstanceDecl))),
     dynNode :: AST.Node.DynNode
@@ -4061,6 +4266,9 @@ unwrap_InstanceDeclarations node = do
       { declaration,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap InstanceDeclarations InstanceDeclarationsU where
+  unwrap = unwrap_InstanceDeclarations
 
 data Integer = Integer {dynNode :: AST.Node.DynNode}
   deriving (Prelude.Show, Prelude.Eq, GHC.Generics.Generic)
@@ -4112,6 +4320,9 @@ unwrap_Invisible node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Invisible InvisibleU where
+  unwrap = unwrap_Invisible
+
 data Irrefutable = Irrefutable
   { pattern' :: ((AST.Err.Err (Pattern))),
     dynNode :: AST.Node.DynNode
@@ -4151,6 +4362,9 @@ unwrap_Irrefutable node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Irrefutable IrrefutableU where
+  unwrap = unwrap_Irrefutable
+
 data KindApplication = KindApplication
   { type' :: ((AST.Err.Err (Type))),
     dynNode :: AST.Node.DynNode
@@ -4189,6 +4403,9 @@ unwrap_KindApplication node = do
       { type',
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap KindApplication KindApplicationU where
+  unwrap = unwrap_KindApplication
 
 data KindSignature = KindSignature
   { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ Sum.Nil)))),
@@ -4249,6 +4466,9 @@ unwrap_KindSignature node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap KindSignature KindSignatureU where
+  unwrap = unwrap_KindSignature
+
 data Lambda = Lambda
   { expression :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     patterns :: ((AST.Err.Err (Patterns))),
@@ -4295,6 +4515,9 @@ unwrap_Lambda node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Lambda LambdaU where
+  unwrap = unwrap_Lambda
+
 data LambdaCase = LambdaCase
   { alternatives :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Alternatives))),
     dynNode :: AST.Node.DynNode
@@ -4333,6 +4556,9 @@ unwrap_LambdaCase node = do
       { alternatives,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap LambdaCase LambdaCaseU where
+  unwrap = unwrap_LambdaCase
 
 data LambdaCases = LambdaCases
   { alternatives :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Alternatives))),
@@ -4373,6 +4599,9 @@ unwrap_LambdaCases node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap LambdaCases LambdaCasesU where
+  unwrap = unwrap_LambdaCases
+
 data LazyField = LazyField
   { type' :: ((AST.Err.Err (Type))),
     dynNode :: AST.Node.DynNode
@@ -4411,6 +4640,9 @@ unwrap_LazyField node = do
       { type',
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap LazyField LazyFieldU where
+  unwrap = unwrap_LazyField
 
 data LeftSection = LeftSection
   { leftOperand :: ((AST.Err.Err (Expression))),
@@ -4458,6 +4690,9 @@ unwrap_LeftSection node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap LeftSection LeftSectionU where
+  unwrap = unwrap_LeftSection
+
 data Let = Let
   { binds :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (LocalBinds))),
     dynNode :: AST.Node.DynNode
@@ -4496,6 +4731,9 @@ unwrap_Let node = do
       { binds,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Let LetU where
+  unwrap = unwrap_Let
 
 data LetIn = LetIn
   { binds :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (LocalBinds))),
@@ -4542,6 +4780,9 @@ unwrap_LetIn node = do
         expression,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap LetIn LetInU where
+  unwrap = unwrap_LetIn
 
 data LinearFunction = LinearFunction
   { arrow :: ((AST.Err.Err (((AST.Token.Token "->") Sum.:+ (AST.Token.Token "->.") Sum.:+ (AST.Token.Token "→") Sum.:+ (AST.Token.Token "⊸") Sum.:+ Sum.Nil)))),
@@ -4603,6 +4844,9 @@ unwrap_LinearFunction node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap LinearFunction LinearFunctionU where
+  unwrap = unwrap_LinearFunction
+
 data List = List
   { element :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((Expression Sum.:+ Pattern Sum.:+ QuantifiedType Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -4641,6 +4885,9 @@ unwrap_List node = do
       { element,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap List ListU where
+  unwrap = unwrap_List
 
 data ListComprehension = ListComprehension
   { expression :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
@@ -4688,6 +4935,9 @@ unwrap_ListComprehension node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap ListComprehension ListComprehensionU where
+  unwrap = unwrap_ListComprehension
+
 data Literal = Literal
   { children :: ((AST.Err.Err ((Char Sum.:+ Float Sum.:+ Integer Sum.:+ String Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -4725,6 +4975,9 @@ unwrap_Literal node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Literal LiteralU where
+  unwrap = unwrap_Literal
 
 data LocalBinds = LocalBinds
   { decl :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((Decl Sum.:+ Fixity Sum.:+ Sum.Nil)))),
@@ -4764,6 +5017,9 @@ unwrap_LocalBinds node = do
       { decl,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap LocalBinds LocalBindsU where
+  unwrap = unwrap_LocalBinds
 
 data Match = Match
   { expression :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
@@ -4811,6 +5067,9 @@ unwrap_Match node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Match MatchU where
+  unwrap = unwrap_Match
+
 data Modifier = Modifier
   { children :: ((AST.Err.Err (Type))),
     dynNode :: AST.Node.DynNode
@@ -4849,6 +5108,9 @@ unwrap_Modifier node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Modifier ModifierU where
+  unwrap = unwrap_Modifier
+
 data Module = Module
   { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (ModuleId))),
     dynNode :: AST.Node.DynNode
@@ -4886,6 +5148,9 @@ unwrap_Module node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Module ModuleU where
+  unwrap = unwrap_Module
 
 data ModuleExport = ModuleExport
   { module' :: ((AST.Err.Err (Module))),
@@ -4926,6 +5191,9 @@ unwrap_ModuleExport node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap ModuleExport ModuleExportU where
+  unwrap = unwrap_ModuleExport
+
 data MultiWayIf = MultiWayIf
   { match :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Match))),
     dynNode :: AST.Node.DynNode
@@ -4964,6 +5232,9 @@ unwrap_MultiWayIf node = do
       { match,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap MultiWayIf MultiWayIfU where
+  unwrap = unwrap_MultiWayIf
 
 data Namespace = Namespace {dynNode :: AST.Node.DynNode}
   deriving (Prelude.Show, Prelude.Eq, GHC.Generics.Generic)
@@ -5028,6 +5299,9 @@ unwrap_Negation node = do
         number,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Negation NegationU where
+  unwrap = unwrap_Negation
 
 data Newtype = Newtype
   { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ Sum.Nil)))),
@@ -5123,6 +5397,9 @@ unwrap_Newtype node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Newtype NewtypeU where
+  unwrap = unwrap_Newtype
+
 data NewtypeConstructor = NewtypeConstructor
   { field :: ((AST.Err.Err ((Field Sum.:+ Record Sum.:+ Sum.Nil)))),
     name :: ((AST.Err.Err ((Constructor Sum.:+ PrefixId Sum.:+ Sum.Nil)))),
@@ -5168,6 +5445,9 @@ unwrap_NewtypeConstructor node = do
         name,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap NewtypeConstructor NewtypeConstructorU where
+  unwrap = unwrap_NewtypeConstructor
 
 data Operator = Operator {dynNode :: AST.Node.DynNode}
   deriving (Prelude.Show, Prelude.Eq, GHC.Generics.Generic)
@@ -5260,6 +5540,9 @@ unwrap_Parens node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Parens ParensU where
+  unwrap = unwrap_Parens
+
 data PatternGuard = PatternGuard
   { arrow :: ((AST.Err.Err (((AST.Token.Token "<-") Sum.:+ (AST.Token.Token "←") Sum.:+ Sum.Nil)))),
     expression :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
@@ -5313,6 +5596,9 @@ unwrap_PatternGuard node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap PatternGuard PatternGuardU where
+  unwrap = unwrap_PatternGuard
+
 data PatternSynonym = PatternSynonym
   { children :: ((AST.Err.Err ((Equation Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -5351,6 +5637,9 @@ unwrap_PatternSynonym node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap PatternSynonym PatternSynonymU where
+  unwrap = unwrap_PatternSynonym
+
 data Patterns = Patterns
   { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((ExplicitType Sum.:+ Pattern Sum.:+ TypeBinder Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -5388,6 +5677,9 @@ unwrap_Patterns node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Patterns PatternsU where
+  unwrap = unwrap_Patterns
 
 data Prefix = Prefix
   { field :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((LazyField Sum.:+ StrictField Sum.:+ Type Sum.:+ Sum.Nil)))),
@@ -5442,6 +5734,9 @@ unwrap_Prefix node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Prefix PrefixU where
+  unwrap = unwrap_Prefix
+
 data PrefixId = PrefixId
   { children :: ((AST.Err.Err ((ConstructorOperator Sum.:+ Operator Sum.:+ Qualified Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -5479,6 +5774,9 @@ unwrap_PrefixId node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap PrefixId PrefixIdU where
+  unwrap = unwrap_PrefixId
 
 data PrefixList = PrefixList {dynNode :: AST.Node.DynNode}
   deriving (Prelude.Show, Prelude.Eq, GHC.Generics.Generic)
@@ -5570,6 +5868,9 @@ unwrap_Projection node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Projection ProjectionU where
+  unwrap = unwrap_Projection
+
 data ProjectionSelector = ProjectionSelector
   { field :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Variable))),
     dynNode :: AST.Node.DynNode
@@ -5609,6 +5910,9 @@ unwrap_ProjectionSelector node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap ProjectionSelector ProjectionSelectorU where
+  unwrap = unwrap_ProjectionSelector
+
 data Promoted = Promoted
   { children :: ((AST.Err.Err ((Constructor Sum.:+ ConstructorOperator Sum.:+ EmptyList Sum.:+ InfixId Sum.:+ List Sum.:+ Operator Sum.:+ PrefixId Sum.:+ PrefixTuple Sum.:+ Qualified Sum.:+ Tuple Sum.:+ Unit Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -5646,6 +5950,9 @@ unwrap_Promoted node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Promoted PromotedU where
+  unwrap = unwrap_Promoted
 
 data Qualified = Qualified
   { id :: ((AST.Err.Err ((Constructor Sum.:+ ConstructorOperator Sum.:+ FieldName Sum.:+ Name Sum.:+ Operator Sum.:+ Variable Sum.:+ Sum.Nil)))),
@@ -5693,6 +6000,9 @@ unwrap_Qualified node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Qualified QualifiedU where
+  unwrap = unwrap_Qualified
+
 data Qualifiers = Qualifiers
   { qualifier :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Qualifier))),
     dynNode :: AST.Node.DynNode
@@ -5732,6 +6042,9 @@ unwrap_Qualifiers node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Qualifiers QualifiersU where
+  unwrap = unwrap_Qualifiers
+
 data QuantifiedVariables = QuantifiedVariables
   { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((Inferred Sum.:+ TypeParam Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -5769,6 +6082,9 @@ unwrap_QuantifiedVariables node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap QuantifiedVariables QuantifiedVariablesU where
+  unwrap = unwrap_QuantifiedVariables
 
 data Quasiquote = Quasiquote
   { body :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuasiquoteBody))),
@@ -5816,6 +6132,9 @@ unwrap_Quasiquote node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Quasiquote QuasiquoteU where
+  unwrap = unwrap_Quasiquote
+
 data Quote = Quote
   { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((QuotedDecls Sum.:+ QuotedExpression Sum.:+ QuotedPattern Sum.:+ QuotedType Sum.:+ Sum.Nil)))),
     quoter :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (((AST.Token.Token "d") Sum.:+ (AST.Token.Token "e") Sum.:+ (AST.Token.Token "p") Sum.:+ (AST.Token.Token "t") Sum.:+ Sum.Nil)))),
@@ -5861,6 +6180,9 @@ unwrap_Quote node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Quote QuoteU where
+  unwrap = unwrap_Quote
+
 data QuotedDecls = QuotedDecls
   { declaration :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Declaration))),
     dynNode :: AST.Node.DynNode
@@ -5900,6 +6222,9 @@ unwrap_QuotedDecls node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap QuotedDecls QuotedDeclsU where
+  unwrap = unwrap_QuotedDecls
+
 data QuotedExpression = QuotedExpression
   { children :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -5937,6 +6262,9 @@ unwrap_QuotedExpression node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap QuotedExpression QuotedExpressionU where
+  unwrap = unwrap_QuotedExpression
 
 data QuotedPattern = QuotedPattern
   { children :: ((AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ Sum.Nil)))),
@@ -5976,6 +6304,9 @@ unwrap_QuotedPattern node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap QuotedPattern QuotedPatternU where
+  unwrap = unwrap_QuotedPattern
+
 data QuotedType = QuotedType
   { children :: ((AST.Err.Err ((QuantifiedType Sum.:+ Signature Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -6013,6 +6344,9 @@ unwrap_QuotedType node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap QuotedType QuotedTypeU where
+  unwrap = unwrap_QuotedType
 
 data Quoter = Quoter
   { children :: ((AST.Err.Err ((Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
@@ -6052,6 +6386,9 @@ unwrap_Quoter node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Quoter QuoterU where
+  unwrap = unwrap_Quoter
+
 data Rec = Rec
   { statement :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Statement))),
     dynNode :: AST.Node.DynNode
@@ -6090,6 +6427,9 @@ unwrap_Rec node = do
       { statement,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Rec RecU where
+  unwrap = unwrap_Rec
 
 data Record = Record
   { arrow :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (((AST.Token.Token "->") Sum.:+ (AST.Token.Token "→") Sum.:+ Sum.Nil)))),
@@ -6172,6 +6512,9 @@ unwrap_Record node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Record RecordU where
+  unwrap = unwrap_Record
+
 data RightSection = RightSection
   { children :: ((AST.Err.Err ((ConstructorOperator Sum.:+ InfixId Sum.:+ Operator Sum.:+ Qualified Sum.:+ Sum.Nil)))),
     rightOperand :: ((AST.Err.Err (Expression))),
@@ -6216,6 +6559,9 @@ unwrap_RightSection node = do
         rightOperand,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap RightSection RightSectionU where
+  unwrap = unwrap_RightSection
 
 data RoleAnnotation = RoleAnnotation
   { role :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (TypeRole))),
@@ -6262,6 +6608,9 @@ unwrap_RoleAnnotation node = do
         type',
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap RoleAnnotation RoleAnnotationU where
+  unwrap = unwrap_RoleAnnotation
 
 data Signature = Signature
   { constraint :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (Constraints))),
@@ -6351,6 +6700,9 @@ unwrap_Signature node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Signature SignatureU where
+  unwrap = unwrap_Signature
+
 data Special = Special
   { children :: ((AST.Err.Err ((EmptyList Sum.:+ Tuple Sum.:+ UnboxedSum Sum.:+ UnboxedTuple Sum.:+ UnboxedUnit Sum.:+ Unit Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -6388,6 +6740,9 @@ unwrap_Special node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Special SpecialU where
+  unwrap = unwrap_Special
 
 data Splice = Splice
   { expression :: ((AST.Err.Err ((Constructor Sum.:+ ImplicitVariable Sum.:+ Label Sum.:+ Literal Sum.:+ Parens Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
@@ -6427,6 +6782,9 @@ unwrap_Splice node = do
       { expression,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap Splice SpliceU where
+  unwrap = unwrap_Splice
 
 data Star = Star {dynNode :: AST.Node.DynNode}
   deriving (Prelude.Show, Prelude.Eq, GHC.Generics.Generic)
@@ -6478,6 +6836,9 @@ unwrap_Strict node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Strict StrictU where
+  unwrap = unwrap_Strict
+
 data StrictField = StrictField
   { type' :: ((AST.Err.Err (Type))),
     dynNode :: AST.Node.DynNode
@@ -6516,6 +6877,9 @@ unwrap_StrictField node = do
       { type',
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap StrictField StrictFieldU where
+  unwrap = unwrap_StrictField
 
 data ThQuotedName = ThQuotedName
   { name :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Constructor Sum.:+ PrefixId Sum.:+ Qualified Sum.:+ Variable Sum.:+ Sum.Nil)))),
@@ -6563,6 +6927,9 @@ unwrap_ThQuotedName node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap ThQuotedName ThQuotedNameU where
+  unwrap = unwrap_ThQuotedName
+
 data TopSplice = TopSplice
   { children :: ((AST.Err.Err (Expression))),
     dynNode :: AST.Node.DynNode
@@ -6600,6 +6967,9 @@ unwrap_TopSplice node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap TopSplice TopSpliceU where
+  unwrap = unwrap_TopSplice
 
 data Transform = Transform
   { key :: AST.Err.Err (Prelude.Maybe (AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
@@ -6647,6 +7017,9 @@ unwrap_Transform node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Transform TransformU where
+  unwrap = unwrap_Transform
+
 data Tuple = Tuple
   { children :: AST.Err.Err (AST.Runtime.List (AST.Err.Err (Constraints))),
     element :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((Expression Sum.:+ Pattern Sum.:+ QuantifiedType Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
@@ -6692,6 +7065,9 @@ unwrap_Tuple node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Tuple TupleU where
+  unwrap = unwrap_Tuple
+
 data TypeApplication = TypeApplication
   { type' :: ((AST.Err.Err (Type))),
     dynNode :: AST.Node.DynNode
@@ -6731,6 +7107,9 @@ unwrap_TypeApplication node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap TypeApplication TypeApplicationU where
+  unwrap = unwrap_TypeApplication
+
 data TypeBinder = TypeBinder
   { type' :: ((AST.Err.Err (Type))),
     dynNode :: AST.Node.DynNode
@@ -6769,6 +7148,9 @@ unwrap_TypeBinder node = do
       { type',
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap TypeBinder TypeBinderU where
+  unwrap = unwrap_TypeBinder
 
 data TypeFamily = TypeFamily
   { children :: AST.Err.Err (AST.Runtime.List (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ TypeFamilyInjectivity Sum.:+ TypeFamilyResult Sum.:+ Sum.Nil)))),
@@ -6836,6 +7218,9 @@ unwrap_TypeFamily node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap TypeFamily TypeFamilyU where
+  unwrap = unwrap_TypeFamily
+
 data TypeFamilyInjectivity = TypeFamilyInjectivity
   { determined :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (Variable))),
     result :: ((AST.Err.Err (Variable))),
@@ -6882,6 +7267,9 @@ unwrap_TypeFamilyInjectivity node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap TypeFamilyInjectivity TypeFamilyInjectivityU where
+  unwrap = unwrap_TypeFamilyInjectivity
+
 data TypeFamilyResult = TypeFamilyResult
   { result :: ((AST.Err.Err (QuantifiedType))),
     dynNode :: AST.Node.DynNode
@@ -6920,6 +7308,9 @@ unwrap_TypeFamilyResult node = do
       { result,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap TypeFamilyResult TypeFamilyResultU where
+  unwrap = unwrap_TypeFamilyResult
 
 data TypeInstance = TypeInstance
   { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((Infix Sum.:+ Parens Sum.:+ QuantifiedType Sum.:+ Sum.Nil)))),
@@ -6980,6 +7371,9 @@ unwrap_TypeInstance node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap TypeInstance TypeInstanceU where
+  unwrap = unwrap_TypeInstance
+
 data TypeParams = TypeParams
   { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err (TypeParam))),
     dynNode :: AST.Node.DynNode
@@ -7018,6 +7412,9 @@ unwrap_TypeParams node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap TypeParams TypeParamsU where
+  unwrap = unwrap_TypeParams
+
 data TypePatterns = TypePatterns
   { children :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((KindApplication Sum.:+ Type Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -7055,6 +7452,9 @@ unwrap_TypePatterns node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap TypePatterns TypePatternsU where
+  unwrap = unwrap_TypePatterns
 
 data TypeRole = TypeRole {dynNode :: AST.Node.DynNode}
   deriving (Prelude.Show, Prelude.Eq, GHC.Generics.Generic)
@@ -7126,6 +7526,9 @@ unwrap_TypeSynomym node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap TypeSynomym TypeSynomymU where
+  unwrap = unwrap_TypeSynomym
+
 data TypedQuote = TypedQuote
   { children :: AST.Err.Err (Prelude.Maybe (AST.Err.Err (QuotedExpression))),
     dynNode :: AST.Node.DynNode
@@ -7163,6 +7566,9 @@ unwrap_TypedQuote node = do
       { children,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap TypedQuote TypedQuoteU where
+  unwrap = unwrap_TypedQuote
 
 data UnboxedSum = UnboxedSum
   { element :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((Expression Sum.:+ Pattern Sum.:+ QuantifiedType Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
@@ -7203,6 +7609,9 @@ unwrap_UnboxedSum node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap UnboxedSum UnboxedSumU where
+  unwrap = unwrap_UnboxedSum
+
 data UnboxedTuple = UnboxedTuple
   { element :: AST.Err.Err (Data.List.NonEmpty.NonEmpty (AST.Err.Err ((Expression Sum.:+ Pattern Sum.:+ QuantifiedType Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
     dynNode :: AST.Node.DynNode
@@ -7241,6 +7650,9 @@ unwrap_UnboxedTuple node = do
       { element,
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap UnboxedTuple UnboxedTupleU where
+  unwrap = unwrap_UnboxedTuple
 
 data UnboxedUnit = UnboxedUnit {dynNode :: AST.Node.DynNode}
   deriving (Prelude.Show, Prelude.Eq, GHC.Generics.Generic)
@@ -7303,6 +7715,9 @@ unwrap_Via node = do
         dynNode = node.dynNode
       }
 
+instance AST.Unwrap.Unwrap Via ViaU where
+  unwrap = unwrap_Via
+
 data ViewPattern = ViewPattern
   { expression :: ((AST.Err.Err ((Expression Sum.:+ Signature Sum.:+ Sum.Nil)))),
     pattern' :: ((AST.Err.Err ((Pattern Sum.:+ Signature Sum.:+ ViewPattern Sum.:+ Sum.Nil)))),
@@ -7348,6 +7763,9 @@ unwrap_ViewPattern node = do
         pattern',
         dynNode = node.dynNode
       }
+
+instance AST.Unwrap.Unwrap ViewPattern ViewPatternU where
+  unwrap = unwrap_ViewPattern
 
 data Wildcard = Wildcard {dynNode :: AST.Node.DynNode}
   deriving (Prelude.Show, Prelude.Eq, GHC.Generics.Generic)
