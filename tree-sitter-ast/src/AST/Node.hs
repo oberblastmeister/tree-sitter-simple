@@ -6,6 +6,7 @@ module AST.Node
     defaultNode,
     nodeToText,
     nodeToRange,
+    OnDynNode(..)
   )
 where
 
@@ -61,3 +62,11 @@ nodeToText = nodeText . getDynNode
 
 nodeToRange :: (HasDynNode n) => n -> TS.Range
 nodeToRange = nodeRange . getDynNode
+
+newtype OnDynNode a = OnDynNode a
+
+instance (HasDynNode a) => Show (OnDynNode a) where
+  show (OnDynNode a) = show $ getDynNode a
+
+instance (HasDynNode a) => Eq (OnDynNode a) where
+  (OnDynNode a) == (OnDynNode b) = getDynNode a == getDynNode b

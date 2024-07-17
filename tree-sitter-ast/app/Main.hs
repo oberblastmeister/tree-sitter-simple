@@ -56,6 +56,7 @@ generateAllM moduleName nodeTypes = do
 
   {-# LANGUAGE NoImplicitPrelude #-}
   {-# LANGUAGE DeriveAnyClass #-}
+  {-# LANGUAGE DerivingVia #-}
   {-# OPTIONS_GHC -Wno-unused-local-binds #-}
   {-# OPTIONS_GHC -Wno-name-shadowing #-}
   {-# HLINT ignore "Use camelCase" #-}
@@ -125,6 +126,7 @@ generateSumType name subtypes = do
   let hsFieldGetter = T.pack (Symbol.toHaskellCamelCaseIdentifier (T.unpack fieldGetter))
   let hsName = T.pack (Symbol.toHaskellPascalCaseIdentifier (T.unpack name))
   let innerTy = nodeTypesToTy subtypes
+  let commonDerive = mkCommonDerive hsName
   emit
     [trimming|
   data $hsName = $hsName { dynNode :: AST.Node.DynNode, $hsFieldGetter :: $innerTy }
@@ -188,6 +190,7 @@ generateProductDecl nodeName fields = do
     emit [trimming|$hsFieldName :: $outsideErr ($tyPrefix (AST.Err.Err ($innerTy)))|]
   emit ", dynNode :: AST.Node.DynNode"
   emit "  }"
+  let commonDerive = mkCommonDerive name
   emit [trimming| $commonDerive|]
 
 generateUnwrappedProductDecl :: Text -> [(Text, NT.Field)] -> M ()
@@ -201,6 +204,7 @@ generateUnwrappedProductDecl nodeName fields = do
     emit [trimming|$hsFieldName :: $tyPrefix ($innerTy)|]
   emit ", dynNode :: AST.Node.DynNode"
   emit "  }"
+  let commonDerive = mkCommonDerive name
   emit [trimming| $commonDerive|]
 
 emitStmts :: M a -> M a
@@ -286,9 +290,12 @@ genUnwrap nodeName fields = do
   emit ", dynNode = node.dynNode" -- add in the dynNode field
   emit [trimming|} ;|]
   emit "}"
-  
+
   emit
     [trimming|
+    instance AST.Node.HasDynNode $nameU where
+      getDynNode ($nameU { dynNode }) = dynNode
+
     instance AST.Unwrap.Unwrap $name $nameU where
       unwrap = unwrap_$name
     |]
@@ -354,6 +361,7 @@ convertFieldName = T.pack . Symbol.toHaskellCamelCaseIdentifier . T.unpack
 generateLeafType :: Text -> NT.Named -> M ()
 generateLeafType name NT.Named = do
   let ident = T.pack (Symbol.toHaskellPascalCaseIdentifier (T.unpack name))
+  let commonDerive = mkCommonDerive ident
   emit
     [trimming|
     data $ident = $ident { dynNode :: AST.Node.DynNode }
@@ -369,5 +377,12 @@ generateLeafType name NT.Named = do
       |]
 generateLeafType _name NT.Anonymous = pure ()
 
-commonDerive :: Text
-commonDerive = "  deriving (Prelude.Show, Prelude.Eq, GHC.Generics.Generic)"
+mkCommonDerive :: Text -> Text
+mkCommonDerive name =
+  T.intercalate "\n" $
+    fmap
+      ("  " <>)
+      [ [untrimming|deriving Prelude.Show via (AST.Node.OnDynNode $name)|],
+        [untrimming|deriving Prelude.Eq via (AST.Node.OnDynNode $name)|],
+        [untrimming|deriving (GHC.Generics.Generic)|]
+      ]
