@@ -3,11 +3,13 @@ module Data.LineColRange
     empty,
     mkLineColRange,
     containsRange,
+    point,
   )
 where
 
 import Data.Hashable (Hashable)
-import Data.LineCol (LineCol)
+import Data.LineCol (LineCol (..))
+import Data.Pos (Pos (..))
 import GHC.Generics (Generic)
 import GHC.Stack (HasCallStack)
 
@@ -36,6 +38,9 @@ mkLineColRange s e
 
 empty :: LineCol -> LineColRange
 empty p = LineColRange p p
+
+point :: LineCol -> LineColRange
+point p@(LineCol line col) = LineColRange p (LineCol line (Pos (col.pos + 1)))
 
 containsRange :: LineColRange -> LineColRange -> Bool
 containsRange (LineColRange s1 e1) (LineColRange s2 e2) = s1 <= s2 && e2 <= e1

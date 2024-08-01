@@ -53,44 +53,18 @@ main = do
             emojiCode
         ),
         ( test
-            ""
+            "getDeepestDynNodeContainingLineCol"
             [expect|Just
-    ( "haskell@(0 - 38)"
-        [ "header@(0 - 17)"
-            [ "module@(0 - 6)" []
-            , "module@(7 - 11)"
-                [ "module_id@(7 - 11)" [] ]
-            , "where@(12 - 17)" []
-            ]
-        , "declarations@(19 - 38)"
-            [ "bind@(19 - 29)"
-                [ "variable@(19 - 20)" []
-                , "match@(21 - 29)"
-                    [ "=@(21 - 22)" []
-                    , "literal@(23 - 29)"
-                        [ "string@(23 - 29)" [] ]
-                    ]
-                ]
-            , "bind@(31 - 38)"
-                [ "variable@(31 - 32)" []
-                , "match@(33 - 38)"
-                    [ "=@(33 - 34)" []
-                    , "literal@(35 - 38)"
-                        [ "string@(35 - 38)" [] ]
-                    ]
-                ]
-            ]
-        ]
-    )|]
+    ( "string@(35 - 38)" [] )|]
             do
               let hs = Haskell.parse emojiCode
               let node = AST.getDynNode hs
               let point = LineCol (Pos 4) (Pos 5)
-              let res = AST.getDeepestDynNodeContainingLineCol point node
+              let res = AST.getDeepestDynNodeContainingLineCol (LineColRange.point point) node
               pure $ pShow (AST.FullDynNode <$> res)
         ),
         ( test
-            ""
+            "getDeepestContainingLineCol"
             [expect|Just
     ( "literal@(35 - 38)"
         [ "string@(35 - 38)" [] ]
@@ -99,19 +73,20 @@ main = do
               let hs = Haskell.parse emojiCode
               let node = AST.getDynNode hs
               let point = LineCol (Pos 4) (Pos 5)
-              let res = AST.getDeepestContainingLineCol @AST.Haskell.Literal (LineColRange.empty point) node
+              let res = AST.getDeepestContainingLineCol @AST.Haskell.Literal (LineColRange.point point) node
               pure $ pShow (AST.FullDynNode <$> (AST.getDynNode <$> res))
         ),
         ( test
-            ""
+            "getDeepestContainingLineCol"
             [expect|Just
     ( "variable@(666 - 683)" [] )|]
             do
               let hs = Haskell.parse weirdSource
               let node = AST.getDynNode hs
               let point = LineCol (Pos 24) (Pos 0)
-              let res = AST.getDeepestContainingLineCol @AutoImportTypes (LineColRange.empty point) node
+              let res = AST.getDeepestContainingLineCol @AutoImportTypes (LineColRange.point point) node
               pure $ pShow (AST.FullDynNode <$> (AST.getDynNode <$> res))
+              -- pure $ pShow (AST.FullDynNode (AST.getDynNode hs))
         )
       ]
 
@@ -162,52 +137,4 @@ findModulesForDef (getConn -> conn) name = do
       \WHERE exports.occ LIKE ?"
       (Only (T.pack "_:" <> name))
   pure (coerce res)
-
-getModulesToImport ::
-  (HasCallStack, ()) =>
-  LSP.TextDocumentIdentifier ->
-  LSP.Position ->
-  StaticLs [Text]
-getModulesToImport tdi pos = do
-  logInfo "getModulesToImport"
-  let uri = tdi._uri
-  haskell <- getHaskell uri
-  mHieFile <- runMaybeT $ getHieFileFromTdi tdi
-  let astPoint = lspPositionToASTPoint pos
-  logInfo $ T.pack $ "astPoint: " ++ show astPoint
-  case haskell of
-    Nothing -> do
-      logInfo "didn't get haskell"
-      pure []
-    Just haskell -> do
-      logInfo "got haskell"
-      let dynNode = AST.getDynNode haskell
-      logInfo $ T.pack $ "dynNode: " ++ show dynNode
-      let maybeQualified = AST.getDeepestContaining @Haskell.Qualified astPoint (AST.getDynNode haskell)
-      case maybeQualified of
-        Just qualified -> do
-          let node = AST.getDynNode qualified
-          logInfo $ T.pack $ "qualified: " ++ show node
-          pure []
-        _ -> do
-          logInfo $ T.pack $ "no qualified: "
-          pure []
-
--- case mHieFile of
---   Nothing -> pure []
---   Just hieFile -> do
---     let hiedbPosition = lspPositionToHieDbCoords pos
---         names = namesAtPoint hieFile hiedbPosition
---         occNamesAndModNamesAtPoint =
---           (\name -> (GHC.occName name, fmap GHC.moduleName . GHC.nameModule_maybe $ name))
---             <$> names
---         occNames = map fst occNamesAndModNamesAtPoint
---     logInfo $ T.pack $ "occNames: " ++ show (showGhc names)
---     res <- traverse (\occ -> runExceptT $ runHieDbExceptT (\db -> findModulesForDef db occ)) occNames
---     let res' = sequenceA res
---     case res' of
---       Left e -> do
---         logError $ T.pack $ "e: " ++ show e
---         pure []
---       Right res'' -> pure $ concat res''
 |]

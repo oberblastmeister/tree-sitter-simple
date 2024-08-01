@@ -4,6 +4,7 @@ module Data.Range
     mkRange,
     contains,
     containsRange,
+    point,
   )
 where
 
@@ -32,6 +33,9 @@ pattern Range s e <- UnsafeRange s e
 
 empty :: Pos -> Range
 empty p = UnsafeRange p p
+
+point :: Pos -> Range
+point p = UnsafeRange p (Pos (p.pos + 1))
 
 mkRange :: (HasCallStack) => Pos -> Pos -> Range
 mkRange start end = if start > end then error "start must not be greater than end" else UnsafeRange start end

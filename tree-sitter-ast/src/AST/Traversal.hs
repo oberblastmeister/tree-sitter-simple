@@ -10,50 +10,45 @@ where
 import AST.Cast (Cast (..))
 import AST.Node
 import Control.Applicative ((<|>))
-import Control.Monad (guard)
 import Data.Foldable (asum)
-import Data.LineCol (LineCol)
-import Data.LineColRange (LineColRange(..))
+import Data.LineColRange (LineColRange (..))
+import Data.LineColRange qualified as LineColRange
+import Data.List qualified as List
 import Data.Range (Range (..))
 import Data.Range qualified as Range
 import TreeSitter.Api qualified as TS
-import qualified Data.LineColRange as LineColRange
 
-getDeepestDynNodeContainingLineCol :: LineCol -> DynNode -> Maybe DynNode
-getDeepestDynNodeContainingLineCol lineCol node =
-  ( \n -> do
-      guard (n.nodeLineColRange.start <= lineCol && lineCol <= n.nodeLineColRange.end)
-      pure n
-  )
-    node
+getDeepestDynNodeContainingLineCol :: LineColRange -> DynNode -> Maybe DynNode
+getDeepestDynNodeContainingLineCol = getDeepestContainingLineColSatisfying Just
 
 getDeepestDynNodeContaining :: Range -> DynNode -> Maybe DynNode
-getDeepestDynNodeContaining range node =
-  getDeepestSatisfying
-    ( \n -> do
-        guard (n.nodeRange `Range.containsRange` range)
-        pure n
-    )
-    node
-    
+getDeepestDynNodeContaining = getDeepestContainingSatisfying Just
 
 getDeepestContainingLineCol :: (Cast n) => LineColRange -> DynNode -> Maybe n
-getDeepestContainingLineCol lineColRange node =
-  getDeepestSatisfying
-    ( \n -> do
-        guard (n.nodeLineColRange `LineColRange.containsRange` lineColRange)
-        cast n
-    )
-    node
+getDeepestContainingLineCol = getDeepestContainingLineColSatisfying cast
+
+getDeepestContainingLineColSatisfying :: (DynNode -> Maybe b) -> LineColRange -> DynNode -> Maybe b
+getDeepestContainingLineColSatisfying f range node = go node
+  where
+    go n =
+      ( do
+          n' <- List.find (\n -> n.nodeLineColRange `LineColRange.containsRange` range) n.nodeChildren
+          go n'
+      )
+        <|> f n
+
+getDeepestContainingSatisfying :: (DynNode -> Maybe b) -> Range -> DynNode -> Maybe b
+getDeepestContainingSatisfying f range node = go node
+  where
+    go n =
+      ( do
+          n' <- List.find (\n -> n.nodeRange `Range.containsRange` range) n.nodeChildren
+          go n'
+      )
+        <|> f n
 
 getDeepestContaining :: (Cast n) => Range -> DynNode -> Maybe n
-getDeepestContaining range node =
-  getDeepestSatisfying
-    ( \n -> do
-        guard (n.nodeRange `Range.containsRange` range)
-        cast n
-    )
-    node
+getDeepestContaining = getDeepestContainingSatisfying cast
 
 getDeepestSatisfying :: (DynNode -> Maybe b) -> DynNode -> Maybe b
 getDeepestSatisfying f n = go n
