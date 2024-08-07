@@ -15,6 +15,7 @@ dependencies:
   - split
   - deepseq
   - text-range
+  - template-haskell
   
 library:
   <<: *default_library
